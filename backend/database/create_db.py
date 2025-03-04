@@ -32,7 +32,6 @@ CREATE TABLE IF NOT EXISTS store_products (
 )
 ''')
 
-
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS receipts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +41,6 @@ CREATE TABLE IF NOT EXISTS receipts (
 )
 ''')
 
-# Таблиця "Містить" (зв’язок між "Чек" і "Товар у магазині")
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS contains (
     receipt_id INTEGER,
