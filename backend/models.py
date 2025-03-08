@@ -1,27 +1,76 @@
 import sqlite3
-import json
+from robyn import jsonify 
+
+
+# !!! У якому вигляді повертається відповідь:
+# "status_code": 200,
+#             "body": jsonify({
+#                 "data": result,
+#             }),
+#             "headers": {"Content-Type": "application/json"}
+
+# результат, тобто наші дані -- у "data"
+# !!!
 def get_all_store_products():
     try:
-        conn = sqlite3.connect('database/supermarket.db')
+
+        conn = sqlite3.connect('./database/supermarket.db')
         cursor = conn.cursor()
-
+        
+    
         cursor.execute('''
-            SELECT sp.id, p.name, sp.price, sp.quantity, sp.discount
-            FROM store_products sp
-            JOIN products p ON sp.product_id = p.id
+            SELECT 
+                sp.UPC,
+                sp.UPC_prom,
+                p.product_name,
+                p.characteristics,
+                c.category_name,
+                sp.selling_price,
+                sp.products_number,
+                sp.promotional_product
+            FROM store_product sp
+            JOIN product p ON sp.id_product = p.id_product
+            JOIN category c ON p.category_number = c.category_number
         ''')
-
+        
+        # Fetch all results
         products = cursor.fetchall()
-        conn.close()
-
-        if not products:
-            return json.dumps({"error": "No products found"}, ensure_ascii=False)
-
-        product_list = [
-            {"id": row[0], "name": row[1], "price": row[2], "quantity": row[3], "discount": row[4]}
-            for row in products
-        ]
-
-        return json.dumps(product_list, ensure_ascii=False)
+        
+        # Format the results
+        result = []
+        for product in products:
+            product_dict = {
+                'UPC': product[0],
+                'UPC_prom': product[1],
+                'product_name': product[2],
+                'characteristics': product[3],
+                'category_name': product[4],
+                'selling_price': float(product[5]),  
+                'products_number': int(product[6]), 
+                'promotional_product': bool(product[7])
+            }
+            result.append(product_dict)
+            
+        return {
+            "status_code": 200,
+            "body": jsonify({
+                "data": result,
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+        
     except sqlite3.Error as e:
-        return json.dumps({"error": str(e)}, ensure_ascii=False)
+      
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+        
+    finally:
+        if conn:
+            conn.close()
