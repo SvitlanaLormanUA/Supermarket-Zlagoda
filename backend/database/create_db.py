@@ -4,81 +4,89 @@ conn = sqlite3.connect('supermarket.db')
 cursor = conn.cursor()
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS categories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL
+CREATE TABLE IF NOT EXISTS category (
+    category_number INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_name TEXT NOT NULL
 )
 ''')
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    producer TEXT,
-    characteristics TEXT,
-    category_id INTEGER,
-    FOREIGN KEY (category_id) REFERENCES categories(id)
+CREATE TABLE IF NOT EXISTS product (
+    id_product INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_number INTEGER NOT NULL,
+    product_name TEXT NOT NULL,
+    characteristics TEXT NOT NULL,
+    FOREIGN KEY (category_number) REFERENCES category(category_number) ON UPDATE CASCADE ON DELETE NO ACTION
 )
 ''')
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS store_products (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    product_id INTEGER NOT NULL,
-    price REAL NOT NULL,
-    quantity INTEGER NOT NULL,
-    discount REAL DEFAULT 0,
-    FOREIGN KEY (product_id) REFERENCES products(id)
+CREATE TABLE IF NOT EXISTS store_product (
+    UPC TEXT PRIMARY KEY,
+    UPC_prom TEXT,
+    id_product INTEGER NOT NULL,
+    selling_price REAL NOT NULL,
+    products_number INTEGER NOT NULL,
+    promotional_product BOOLEAN NOT NULL,
+    FOREIGN KEY (UPC_prom) REFERENCES store_product(UPC) ON UPDATE CASCADE ON DELETE SET NULL,
+    FOREIGN KEY (id_product) REFERENCES product(id_product) ON UPDATE CASCADE ON DELETE NO ACTION
 )
 ''')
 
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS receipts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    number TEXT NOT NULL,
-    date TEXT NOT NULL,
-    total_sum REAL NOT NULL
-)
-''')
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS contains (
-    receipt_id INTEGER,
-    store_product_id INTEGER,
-    quantity INTEGER NOT NULL,
-    price REAL NOT NULL,
-    FOREIGN KEY (receipt_id) REFERENCES receipts(id),
-    FOREIGN KEY (store_product_id) REFERENCES store_products(id),
-    PRIMARY KEY (receipt_id, store_product_id)
-)
-''')
-
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS client_cards (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    number TEXT NOT NULL UNIQUE,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    phone TEXT,
-    address TEXT,
-    city TEXT,
-    discount REAL DEFAULT 0
-)
-''')
-
-
-cursor.execute('''
-CREATE TABLE IF NOT EXISTS employees (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    first_name TEXT NOT NULL,
-    last_name TEXT NOT NULL,
-    position TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS employee (
+    id_employee TEXT PRIMARY KEY,
+    empl_surname TEXT NOT NULL,
+    empl_name TEXT NOT NULL,
+    empl_patronymic TEXT,
+    empl_role TEXT NOT NULL,
     salary REAL NOT NULL,
-    start_date TEXT NOT NULL,
-    contact_info TEXT,
-    address TEXT,
-    city TEXT
+    date_of_birth TEXT NOT NULL,
+    date_of_start TEXT NOT NULL,
+    phone_number TEXT NOT NULL,
+    city TEXT NOT NULL,
+    street TEXT NOT NULL,
+    zip_code TEXT NOT NULL
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS customer_card (
+    card_number TEXT PRIMARY KEY,
+    cust_surname TEXT NOT NULL,
+    cust_name TEXT NOT NULL,
+    cust_patronymic TEXT,
+    phone_number TEXT NOT NULL,
+    city TEXT NOT NULL,
+    street TEXT NOT NULL,
+    zip_code TEXT NOT NULL,
+    percent INTEGER NOT NULL
+)
+''')
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS receipt (
+    check_number TEXT PRIMARY KEY,
+    id_employee TEXT NOT NULL,
+    card_number TEXT,
+    print_date TEXT NOT NULL,
+    sum_total REAL NOT NULL,
+    vat REAL NOT NULL,
+    FOREIGN KEY (id_employee) REFERENCES employee(id_employee) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (card_number) REFERENCES customer_card(card_number) ON UPDATE CASCADE ON DELETE NO ACTION
+)
+''')
+
+
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS sale (
+    UPC TEXT NOT NULL,
+    check_number TEXT NOT NULL,
+    product_number INTEGER NOT NULL,
+    selling_price REAL NOT NULL,
+    PRIMARY KEY (UPC, check_number),
+    FOREIGN KEY (UPC) REFERENCES store_product(UPC) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (check_number) REFERENCES receipt(check_number) ON UPDATE CASCADE ON DELETE CASCADE
 )
 ''')
 
