@@ -11,4 +11,9 @@ To run the application your .env.local file should look like this:
 
 ```
 DB_LINK # place a local link to the database
+SECRET_KEY="2$53423$@#23423" # you can place any key u wish. Be mindful since it's used for hashing!
+ALGORITHM = "HS256"
 ```
+# login 
+You can find pre-made accounts in /backend/database/first_accounts.py . Use the email and password to regitster.
+If u are a manager, you will be able to add new employees (cashiers)
