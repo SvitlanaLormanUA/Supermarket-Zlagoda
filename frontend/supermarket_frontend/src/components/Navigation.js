@@ -13,18 +13,21 @@ function Navigation() {
     <div className="navbar">
       <ul className="navbar-list">
         <li><Link to="/">
-        <button className="dashboard-button">
-          Dashboard
-        </button></Link>
+          <button className="dashboard-button">
+            <img src="/assets/images/dashboard.png" alt="Dashboard" className="button-icon" />
+            Dashboard
+          </button></Link>
         </li>
 
         <li><Link to="/add-product"><button className="add-button">
+          <img src="/assets/images/addProduct.png" alt="AddProduct" className="button-icon" />
           Add Product
         </button></Link>
         </li>
 
         <li className="dropdown">
           <button className="account-button" onClick={toggleDropdown}>
+            <img src="/assets/images/account.png" alt="Account" className="button-icon" />
             Account ▾
           </button>
 

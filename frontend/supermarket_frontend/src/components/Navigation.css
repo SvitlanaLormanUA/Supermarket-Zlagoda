@@ -19,25 +19,29 @@
   background-color: #ffffff;
 }
 
-.dropdown {
-  position: relative;
-}
-
-.account-button, .dashboard-button, .add-button {
+.account-button,
+.dashboard-button,
+.add-button {
   background: none;
   border: none;
   font-size: 20px;
+  font-weight: bold;
   cursor: pointer;
   color: black;
   padding: 10px 20px;
   width: 100%;
   text-align: left;
-  
 }
 
-.account-button:hover, .dashboard-button:hover, .add-button:hover {
+.dashboard-button:hover,
+.add-button:hover,
+.account-button:hover {
   background-color: #e6e6e6;
   border-radius: 8px;
+}
+
+.dropdown {
+  position: relative;
 }
 
 .dropdown-menu {
@@ -54,7 +58,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
- 
+
 }
 
 .dropdown-menu li {
@@ -62,7 +66,7 @@
   justify-content: center;
   list-style: none;
   margin: 0px;
-  
+
 }
 
 .dropdown-menu li a {
@@ -71,10 +75,17 @@
   text-decoration: none;
   color: black;
   font-size: 16px;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .dropdown-menu li a:hover {
   background-color: #f0f0f0;
   border-radius: 6px;
+}
+
+.button-icon {
+  width: 20px;
+  height: 20px; 
+  margin-right: 10px;
+  vertical-align: top;
 }
