@@ -8,7 +8,7 @@ function App() {
       <div style={{ marginLeft: '250px', padding: '20px' }}>
         <Navigation />
         <Routes> {}
-          <Route path="/" element={<h1>Welcome to supermarket!</h1>} /> {}
+          <Route path="/"/> {}
         </Routes> {}
       </div>
     </Router>

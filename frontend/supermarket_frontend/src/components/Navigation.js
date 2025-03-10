@@ -12,17 +12,25 @@ function Navigation() {
   return (
     <div className="navbar">
       <ul className="navbar-list">
-        <li><Link to="/">
+        <li><Link to="/" style={{ textDecoration: 'none' }}>
           <button className="dashboard-button">
             <img src="/assets/images/dashboard.png" alt="Dashboard" className="button-icon" />
             Dashboard
           </button></Link>
         </li>
 
-        <li><Link to="/add-product"><button className="add-button">
-          <img src="/assets/images/addProduct.png" alt="AddProduct" className="button-icon" />
-          Add Product
-        </button></Link>
+        <li><Link to="/shop" style={{ textDecoration: 'none' }}>
+          <button className="shop-button">
+            <img src="/assets/images/shop.png" alt="Shop" className="button-icon" />
+            Shop
+          </button></Link>
+        </li>
+
+        <li><Link to="/employees" style={{ textDecoration: 'none' }}>
+          <button className="shop-button">
+            <img src="/assets/images/workers.png" alt="Employees" className="button-icon" />
+            Employees
+          </button></Link>
         </li>
 
         <li className="dropdown">
