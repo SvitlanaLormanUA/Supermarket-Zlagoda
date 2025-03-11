@@ -10,9 +10,22 @@ function Shop() {
             </div>
 
             <div className="shop-sections">
-                <div className="shop-section"></div>
-                <div className="shop-section"></div>
-                <div className="shop-section"></div>
+                <div className="sections">
+                    <button className="shop-section">
+                        <img src="/assets/images/products.png" alt="Shop" className="button-icon" />
+                        Products
+                    </button>
+
+                    <button className="shop-section">
+                        <img src="/assets/images/categoriesColor.png" alt="Categories" className="button-icon" />
+                        Categories
+                    </button>
+
+                    <button className="shop-section">
+                        <img src="/assets/images/store.png" alt="ProductsInStore" className="button-icon" />
+                        Products in Store
+                    </button>
+                </div>
             </div>
         </div>
     );
