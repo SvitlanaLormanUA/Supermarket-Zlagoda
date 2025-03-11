@@ -12,7 +12,7 @@ function Navigation() {
   return (
     <div className="navbar">
       <ul className="navbar-list">
-        <li><Link to="/" style={{ textDecoration: 'none' }}>
+        <li><Link to="/dashboard" style={{ textDecoration: 'none' }}>
           <button className="dashboard-button">
             <img src="/assets/images/dashboard.png" alt="Dashboard" className="button-icon" />
             Dashboard
