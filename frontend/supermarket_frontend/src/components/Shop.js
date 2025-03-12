@@ -1,15 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Shop.css';
+import Search from './Search';
 
 function Shop() {
     return (
         <div className="shop-container">
-            <div className="shop-search-bar">
-                <input type="text" placeholder="Search..." className="search-input" />
-                <img src="/assets/images/search.png" alt="Search" className="search-icon" />
-            </div>
-
+            <Search />
             <div className="shop-sections">
                 <div className="sections">
                     <Link to="/shop/products" style={{ textDecoration: 'none' }}>
