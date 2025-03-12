@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Shop.css';
 
 function Shop() {
@@ -11,20 +12,26 @@ function Shop() {
 
             <div className="shop-sections">
                 <div className="sections">
-                    <button className="shop-section">
-                        <img src="/assets/images/products.png" alt="Shop" className="button-icon" />
-                        Products
-                    </button>
+                    <Link to="/shop/products" style={{ textDecoration: 'none' }}>
+                        <button className="shop-section">
+                            <img src="/assets/images/products.png" alt="Shop" className="button-icon" />
+                            Products
+                        </button>
+                    </Link>
 
-                    <button className="shop-section">
-                        <img src="/assets/images/categoriesColor.png" alt="Categories" className="button-icon" />
-                        Categories
-                    </button>
+                    <Link to="/shop/categories" style={{ textDecoration: 'none' }}>
+                        <button className="shop-section">
+                            <img src="/assets/images/categoriesColor.png" alt="Categories" className="button-icon" />
+                            Categories
+                        </button>
+                    </Link>
 
-                    <button className="shop-section">
-                        <img src="/assets/images/store.png" alt="ProductsInStore" className="button-icon" />
-                        Products in Store
-                    </button>
+                    <Link to="/shop/products-in-store" style={{ textDecoration: 'none' }}>
+                        <button className="shop-section">
+                            <img src="/assets/images/store.png" alt="ProductsInStore" className="button-icon" />
+                            Products in Store
+                        </button>
+                    </Link>
                 </div>
             </div>
         </div>
