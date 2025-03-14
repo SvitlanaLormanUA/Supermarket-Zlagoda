@@ -1,3 +1,9 @@
+@import './styles/Categories.css';
+@import './styles/Navigation.css';
+@import './styles/ProductsInStore.css';
+@import './styles/Products.css';
+@import './styles/Shop.css';
+
 body {
   font-family: Arial, sans-serif;
   background-color: #eeeeee;
