@@ -11,13 +11,13 @@ function App() {
     <Router>
       <div style={{ marginLeft: '270px', padding: '20px' }}>
         <Navigation />
-        <Routes> { }
-          <Route path="/dashboard" /> { }
-          <Route path="/shop" element={<Shop />} /> { }
+        <Routes> 
+          <Route path="/dashboard" /> 
+          <Route path="/shop" element={<Shop />} /> 
           <Route path="/shop/products" element={<Products />} />
           <Route path="/shop/categories" element={<Categories />} />
           <Route path="/shop/products-in-store" element={<ProductsInStore />} />
-        </Routes> { }
+        </Routes> 
       </div>
     </Router>
   );
