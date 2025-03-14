@@ -32,8 +32,4 @@ function BackButton() {
     );
 }
 
-<<<<<<< HEAD:frontend/supermarket_frontend/src/components/BackButton.js
 export default BackButton;
-=======
-export default BackButton;
->>>>>>> bf2d68ecbca44751cd7d595479512e3b2e798a7b:frontend/src/components/BackButton.js

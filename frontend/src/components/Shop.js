@@ -1,10 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-<<<<<<< HEAD:frontend/supermarket_frontend/src/components/Shop.js
-import './Shop.css';
 import Search from './Search';
-=======
->>>>>>> bf2d68ecbca44751cd7d595479512e3b2e798a7b:frontend/src/components/Shop.js
 
 function Shop() {
     return (
