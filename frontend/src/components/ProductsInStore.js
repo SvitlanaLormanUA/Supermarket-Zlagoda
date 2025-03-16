@@ -4,7 +4,7 @@ import BackButton from './BackButton';
 function ProductsInStore() {
   return (
     <div>
-      <BackButton /> {}
+      <BackButton /> 
     </div>
   );
 }
