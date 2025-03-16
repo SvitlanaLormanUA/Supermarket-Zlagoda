@@ -3,7 +3,8 @@
 @import './styles/ProductsInStore.css';
 @import './styles/Products.css';
 @import './styles/Shop.css';
-@import './styles/Login.css';;
+@import './styles/Login.css';
+@import './styles/SearchAndBack.css';
 
 body {
   font-family: Arial, sans-serif;
