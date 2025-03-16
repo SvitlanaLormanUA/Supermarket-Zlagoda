@@ -1,10 +1,10 @@
 import React from 'react';
-import BackButton from './BackButton';
+import SearchAndBack from './SearchAndBack';
 
 function Categories() {
   return (
-    <div>
-      <BackButton /> {}
+    <div className="categories-container">
+      <SearchAndBack/>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import React from 'react';
-import BackButton from './BackButton';
+import SearchAndBack from './SearchAndBack';
 import Fetch from '../FetchData';
 
 function Products() {
   return (
     <div>
-      <BackButton /> 
+      <SearchAndBack /> 
       <Fetch />
     </div>
   );

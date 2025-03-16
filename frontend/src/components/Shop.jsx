@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Search from './Search';
+import SearchAndBack from './SearchAndBack';
 
 function Shop() {
     const [totalPrice, setTotalPrice] = useState([]);
@@ -27,7 +27,7 @@ function Shop() {
 
     return (
         <div className="shop-container">
-            <Search />
+            <SearchAndBack />
 
             <div className="shop-stats">
                 <div className="shop-stat-card">
@@ -48,7 +48,7 @@ function Shop() {
                             Products in Store
                         </button>
                     </Link>
-                    
+
                     <Link to="/shop/products" style={{ textDecoration: 'none' }}>
                         <button className="shop-section">
                             <img src="/assets/images/products.png" alt="Shop" className="button-icon" />
@@ -64,6 +64,11 @@ function Shop() {
                     </Link>
                 </div>
             </div>
+            <style jsx>{`
+                .back-button {
+                    visibility: hidden;
+                }
+            `}</style>
         </div>
     );
 }
