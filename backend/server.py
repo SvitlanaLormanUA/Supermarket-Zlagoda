@@ -1,10 +1,12 @@
 from robyn import Robyn, jsonify
 from models import get_all_store_products, get_product_info, add_new_product, delete_product, update_product
 import json
+from cors import setup_cors 
+
 app = Robyn(__file__)
+PORT = 5174
 
-PORT = 3000
-
+setup_cors(app)
 
 @app.get("/products")
 async def get_products():
@@ -35,9 +37,7 @@ async def add_product(request):
         return {
             "status_code": 400,
             "body": jsonify({"data": "Invalid JSON format"}),
-            "headers": {"Content-Type": "application/json"}
+            "headers": {"Content-Type": "application/json"},
         }
 
-
-app.start(port=PORT, host="127.0.0.1") 
-
+app.start(port=PORT, host="127.0.0.1")
