@@ -6,7 +6,6 @@ function Products() {
   return (
     <div>
       <SearchAndBack /> 
-      <Fetch />
     </div>
   );
 }
