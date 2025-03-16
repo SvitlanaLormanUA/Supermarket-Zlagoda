@@ -248,3 +248,64 @@ def get_all_store_products():
         if conn:
             conn.close()
 
+
+def get_total_price():
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT SUM(selling_price * products_number) FROM store_product
+        ''')
+
+        row = cursor.fetchone()
+        total_price = row[0] if row[0] else 0.0
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"total_price": round(total_price, 2)}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_total_quantity():
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT SUM(products_number) FROM store_product
+        ''')
+
+        row = cursor.fetchone()
+        total_quantity = row[0] if row[0] else 0
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"total_quantity": total_quantity}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+

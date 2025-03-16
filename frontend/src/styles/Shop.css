@@ -5,6 +5,34 @@
     align-items: center;
 }
 
+.shop-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.shop-stat-card {
+    background-color: #f8f8f8;
+    padding: 20px 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 250px;
+}
+
+.shop-stat-title {
+    font-size: 18px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.shop-stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000000;
+}
+
 .shop-sections {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
