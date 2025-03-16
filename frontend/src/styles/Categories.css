@@ -1,5 +1,56 @@
-.categories-container {
+.searchAndBackSection {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #496e4a;
+    padding: 20px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 200px;
+    min-height: 80px;
+    font-size: 22px;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: background-color 0.7s ease;
+    font-weight: bold;
+    gap: 20px;
+}
+
+.add-button {
+    background-color: #65b866;
+
+}
+.add-button:hover {
+    background-color: #3f933f;
+}
+
+.edit-button {
+    background-color: #ffe734;
+}
+
+.edit-button:hover {
+    background-color: #f1d922;
+}
+
+.delete-button {
+    background-color: #ff5a4f;
+}
+
+.delete-button:hover {
+    background-color: #e54438;
 }
