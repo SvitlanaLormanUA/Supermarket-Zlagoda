@@ -13,7 +13,7 @@
 }
 
 .shop-stat-card {
-    background-color: #f8f8f8;
+    background-color: #496e4a;
     padding: 20px 30px;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -23,14 +23,14 @@
 
 .shop-stat-title {
     font-size: 18px;
-    color: #777;
+    color: #ffffff;
     margin-bottom: 10px;
 }
 
 .shop-stat-value {
     font-size: 28px;
     font-weight: bold;
-    color: #000000;
+    color: #ffffff;
 }
 
 .shop-sections {
