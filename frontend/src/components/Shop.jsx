@@ -62,6 +62,13 @@ function Shop() {
                             Categories
                         </button>
                     </Link>
+
+                    <Link to="" style={{ textDecoration: 'none' }}>
+                        <button className="shop-section">
+                            <img src="/assets/images/receipt.png" alt="Receipt" className="button-icon" />
+                            Print a Receipt
+                        </button>
+                    </Link>
                 </div>
             </div>
             <style jsx>{`
