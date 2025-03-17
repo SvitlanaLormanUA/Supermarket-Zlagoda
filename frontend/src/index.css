@@ -5,6 +5,7 @@
 @import './styles/Shop.css';
 @import './styles/Login.css';
 @import './styles/SearchAndBack.css';
+@import './styles/AddItemModal.css';
 
 html {
   height: 100%;

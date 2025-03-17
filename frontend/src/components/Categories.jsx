@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import SearchAndBack from './SearchAndBack';
+import AddItemModal from './AddItemModal';
 
 function Categories() {
 
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fields, setFields] = useState([
+    { name: 'category_name', label: 'Category Name' },
+    { name: 'category_number', label: 'Category ID' }
+  ]);
 
   useEffect(() => {
     fetch('http://127.0.0.1:5174/categories')
@@ -26,6 +31,20 @@ function Categories() {
     }));
   };
 
+  const openAddModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const saveNewCategory = (newCategory) => {
+    console.log('Saving new category:', newCategory);
+    //add then a database saving
+    closeAddModal();
+  };
+
 
   return (
     <div className="categories-container">
@@ -34,7 +53,7 @@ function Categories() {
         <SearchAndBack />
       </div>
       <div className="action-buttons">
-        <button className="action-button add-button">Add</button>
+        <button className="action-button add-button" onClick={openAddModal}>Add</button>
         <button className="action-button edit-button ">Edit</button>
         <button className="action-button delete-button ">Delete</button>
       </div>
@@ -65,6 +84,12 @@ function Categories() {
         )}
       </div>
 
+      <AddItemModal
+        fields={fields}
+        isOpen={isModalOpen}
+        onClose={closeAddModal}
+        onSave={saveNewCategory}
+      />
     </div>
   );
 }
