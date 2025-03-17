@@ -6,6 +6,11 @@
 @import './styles/Login.css';
 @import './styles/SearchAndBack.css';
 
+html {
+  height: 100%;
+  overflow: auto;
+}
+
 body {
   font-family: Arial, sans-serif;
   background-color: #eeeeee;

@@ -1,5 +1,5 @@
 from robyn import Robyn, jsonify
-from models import get_all_store_products, get_product_info, add_new_product, delete_product, update_product, get_total_price, get_total_quantity
+from models import get_all_store_products, get_all_categories, get_product_info, add_new_product, delete_product, update_product, get_total_price, get_total_quantity
 import json
 from cors import setup_cors 
 
@@ -11,6 +11,10 @@ setup_cors(app)
 @app.get("/products")
 async def get_products():
     return get_all_store_products()
+
+@app.get("/categories")
+async def get_categories():
+    return get_all_categories()    
 
 @app.get("/products/:id")
 async def get_product(request):

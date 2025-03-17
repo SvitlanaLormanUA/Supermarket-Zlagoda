@@ -8,6 +8,7 @@
     display: flex;
     justify-content: space-around;
     margin-top: 20px;
+    margin-bottom: 30px;
 }
 
 .action-button {
@@ -21,10 +22,11 @@
     border: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     text-align: center;
-    min-width: 200px;
-    min-height: 80px;
-    font-size: 22px;
-    color: rgb(255, 255, 255);
+    width: 200px;
+    min-width: 100px;
+    min-height: 50px;
+    font-size: 16px;
+    color: rgb(0, 0, 0);
     cursor: pointer;
     transition: background-color 0.7s ease;
     font-weight: bold;
@@ -32,25 +34,86 @@
 }
 
 .add-button {
-    background-color: #65b866;
-
+    background-color: #beff5c;
 }
+
 .add-button:hover {
-    background-color: #3f933f;
+    background-color: #a6db58;
 }
 
 .edit-button {
-    background-color: #ffe734;
+    background-color: #fcff5c;
 }
 
 .edit-button:hover {
-    background-color: #f1d922;
+    background-color: #f1f354;
 }
 
 .delete-button {
-    background-color: #ff5a4f;
+    background-color: #ff7d73;
 }
 
 .delete-button:hover {
-    background-color: #e54438;
+    background-color: #e96258;
+}
+
+.categories-table {
+    margin-top: 40px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 0;
+}
+
+.category-row {
+    border-bottom: 1px solid #e0e0e0;
+    transition: background-color 0.2s;
+}
+
+.category-row:last-child {
+    border-bottom: none;
+}
+
+.category-row-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    cursor: pointer;
+    background-color: #f9f9f9;
+}
+
+.category-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.category-row-header:hover {
+    background-color: #f0f0f0;
+}
+
+.category-name {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.category-arrow {
+    font-size: 18px;
+    color: #555;
+    user-select: none;
+}
+
+.category-products {
+    background-color: #fafafa;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #444;
+}
+
+
+.category-id {
+    font-size: 16px;
+    color: #888;
 }
