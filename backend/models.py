@@ -395,3 +395,31 @@ def get_total_quantity():
             conn.close()
 
 
+def add_new_category(category_data):
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO category (category_name)
+            VALUES (?)
+        ''', (category_data['category_name'],))
+
+        conn.commit()
+
+        return {
+            "status_code": 201,
+            "body": jsonify({"data": "Category added successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
