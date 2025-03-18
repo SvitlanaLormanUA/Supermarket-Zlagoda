@@ -6,7 +6,7 @@
     padding: 15px;
     margin-top: 0px;
     border-radius: 16px;
-    background-color: #496e4a;
+    background-color: #ffd364;
 }
 
 .dashboard-columns {
@@ -39,7 +39,7 @@
 }
 
 .slider-image-wrapper img {
-    border: 10px solid #496e4a;
+    border: 10px solid #ffd364;
     width: 350px;
     height: auto;
     border-radius: 16px;

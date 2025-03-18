@@ -20,19 +20,19 @@ function Dashboard() {
         <div className="slider-column">
           <Slider {...sliderSettings}>
             <div className="slider-image-wrapper">
-              <img src="/assets/images/market.png" alt="Slide 1" />
+              <img src="/assets/images/shopping.png" alt="Slide 1" />
             </div>
             <div className="slider-image-wrapper">
-              <img src="/assets/images/market (1).png" alt="Slide 2" />
+              <img src="/assets/images/shopping (1).png" alt="Slide 2" />
             </div>
             <div className="slider-image-wrapper">
-              <img src="/assets/images/market (2).png" alt="Slide 3" />
+              <img src="/assets/images/shopping (2).png" alt="Slide 3" />
             </div>
+            {/* <div className="slider-image-wrapper">
+              <img src="/assets/images/shopping (3).png" alt="Slide 3" />
+            </div> */}
             <div className="slider-image-wrapper">
-              <img src="/assets/images/market (3).png" alt="Slide 3" />
-            </div>
-            <div className="slider-image-wrapper">
-              <img src="/assets/images/market (4).png" alt="Slide 3" />
+              <img src="/assets/images/online-shopping.png" alt="Slide 3" />
             </div>
           </Slider>
         </div>
