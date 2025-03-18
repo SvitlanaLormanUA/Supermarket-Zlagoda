@@ -69,6 +69,20 @@ function Shop() {
                             Print a Receipt
                         </button>
                     </Link>
+
+                    <Link to="" style={{ textDecoration: 'none' }}>
+                        <button className="shop-section">
+                            <img src="/assets/images/gift-card.png" alt="Customers' Cards" className="button-icon" />
+                            Customers' Cards
+                        </button>
+                    </Link>
+
+                    <Link to="" style={{ textDecoration: 'none' }}>
+                        <button className="shop-section">
+                            <img src="/assets/images/report.png" alt="Report" className="button-icon" />
+                            Report
+                        </button>
+                    </Link>
                 </div>
             </div>
             <style jsx>{`

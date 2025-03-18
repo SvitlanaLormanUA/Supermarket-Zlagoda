@@ -19,7 +19,7 @@ function App() {
       ) : (
         <>
           <Navigation />
-          <div style={{ marginLeft: '270px', padding: '20px' }}>
+          <div style={{ marginLeft: '270px', padding: '15px' }}>
             <Routes>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/shop" element={<Shop />} />
