@@ -3,7 +3,6 @@ import SearchAndBack from './SearchAndBack';
 import AddItemModal from './AddItemModal';
 
 function Categories() {
-
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,16 +10,18 @@ function Categories() {
     { name: 'category_name', label: 'Category Name' },
     { name: 'category_number', label: 'Category ID' }
   ]);
+  const [categoryProducts, setCategoryProducts] = useState({});
 
   useEffect(() => {
     fetch('http://127.0.0.1:5174/categories')
       .then((res) => res.json())
       .then((data) => {
         const parsedData = JSON.parse(data.body).data;
+        console.log(parsedData);
         setCategories(parsedData);
       })
       .catch((error) => {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching categories:', error);
       });
   }, []);
 
@@ -29,6 +30,23 @@ function Categories() {
       ...prev,
       [id]: !prev[id],
     }));
+
+
+    if (!openCategories[id]) {
+      fetch(`http://127.0.0.1:5174/products/category/${id}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = JSON.parse(data.body).data;
+          console.log(parsedData);
+          setCategoryProducts((prev) => ({
+            ...prev,
+            [id]: Array.isArray(parsedData) ? parsedData : [],
+          }));
+        })
+        .catch((error) => {
+          console.error('Error fetching products for category:', error);
+        });
+    }
   };
 
   const openAddModal = () => {
@@ -45,17 +63,16 @@ function Categories() {
     closeAddModal();
   };
 
-
   return (
     <div className="categories-container">
-
       <div className="searchAndBackSection">
         <SearchAndBack />
       </div>
+
       <div className="action-buttons">
         <button className="action-button add-button" onClick={openAddModal}>Add</button>
-        <button className="action-button edit-button ">Edit</button>
-        <button className="action-button delete-button ">Delete</button>
+        <button className="action-button edit-button">Edit</button>
+        <button className="action-button delete-button">Delete</button>
       </div>
 
       <div className="categories-table">
@@ -74,7 +91,15 @@ function Categories() {
 
               {openCategories[category.category_number] && (
                 <div className="category-products">
-                  <p>Products of this category will appear here...</p>
+                  {Array.isArray(categoryProducts[category.category_number]) && categoryProducts[category.category_number].length > 0 ? (
+                    categoryProducts[category.category_number].map((product) => (
+                      <div key={product.id_product} className="product-item">
+                        <p>{product.product_name}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No products found in this category.</p>
+                  )}
                 </div>
               )}
             </div>

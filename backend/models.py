@@ -288,6 +288,51 @@ def get_all_categories():
         if conn:
             conn.close()
 
+def get_products_by_category(category_number):
+    conn = None
+    try:
+        # Create a new connection for this request
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT p.id_product, p.product_name
+            FROM product p
+            LEFT JOIN store_product sp ON p.id_product = sp.id_product
+            WHERE p.category_number = ?
+        ''', (category_number,))
+
+        products = cursor.fetchall()
+
+        if products:
+            product_list = [
+                {
+                    "id_product": product[0],
+                    "product_name": product[1]
+                }
+                for product in products
+            ]
+            return {
+                "status_code": 200,
+                "body": jsonify({"data": product_list}),
+                "headers": {"Content-Type": "application/json"}
+            }
+        else:
+            return {
+                "status_code": 404,
+                "body": jsonify({"data": "No products found for this category"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
 
 
 def get_total_price():
