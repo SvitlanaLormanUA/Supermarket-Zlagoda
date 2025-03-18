@@ -6,6 +6,9 @@
 @import './styles/Login.css';
 @import './styles/SearchAndBack.css';
 @import './styles/AddItemModal.css';
+@import './styles/Dashboard.css';
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 
 html {
   height: 100%;
