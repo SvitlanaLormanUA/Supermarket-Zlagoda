@@ -23,21 +23,33 @@ function ProductsInStore() {
 
   return (
     <div className="products-container">
-      <SearchAndBack />
+      <div className="searchAndBackSection">
+        <SearchAndBack />
+      </div>
+
+      <div className="action-buttons">
+        <button className="action-button add-button">Add</button>
+        <button className="action-button edit-button">Edit</button>
+        <button className="action-button delete-button">Delete</button>
+      </div>
 
       <table className="products-table">
         <thead>
           <tr>
-            <th>Product Name</th>
-            <th>UPC</th>
+            <th colSpan="2">Products In Store</th>
           </tr>
         </thead>
         <tbody>
           {products.map((product, index) => (
             <React.Fragment key={index}>
-              <tr onClick={() => toggleProduct(index)} style={{ cursor: 'pointer' }}>
+              <tr className="product-row-header"onClick={() => toggleProduct(index)} style={{ cursor: 'pointer' }}>
                 <td>{product.product_name}</td>
-                <td>{product.UPC}</td>
+                <td style={{ textAlign: 'right' }}>
+                  {product.UPC}
+                  <span style={{ marginLeft: '10px' }}>
+                    {openProduct === index ? '▲' : '▼'}
+                  </span>
+                </td>
               </tr>
               {openProduct === index && (
                 <tr className="product-details-row">

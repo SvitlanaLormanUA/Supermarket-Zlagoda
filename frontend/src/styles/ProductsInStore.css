@@ -1,22 +1,5 @@
-table {
-    margin-top: 40px;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    padding: 0;
-}
-
-th,
-td {
-    padding: 10px;
-    border: none;
-    text-align: left;
-}
-
-th {
-    background-color: #496e4a;
-    color: #ffffff;
+.product-row-header:hover {
+    background-color: #f0f0f0;
 }
 
 .products-table {
@@ -26,7 +9,7 @@ th {
 }
 
 .product-details {
-    background-color: #f9f9f9;
+    background-color: #ffffff;
     padding: 10px;
     border-radius: 8px;
 }
