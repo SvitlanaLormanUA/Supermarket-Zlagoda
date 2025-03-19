@@ -46,7 +46,7 @@ function ProductsInStore() {
                       <p><strong>Promotional UPC:</strong> {product.UPC_prom || '—'}</p>
                       <p><strong>Characteristics:</strong> {product.characteristics || '—'}</p>
                       <p><strong>Category:</strong> {product.category_name || '—'}</p>
-                      <p><strong>Price:</strong> {product.selling_price} UAH</p>
+                      <p><strong>Price:</strong> {product.selling_price}$</p>
                       <p><strong>Products Number:</strong> {product.products_number}</p>
                       <p><strong>Promotional Product:</strong> {product.promotional_product ? 'Yes' : 'No'}</p>
                     </div>
