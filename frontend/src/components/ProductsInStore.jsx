@@ -3,13 +3,13 @@ import SearchAndBack from './SearchAndBack';
 
 function ProductsInStore() {
   const [products, setProducts] = useState([]);
+  const [openProduct, setOpenProduct] = useState(null);
 
   useEffect(() => {
     fetch('http://127.0.0.1:5174/products')
       .then((res) => res.json())
       .then((data) => {
         const parsedData = JSON.parse(data.body).data;
-        console.log(parsedData);
         setProducts(parsedData);
       })
       .catch((error) => {
@@ -17,35 +17,43 @@ function ProductsInStore() {
       });
   }, []);
 
+  const toggleProduct = (index) => {
+    setOpenProduct(openProduct === index ? null : index);
+  };
+
   return (
-    <div>
+    <div className="products-container">
       <SearchAndBack />
-      <h1>Products in Store</h1>
-      <table>
+
+      <table className="products-table">
         <thead>
           <tr>
-            <th>UPC</th>
-            <th>Promotional UPC</th>
             <th>Product Name</th>
-            <th>Characteristics</th>
-            <th>Category</th>
-            <th>Price</th>
-            <th>Products Number</th>
-            <th>Promotional Product</th>
+            <th>UPC</th>
           </tr>
         </thead>
         <tbody>
           {products.map((product, index) => (
-            <tr key={index}>
-              <td>{product.UPC}</td>
-              <td>{product.UPC_prom}</td>
-              <td>{product.product_name}</td>
-              <td>{product.characteristics}</td>
-              <td>{product.category_name}</td>
-              <td>{product.selling_price}</td>
-              <td>{product.products_number}</td>
-              <td>{product.promotional_product ? "Yes" : "No"}</td>
-            </tr>
+            <React.Fragment key={index}>
+              <tr onClick={() => toggleProduct(index)} style={{ cursor: 'pointer' }}>
+                <td>{product.product_name}</td>
+                <td>{product.UPC}</td>
+              </tr>
+              {openProduct === index && (
+                <tr className="product-details-row">
+                  <td colSpan="2">
+                    <div className="product-details">
+                      <p><strong>Promotional UPC:</strong> {product.UPC_prom || '—'}</p>
+                      <p><strong>Characteristics:</strong> {product.characteristics || '—'}</p>
+                      <p><strong>Category:</strong> {product.category_name || '—'}</p>
+                      <p><strong>Price:</strong> {product.selling_price} UAH</p>
+                      <p><strong>Products Number:</strong> {product.products_number}</p>
+                      <p><strong>Promotional Product:</strong> {product.promotional_product ? 'Yes' : 'No'}</p>
+                    </div>
+                  </td>
+                </tr>
+              )}
+            </React.Fragment>
           ))}
         </tbody>
       </table>
