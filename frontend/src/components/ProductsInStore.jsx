@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import SearchAndBack from './SearchAndBack';
+import ControlButtons from './ControlButtons';
 
 function ProductsInStore() {
   const [products, setProducts] = useState([]);
   const [openProduct, setOpenProduct] = useState(null);
+  const productFields = [
+    { name: "product_name", label: "Name" },
+    { name: "product_price", label: "Price" },
+    // not all fields(just example)
+  ];
 
   useEffect(() => {
     fetch('http://127.0.0.1:5174/products')
@@ -21,17 +27,33 @@ function ProductsInStore() {
     setOpenProduct(openProduct === index ? null : index);
   };
 
+  const addProduct = (data) => {
+    // example
+    console.log("Add product clicked");
+  };
+
+  const editProduct = () => {
+    // example
+    console.log("Edit product clicked");
+  };
+
+  const deleteProduct = () => {
+    // example
+    console.log("Delete product clicked");
+  };
+
   return (
     <div className="products-container">
       <div className="searchAndBackSection">
         <SearchAndBack />
       </div>
 
-      <div className="action-buttons">
-        <button className="action-button add-button">Add</button>
-        <button className="action-button edit-button">Edit</button>
-        <button className="action-button delete-button">Delete</button>
-      </div>
+      <ControlButtons
+        onAdd={addProduct}
+        onEdit={editProduct}
+        onDelete={deleteProduct}
+        modalFields={productFields}
+      />
 
       <table className="products-table">
         <thead>
@@ -46,7 +68,7 @@ function ProductsInStore() {
                 <td>{product.product_name}</td>
                 <td style={{ textAlign: 'right' }}>
                   {product.UPC}
-                  <span style={{ marginLeft: '10px' }}>
+                  <span className="list-arrow" style={{ marginLeft: '10px' }}>
                     {openProduct === index ? '▲' : '▼'}
                   </span>
                 </td>

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import SearchAndBack from './SearchAndBack';
-import AddItemModal from './AddItemModal';
+import ControlButtons from './ControlButtons';
 
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fields, setFields] = useState([
-    { name: 'category_name', label: 'Category Name' },
-    { name: 'category_number', label: 'Category ID' }
-  ]);
+  const categoryFields = [
+    { name: "category_name", label: "Name" },
+    // not all fields(just example)
+  ];
   const [categoryProducts, setCategoryProducts] = useState({});
 
   useEffect(() => {
@@ -46,16 +45,19 @@ function Categories() {
     }
   };
 
-  const openAddModal = () => {
-    setIsModalOpen(true);
+  const addCategory = (data) => {
+    // example
+    console.log("Add category clicked");
   };
 
-  const closeAddModal = () => {
-    setIsModalOpen(false);
+  const editCategory = () => {
+    // example
+    console.log("Edit category clicked");
   };
 
-  const saveNewCategory = (newCategory) => {
-    closeAddModal();
+  const deleteCategory = () => {
+    // example
+    console.log("Delete category clicked");
   };
 
   return (
@@ -64,11 +66,12 @@ function Categories() {
         <SearchAndBack />
       </div>
 
-      <div className="action-buttons">
-        <button className="action-button add-button" onClick={openAddModal}>Add</button>
-        <button className="action-button edit-button">Edit</button>
-        <button className="action-button delete-button">Delete</button>
-      </div>
+      <ControlButtons
+        onAdd={addCategory}
+        onEdit={editCategory}
+        onDelete={deleteCategory}
+        modalFields={categoryFields}
+      />
 
       <table className="categories-table">
         <thead>
@@ -84,7 +87,7 @@ function Categories() {
                   <td>{category.category_name}</td>
                   <td style={{ textAlign: 'right' }}>
                     {category.category_number}
-                    <span className="category-arrow" style={{ marginLeft: '10px' }}>
+                    <span className="list-arrow" style={{ marginLeft: '10px' }}>
                       {openCategories[category.category_number] ? '▲' : '▼'}
                     </span>
                   </td>
@@ -112,13 +115,6 @@ function Categories() {
           )}
         </tbody>
       </table>
-
-      <AddItemModal
-        fields={fields}
-        isOpen={isModalOpen}
-        onClose={closeAddModal}
-        onSave={saveNewCategory}
-      />
     </div>
   );
 }

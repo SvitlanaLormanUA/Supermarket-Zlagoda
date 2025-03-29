@@ -1,0 +1,52 @@
+.action-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #496e4a;
+    padding: 20px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 200px;
+    min-width: 100px;
+    min-height: 50px;
+    font-size: 16px;
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    transition: background-color 0.7s ease;
+    font-weight: bold;
+    gap: 20px;
+}
+
+.add-button {
+    background-color: #beff5c;
+}
+
+.add-button:hover {
+    background-color: #a6db58;
+}
+
+.edit-button {
+    background-color: #fcff5c;
+}
+
+.edit-button:hover {
+    background-color: #f1f354;
+}
+
+.delete-button {
+    background-color: #ff7d73;
+}
+
+.delete-button:hover {
+    background-color: #e96258;
+}
