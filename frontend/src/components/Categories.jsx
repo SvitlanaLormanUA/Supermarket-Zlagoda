@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
+import CustomTable from './CustomTable';
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -73,48 +74,13 @@ function Categories() {
         modalFields={categoryFields}
       />
 
-      <table className="categories-table">
-        <thead>
-          <tr>
-            <th colSpan="2">Categories</th>
-          </tr>
-        </thead>
-        <tbody>
-          {categories.length > 0 ? (
-            categories.map((category) => (
-              <React.Fragment key={category.category_number}>
-                <tr className="category-row-header" onClick={() => toggleCategory(category.category_number)}>
-                  <td>{category.category_name}</td>
-                  <td style={{ textAlign: 'right' }}>
-                    {category.category_number}
-                    <span className="list-arrow" style={{ marginLeft: '10px' }}>
-                      {openCategories[category.category_number] ? '▲' : '▼'}
-                    </span>
-                  </td>
-                </tr>
-                {openCategories[category.category_number] && (
-                  <tr>
-                    <td colSpan="3" className="category-products">
-                      {Array.isArray(categoryProducts[category.category_number]) &&
-                        categoryProducts[category.category_number].length > 0 ? (
-                        categoryProducts[category.category_number].map((product) => (
-                          <div key={product.id_product} className="product-item">
-                            <p>{product.product_name}</p>
-                          </div>
-                        ))
-                      ) : (
-                        <p>No products found in this category.</p>
-                      )}
-                    </td>
-                  </tr>
-                )}
-              </React.Fragment>
-            ))
-          ) : (
-            <tr><td colSpan="3">No categories found.</td></tr>
-          )}
-        </tbody>
-      </table>
+      <CustomTable
+        data={categories}
+        title="Categories"
+        columns={[
+          { key: 'category_name', label: 'Categories' },
+        ]}
+      />
     </div>
   );
 }

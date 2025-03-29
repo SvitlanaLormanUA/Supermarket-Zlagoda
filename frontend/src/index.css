@@ -8,6 +8,7 @@
 @import './styles/AddItemModal.css';
 @import './styles/Dashboard.css';
 @import './styles/ControlButtons.css';
+@import './styles/CustomTable.css';
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 
