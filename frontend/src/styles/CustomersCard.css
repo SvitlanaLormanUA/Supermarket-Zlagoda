@@ -1,0 +1,92 @@
+.searchAndBackSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-bar-container {
+    width: 100%;
+}
+
+.search-bar-container .search-input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.search-bar-container .search-input:focus {
+    border-color: #496e4a; 
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.customer-card {
+    background-color: #496e4a;
+    border: 5px solid #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    font-weight: bold;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card-header h3 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.card-body {
+    font-size: 18px;
+}
+
+.card-body p {
+    margin: 5px 0;
+}
+
+@media (max-width: 1200px) {
+    .card-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .card-container {
+        grid-template-columns: 1fr;
+    }
+}

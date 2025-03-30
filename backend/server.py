@@ -10,6 +10,7 @@ from models import (
     get_total_price,
     get_total_quantity,
     add_new_category,
+    get_all_customer_cards
 )
 import json
 from cors import setup_cors  
@@ -81,5 +82,10 @@ async def add_category(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }
+
+@app.get("/customers-card")
+async def get_customers_cards():
+    return get_all_customer_cards()
+
 
 app.start(port=PORT, host="127.0.0.1")
