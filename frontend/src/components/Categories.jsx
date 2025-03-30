@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
+import AddItemModal from './AddItemModal';
 
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
+  const [isModalOpen, setModalOpen] = useState(false);
   const categoryFields = [
     { name: "category_name", label: "Name" },
     // not all fields(just example)
@@ -46,11 +48,6 @@ function Categories() {
     }
   };
 
-  const addCategory = (data) => {
-    // example
-    console.log("Add category clicked");
-  };
-
   const editCategory = () => {
     // example
     console.log("Edit category clicked");
@@ -61,6 +58,26 @@ function Categories() {
     console.log("Delete category clicked");
   };
 
+  const saveNewCategory = (newCategory) => {
+    console.log("Функція saveNewCategory викликана з даними:", newCategory);
+
+    //ось тут помилка CORS
+    fetch('http://127.0.0.1:5174/categories', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCategory),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setCategories((prev) => [...prev, newCategory]);
+      })
+      .catch((error) => {
+        console.error('Error adding new category:', error);
+      });
+  };
+
   return (
     <div className="categories-container">
       <div className="searchAndBackSection">
@@ -68,10 +85,17 @@ function Categories() {
       </div>
 
       <ControlButtons
-        onAdd={addCategory}
+        onAdd={() => setModalOpen(true)}
         onEdit={editCategory}
         onDelete={deleteCategory}
         modalFields={categoryFields}
+      />
+
+      <AddItemModal
+        fields={categoryFields}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={saveNewCategory}
       />
 
       <CustomTable

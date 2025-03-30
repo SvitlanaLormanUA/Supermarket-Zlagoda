@@ -15,7 +15,9 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Форма відправлена, дані:", formData);
     onSave(formData);
+    onClose();
   };
 
   if (!isOpen) return null;

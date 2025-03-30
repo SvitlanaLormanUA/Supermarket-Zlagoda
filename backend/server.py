@@ -70,7 +70,7 @@ async def get_products_by_category_route(request):
     category_id = request.path_params.get("category_id")
     return get_products_by_category(category_id)
 
-@app.post("/products/category/new_category")
+@app.post("/categories")
 async def add_category(request):
     try:
         category_data = json.loads(request.body)
