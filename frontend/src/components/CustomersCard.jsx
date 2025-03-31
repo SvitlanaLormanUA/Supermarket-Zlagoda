@@ -23,13 +23,20 @@ function CustomersCard() {
                 <div className="searchAndBackSection">
                     <SearchAndBack />
                 </div>
+                <div className="search-bar-container">
+                    <input
+                        type="text"
+                        className="search-input"
+                        placeholder="Search by surname..."
+                    />
+                </div>
                 <div className="card-container">
                     {customerCards.map((card) => (
                         <div key={card.card_number} className="customer-card">
                             <div className="card-content">
                                 <div className="card-header ">
                                     <h3>{card.card_number}</h3>
-                                    <span>{card.cust_name} {card.cust_surname}</span>
+                                    <span>{card.cust_surname} {card.cust_name} {card.cust_patronymic}</span>
                                 </div>
                                 <div className=".card-body">
                                     <p>{card.city}, {card.street}, {card.zip_code}</p>
