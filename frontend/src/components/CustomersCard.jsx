@@ -38,7 +38,7 @@ function CustomersCard() {
                                     <h3>{card.card_number}</h3>
                                     <span>{card.cust_surname} {card.cust_name} {card.cust_patronymic}</span>
                                 </div>
-                                <div className=".card-body">
+                                <div className="card-body">                        
                                     <p>{card.city}, {card.street}, {card.zip_code}</p>
                                     <p>Phone: {card.phone_number}</p>
                                     <p>Discount: {card.percent}%</p>
