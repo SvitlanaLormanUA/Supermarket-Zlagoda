@@ -20,7 +20,7 @@
 }
 
 .search-bar-container .search-input:focus {
-    border-color: #496e4a; 
+    border-color: #496e4a;
 }
 
 .card-container {
@@ -31,7 +31,7 @@
 }
 
 .customer-card {
-    background-color: #ffd364;
+    background-color: #b39f7a;
     text-shadow: 0 1px 1px rgba(112, 76, 20, 0.5);
     border: 4px solid #ffffff;
     border-radius: 10px;
@@ -57,9 +57,42 @@
 }
 
 .card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 10px;
+}
+
+.card-info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-actions {
+    position: relative;
+    top: -5px;
+    display: flex;
+    gap: 10px;
+}
+
+.card-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #927f5c;
+    padding: 5px 8px;
+
+}
+
+.card-actions img {
+    width: 20px;
+    height: 20px;
+
 }
 
 .card-header h3 {
