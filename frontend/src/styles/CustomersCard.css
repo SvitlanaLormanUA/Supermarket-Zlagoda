@@ -32,11 +32,12 @@
 
 .customer-card {
     background-color: #ffd364;
+    text-shadow: 0 1px 1px rgba(112, 76, 20, 0.5);
     border: 4px solid #ffffff;
     border-radius: 10px;
     padding: 15px;
     height: 170px;
-    color: #472f12;
+    color: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
     transition: transform 0.3s, box-shadow 0.3s;
