@@ -1,147 +1,6 @@
 import sqlite3
 from robyn import jsonify 
 
-# !!! У якому вигляді повертається відповідь:
-# "status_code": 200,
-#             "body": jsonify({
-#                 "data": result,
-#             }),
-#             "headers": {"Content-Type": "application/json"}
-
-# результат, тобто наші дані -- у "data"
-# на фронтенді має тільки "data" відображатись. все інше -- для безпеки та беку :)
-# !!!
-
-
-def update_product(product_id, product_data):
-    conn = None
-    try:
-        conn = sqlite3.connect('./database/supermarket.db')
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            UPDATE product
-            SET category_number = ?, product_name = ?, characteristics = ?
-            WHERE id_product = ?
-        ''', (product_data['category_number'], product_data['product_name'], product_data['characteristics'], product_id))
-
-        cursor.execute('''
-            UPDATE store_product
-            SET UPC = ?, UPC_prom = ?, selling_price = ?, products_number = ?, promotional_product = ?
-            WHERE id_product = ?
-        ''', (
-            product_data['UPC'],
-            product_data['UPC_prom'],
-            product_data['selling_price'],
-            product_data['products_number'],
-            product_data['promotional_product'],
-            product_id
-        ))
-
-        conn.commit()
-
-        return {
-            "status_code": 200,
-            "body": jsonify({"data": "Product updated successfully"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-    except sqlite3.Error as e:
-        return {
-            "status_code": 500,
-            "body": jsonify({"data": f"Database error: {str(e)}"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-    finally:
-        if conn:
-            conn.close()
-
-def delete_product(product_id):
-    conn = None
-    try:
-        conn = sqlite3.connect('./database/supermarket.db')
-        cursor = conn.cursor()
-
-        # перевірка на те, чи існує продукт у таблиці product
-        cursor.execute('''
-            SELECT id_product FROM product WHERE id_product = ?
-        ''', (product_id,))
-        product_exists = cursor.fetchone()
-
-        if not product_exists:
-            return {
-                "status_code": 404,
-                "body": jsonify({"data": "Product not found"}),
-                "headers": {"Content-Type": "application/json"}
-            }
-        cursor.execute('''
-            DELETE FROM store_product
-            WHERE id_product = ?
-        ''', (product_id,))
-
-        cursor.execute('''
-            DELETE FROM product
-            WHERE id_product = ?
-        ''', (product_id,))
-
-        conn.commit()
-
-        return {
-            "status_code": 200,
-            "body": jsonify({"data": "Product deleted successfully"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-
-    except sqlite3.Error as e:
-        return {
-            "status_code": 500,
-            "body": jsonify({"data": f"Database error: {str(e)}"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-    finally:
-        if conn:
-            conn.close()
-         
-def add_new_product(product_data):
-    conn = None
-    try:
-        conn = sqlite3.connect('./database/supermarket.db')
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            INSERT INTO product (category_number, product_name, characteristics)
-            VALUES (?, ?, ?)
-        ''', (product_data['category_number'], product_data['product_name'], product_data['characteristics']))
-
-        cursor.execute('''
-            INSERT INTO store_product (UPC, UPC_prom, id_product, selling_price, products_number, promotional_product)
-            VALUES (?, ?, ?, ?, ?, ?)
-        ''', (
-            product_data['UPC'],
-            product_data['UPC_prom'],
-            cursor.lastrowid,
-            product_data['selling_price'],
-            product_data['products_number'],
-            product_data['promotional_product']
-        ))
-
-        conn.commit()
-
-        return {
-            "status_code": 201,
-            "body": jsonify({"data": "Product added successfully"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-
-    except sqlite3.Error as e:
-        return {
-            "status_code": 500,
-            "body": jsonify({"data": f"Database error: {str(e)}"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-    finally:
-        if conn:
-            conn.close()
-
 def get_product_info(product_id):
     conn = None
     try:
@@ -248,7 +107,6 @@ def get_all_store_products():
         if conn:
             conn.close()
 
-
 def get_all_categories():
     conn = None
     try:
@@ -334,7 +192,7 @@ def get_products_by_category(category_number):
         if conn:
             conn.close()
 
-
+#for receipt
 def get_total_price():
     conn = None
     try:
@@ -364,7 +222,6 @@ def get_total_price():
         if conn:
             conn.close()
 
-
 def get_total_quantity():
     conn = None
     try:
@@ -388,36 +245,6 @@ def get_total_quantity():
         return {
             "status_code": 500,
             "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-    finally:
-        if conn:
-            conn.close()
-
-
-def add_new_category(category_data):
-    conn = None
-    try:
-        conn = sqlite3.connect('./database/supermarket.db')
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            INSERT INTO category (category_name)
-            VALUES (?)
-        ''', (category_data['category_name'],))
-
-        conn.commit()
-
-        return {
-            "status_code": 201,
-            "body": jsonify({"data": "Category added successfully"}),
-            "headers": {"Content-Type": "application/json"}
-        }
-
-    except sqlite3.Error as e:
-        return {
-            "status_code": 500,
-            "body": jsonify({"data": f"Database error: {str(e)}"}),
             "headers": {"Content-Type": "application/json"}
         }
     finally:
