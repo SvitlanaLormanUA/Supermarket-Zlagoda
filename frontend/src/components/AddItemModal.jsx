@@ -17,6 +17,7 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
     e.preventDefault();
     console.log("Форма відправлена, дані:", formData);
     onSave(formData);
+    setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
     onClose();
   };
 

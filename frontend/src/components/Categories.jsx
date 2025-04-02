@@ -60,24 +60,26 @@ function Categories() {
 
   const saveNewCategory = (newCategory) => {
     console.log("Функція saveNewCategory викликана з даними:", newCategory);
-
-    //ось тут помилка CORS
-    fetch('http://127.0.0.1:5174/categories', {
+  
+    return fetch('http://127.0.0.1:5174/categories', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(newCategory),
     })
-      .then((res) => res.json())
+
       .then((data) => {
+        console.log('New category added:', data);
+        return data;
+      })
+      .then(() => {
         setCategories((prev) => [...prev, newCategory]);
       })
       .catch((error) => {
         console.error('Error adding new category:', error);
       });
   };
-
   return (
     <div className="categories-container">
       <div className="searchAndBackSection">
