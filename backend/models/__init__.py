@@ -9,7 +9,8 @@ from .get import (
 
 from .add import (
     add_new_product,
-    add_new_category
+    add_new_category,
+    add_products_to_store
 )
 
 from .delete import (
