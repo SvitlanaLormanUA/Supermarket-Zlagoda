@@ -76,7 +76,18 @@ CREATE TABLE IF NOT EXISTS receipt (
     FOREIGN KEY (card_number) REFERENCES customer_card(card_number) ON UPDATE CASCADE ON DELETE NO ACTION
 )
 ''')
+cursor.execute(''' 
+CREATE TABLE IF NOT EXISTS receipt_product (
+    check_number TEXT NOT NULL,
+    UPC TEXT NOT NULL,
+    product_quantity INTEGER NOT NULL,
+    total_price REAL NOT NULL,
+    PRIMARY KEY (check_number, UPC),
+    FOREIGN KEY (check_number) REFERENCES receipt(check_number) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (UPC) REFERENCES store_product(UPC) ON UPDATE CASCADE ON DELETE NO ACTION
+);
 
+''')
 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS sale (
