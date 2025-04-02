@@ -30,9 +30,9 @@
     padding: 20px;
 }
 
-.customer-card {
-    background-color: #b39f7a;
-    text-shadow: 0 1px 1px rgba(112, 76, 20, 0.5);
+.customer-card,
+.add-card {
+    background-color: #17216a;
     border: 4px solid #ffffff;
     border-radius: 10px;
     padding: 15px;
@@ -46,7 +46,8 @@
     flex-direction: column;
 }
 
-.customer-card:hover {
+.customer-card:hover,
+.add-card:hover {
     transform: scale(1.05);
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
@@ -84,15 +85,13 @@
     border: none;
     cursor: pointer;
     border-radius: 5px;
-    background-color: #927f5c;
+    background-color: #222e89;
     padding: 5px 8px;
-
 }
 
 .card-actions img {
     width: 20px;
     height: 20px;
-
 }
 
 .card-header h3 {
@@ -117,6 +116,36 @@
 .card-body p {
     margin: 5px 0;
 }
+
+.add-card {
+    justify-content: center;
+    align-items: center;
+    background-color: #4550a0;
+}
+
+.add-card .card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    color: #ffffff;
+    text-shadow: none;
+}
+
+.add-card input {
+    width: 100%;
+    padding: 5px;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.add-card button {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
 
 @media (max-width: 1200px) {
     .card-container {
