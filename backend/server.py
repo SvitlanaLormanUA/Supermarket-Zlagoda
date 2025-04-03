@@ -1,4 +1,4 @@
-from robyn import Robyn, jsonify
+from robyn import Robyn, jsonify, ALLOW_CORS
 from models import (
     get_all_store_products,
     get_all_categories,
@@ -13,15 +13,11 @@ from models import (
     get_all_customer_cards
 )
 import json
-from cors import setup_cors  
 
 app = Robyn(__file__)
 PORT = 5174
 
-
-setup_cors(app)
-
-
+ALLOW_CORS(app, origins="*")
 @app.get("/products")
 async def get_products():
     return get_all_store_products()
@@ -71,11 +67,14 @@ async def get_products_by_category_route(request):
     category_id = request.path_params.get("category_id")
     return get_products_by_category(category_id)
 
+
+#{"category_name": "New Category"}
 @app.post("/categories")
 async def add_category(request):
     try:
         category_data = json.loads(request.body)
         return add_new_category(category_data)
+        
     except json.JSONDecodeError:
         return {
             "status_code": 400,
