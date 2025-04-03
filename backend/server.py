@@ -10,6 +10,10 @@ from models import (
     get_total_price,
     get_total_quantity,
     add_new_category,
+    get_all_employees,
+    add_new_employee,
+    update_employee,
+    delete_employee
 )
 import json
 from cors import setup_cors  
@@ -81,5 +85,42 @@ async def add_category(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }
+
+#працівники
+
+@app.get("/employees")
+async def get_employees():
+    return get_all_employees()
+
+@app.post("/employees/new")
+async def add_employee(request):
+    try:
+        employee_data = json.loads(request.body)
+        return add_new_employee(employee_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+@app.patch("/employees/:id")
+async def update_employee_route(request):
+    employee_id = request.path_params.get("id")
+    try:
+        employee_data = json.loads(request.body)
+        return update_employee(employee_id, employee_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+@app.delete("/employees/:id")
+async def delete_employee_route(request):
+    employee_id = request.path_params.get("id")
+    return delete_employee(employee_id)
+
 
 app.start(port=PORT, host="127.0.0.1")
