@@ -423,3 +423,213 @@ def add_new_category(category_data):
     finally:
         if conn:
             conn.close()
+
+
+# працівник
+
+# Додавати нові дані про працівників
+def add_new_employee(employee_data):
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO employee (
+                id_employee, empl_surname, empl_name, empl_patronymic,
+                empl_role, salary, date_of_birth, date_of_start,
+                phone_number, city, street, zip_code
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            employee_data['id_employee'],
+            employee_data['empl_surname'],
+            employee_data['empl_name'],
+            employee_data['empl_patronymic'],
+            employee_data['empl_role'],
+            employee_data['salary'],
+            employee_data['date_of_birth'],
+            employee_data['date_of_start'],
+            employee_data['phone_number'],
+            employee_data['city'],
+            employee_data['street'],
+            employee_data['zip_code']
+        ))
+
+        conn.commit()
+
+        return {
+            "status_code": 201,
+            "body": jsonify({"data": "Employee added successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+# Редагувати дані про працівників
+def update_employee(employee_id, employee_data):
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            UPDATE employee
+            SET
+                empl_surname = ?,
+                empl_name = ?,
+                empl_patronymic = ?,
+                empl_role = ?,
+                salary = ?,
+                date_of_birth = ?,
+                date_of_start = ?,
+                phone_number = ?,
+                city = ?,
+                street = ?,
+                zip_code = ?
+            WHERE id_employee = ?
+        ''', (
+            employee_data['empl_surname'],
+            employee_data['empl_name'],
+            employee_data['empl_patronymic'],
+            employee_data['empl_role'],
+            employee_data['salary'],
+            employee_data['date_of_birth'],
+            employee_data['date_of_start'],
+            employee_data['phone_number'],
+            employee_data['city'],
+            employee_data['street'],
+            employee_data['zip_code'],
+            employee_id
+        ))
+
+        conn.commit()
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": "Employee updated successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+# Видаляти дані про працівників 
+def delete_employee(employee_id):
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        # Перевірка наявності працівника
+        cursor.execute('''
+            SELECT id_employee FROM employee WHERE id_employee = ?
+        ''', (employee_id,))
+        employee_exists = cursor.fetchone()
+
+        if not employee_exists:
+            return {
+                "status_code": 404,
+                "body": jsonify({"data": "Employee not found"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        cursor.execute('''
+            DELETE FROM employee WHERE id_employee = ?
+        ''', (employee_id,))
+
+        conn.commit()
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": "Employee deleted successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+# Отримати інформацію про всіх працівників
+def get_all_employees():
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                id_employee,
+                empl_surname,
+                empl_name,
+                empl_patronymic,
+                empl_role,
+                salary,
+                date_of_birth,
+                date_of_start,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+        ''')
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1],
+                'empl_name': employee[2],
+                'empl_patronymic': employee[3],
+                'empl_role': employee[4],
+                'salary': float(employee[5]),
+                'date_of_birth': employee[6],
+                'date_of_start': employee[7],
+                'phone_number': employee[8],
+                'city': employee[9],
+                'street': employee[10],
+                'zip_code': employee[11]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
