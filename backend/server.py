@@ -3,13 +3,16 @@ from models import (
     get_all_store_products,
     get_all_categories,
     get_products_by_category,
-    get_product_info,
-    add_new_product,
-    delete_product,
-    update_product,
+    get_product_info,  
     get_total_price,
     get_total_quantity,
+    get_all_customer_cards,
+    add_new_product,
     add_new_category,
+    delete_product,
+    delete_category,
+    update_product,
+  
 )
 import json
 from cors import setup_cors  
@@ -70,6 +73,11 @@ async def get_products_by_category_route(request):
     category_id = request.path_params.get("category_id")
     return get_products_by_category(category_id)
 
+
+@app.get("/customers-card")
+async def get_customers_cards():
+    return get_all_customer_cards()
+
 @app.post("/products/category/new_category")
 async def add_category(request):
     try:
@@ -81,5 +89,10 @@ async def add_category(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }
+
+@app.delete("/categories/:id")
+async def del_category(request):
+    category_number = request.path_params.get("id")
+    return delete_category(category_number)           
 
 app.start(port=PORT, host="127.0.0.1")

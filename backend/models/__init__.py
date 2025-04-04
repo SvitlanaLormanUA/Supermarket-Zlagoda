@@ -4,17 +4,18 @@ from .get import (
     get_products_by_category,
     get_product_info,
     get_total_price,
-    get_total_quantity
+    get_total_quantity,
+    get_all_customer_cards
 )
 
 from .add import (
     add_new_product,
-    add_new_category,
-    add_products_to_store
+    add_new_category
 )
 
 from .delete import (
     delete_product
+    delete_category
 )
 
 from .update import (
@@ -28,9 +29,10 @@ __all__ = [
     'get_product_info',
     'get_total_price',
     'get_total_quantity',
+    'get_all_customer_cards'
     'add_new_product',
     'add_new_category',
-    'add_new_product_to_store',
     'delete_product',
+    'delete_category',
     'update_product'
 ]
