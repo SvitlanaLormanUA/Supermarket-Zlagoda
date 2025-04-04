@@ -1,0 +1,30 @@
+.item-list {
+    list-style: none;
+    padding: 0;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.item-list li {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 10px;
+    padding: 5px 0;
+}
+
+.delete-btn{
+    background-color: #ed2f2f;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #be1414;
+}
+
+

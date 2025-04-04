@@ -3,13 +3,15 @@ import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
 import AddItemModal from './AddItemModal';
+import DeleteItemModal from "./DeleteItemModal";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const categoryFields = [
-    { name: "category_name", label: "Name" },
+    { name: "category_name", label: "Category Name" },
     // not all fields(just example)
   ];
   const [categoryProducts, setCategoryProducts] = useState({});
@@ -48,19 +50,9 @@ function Categories() {
     }
   };
 
-  const editCategory = () => {
-    // example
-    console.log("Edit category clicked");
-  };
-
-  const deleteCategory = () => {
-    // example
-    console.log("Delete category clicked");
-  };
-
   const saveNewCategory = (newCategory) => {
     console.log("Функція saveNewCategory викликана з даними:", newCategory);
-  
+
     return fetch('http://127.0.0.1:5174/categories', {
       method: 'POST',
       headers: {
@@ -68,7 +60,6 @@ function Categories() {
       },
       body: JSON.stringify(newCategory),
     })
-
       .then((data) => {
         console.log('New category added:', data);
         return data;
@@ -80,6 +71,33 @@ function Categories() {
         console.error('Error adding new category:', error);
       });
   };
+
+
+  const editCategory = () => {
+    // example
+    console.log("Edit category clicked");
+  };
+
+  const deleteCategory = async (category_numbers) => {
+    try {
+      for (const category_number of category_numbers) {
+        const response = await fetch(`http://127.0.0.1:5174/categories/${category_number}`, {
+          method: "DELETE",
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to delete category ID: ${category_number}`);
+        }
+      }
+
+      setCategories((prevCategories) =>
+        prevCategories.filter((category) => !category_numbers.includes(category.category_number))
+      );
+    } catch (error) {
+      console.error("Error deleting categories:", error);
+    }
+  };
+
   return (
     <div className="categories-container">
       <div className="searchAndBackSection">
@@ -87,10 +105,13 @@ function Categories() {
       </div>
 
       <ControlButtons
-        onAdd={() => setModalOpen(true)}
+        onAdd={(data) => saveNewCategory(data)}
         onEdit={editCategory}
-        onDelete={deleteCategory}
+        onDelete={(ids) => deleteCategory(ids)}
         modalFields={categoryFields}
+        deleteItems={categories}
+        itemKey="category_name"
+        itemIdKey="category_number"
       />
 
       <AddItemModal
@@ -98,6 +119,15 @@ function Categories() {
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={saveNewCategory}
+      />
+
+      <DeleteItemModal
+        items={categories}
+        itemKey="category_name"
+        itemIdKey="category_number"
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onDelete={deleteCategory}
       />
 
       <CustomTable

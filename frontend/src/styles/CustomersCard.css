@@ -89,6 +89,11 @@
     padding: 5px 8px;
 }
 
+.card-actions .delete-btn:hover, .card-actions .edit-btn:hover{
+    background-color: #222e89;
+    border: 1px solid #b3bcff;
+}
+
 .card-actions img {
     width: 20px;
     height: 20px;

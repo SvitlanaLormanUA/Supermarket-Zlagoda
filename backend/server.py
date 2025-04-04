@@ -6,6 +6,7 @@ from models import (
     get_product_info,
     add_new_product,
     delete_product,
+    delete_category,
     update_product,
     get_total_price,
     get_total_quantity,
@@ -41,6 +42,11 @@ async def upd_product(request):
 async def del_product(request):
     product_id = request.path_params.get("id")
     return delete_product(product_id)
+
+@app.delete("/categories/:id")
+async def del_category(request):
+    category_number = request.path_params.get("id")
+    return delete_category(category_number)    
 
 @app.post("/products/new_product")
 async def add_product(request):
