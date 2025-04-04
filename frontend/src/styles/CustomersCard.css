@@ -1,0 +1,171 @@
+.searchAndBackSection {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.search-bar-container {
+    width: 100%;
+}
+
+.search-bar-container .search-input {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.search-bar-container .search-input:focus {
+    border-color: #496e4a;
+}
+
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 20px;
+}
+
+.customer-card,
+.add-card {
+    background-color: #17216a;
+    border: 4px solid #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    height: 170px;
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+}
+
+.customer-card:hover,
+.add-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.card-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.card-info {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-actions {
+    position: relative;
+    top: -5px;
+    display: flex;
+    gap: 10px;
+}
+
+.card-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #222e89;
+    padding: 5px 8px;
+}
+
+.card-actions .delete-btn:hover, .card-actions .edit-btn:hover{
+    background-color: #222e89;
+    border: 1px solid #b3bcff;
+}
+
+.card-actions img {
+    width: 20px;
+    height: 20px;
+}
+
+.card-header h3 {
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
+.customer-card .card-body {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    font-size: 18px;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+}
+
+.customer-card:hover .card-body {
+    opacity: 1;
+    max-height: 170px;
+}
+
+
+.card-body p {
+    margin: 5px 0;
+}
+
+.add-card {
+    justify-content: center;
+    align-items: center;
+    background-color: #4550a0;
+}
+
+.add-card .card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    color: #ffffff;
+    text-shadow: none;
+}
+
+.add-card input {
+    width: 100%;
+    padding: 5px;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.add-card button {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+
+@media (max-width: 1200px) {
+    .card-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .card-container {
+        grid-template-columns: 1fr;
+    }
+}

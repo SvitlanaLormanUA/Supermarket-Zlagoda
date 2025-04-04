@@ -7,6 +7,7 @@ import Categories from './components/Categories';
 import ProductsInStore from './components/ProductsInStore';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
+import CustomersCard from './components/CustomersCard';
 
 function App() {
   
@@ -26,6 +27,7 @@ function App() {
               <Route path="/shop/products" element={<Products />} />
               <Route path="/shop/categories" element={<Categories />} />
               <Route path="/shop/products-in-store" element={<ProductsInStore />} />
+              <Route path="/shop/customers-card" element={<CustomersCard />} />
             </Routes>
           </div>
         </>

@@ -70,7 +70,7 @@ function Shop() {
                         </button>
                     </Link>
 
-                    <Link to="" style={{ textDecoration: 'none' }}>
+                    <Link to="/shop/customers-card" style={{ textDecoration: 'none' }}>
                         <button className="shop-section">
                             <img src="/assets/images/gift-card.png" alt="Customers' Cards" className="button-icon" />
                             Customers' Cards
