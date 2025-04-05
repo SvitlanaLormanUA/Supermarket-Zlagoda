@@ -51,7 +51,7 @@ function Categories() {
   };
 
   const saveNewCategory = (newCategory) => {
-    
+
     return fetch('http://127.0.0.1:5174/categories', {
       method: 'POST',
       headers: {
@@ -93,21 +93,30 @@ function Categories() {
   const deleteCategory = async (category_numbers) => {
     try {
       for (const category_number of category_numbers) {
+        const productsResponse = await fetch(`http://127.0.0.1:5174/products/category/${category_number}`);
+        const productsData = await productsResponse.json();
+        const parsedProducts = JSON.parse(productsData.body).data;
+
+        if (Array.isArray(parsedProducts) && parsedProducts.length > 0) {
+          alert(`Cannot delete category #${category_number}, there are products in it.`);
+          continue;
+        }
+
         const response = await fetch(`http://127.0.0.1:5174/categories/${category_number}`, {
           method: "DELETE",
         });
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.data || `Failed to delete category ID: ${category_number}`);
+          throw new Error(errorData.data || `Cannot delete category #${category_number}`);
         }
 
         setCategories((prevCategories) =>
-          prevCategories.filter((category) => !category_numbers.includes(category.category_number))
+          prevCategories.filter((category) => category.category_number !== category_number)
         );
       }
     } catch (error) {
-      console.error("Error deleting categories:", error.message);
+      console.error('Error deleting category:', error);
       alert(error.message);
     }
   };
