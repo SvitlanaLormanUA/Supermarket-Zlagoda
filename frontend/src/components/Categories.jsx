@@ -51,8 +51,7 @@ function Categories() {
   };
 
   const saveNewCategory = (newCategory) => {
-    console.log("Функція saveNewCategory викликана з даними:", newCategory);
-
+    
     return fetch('http://127.0.0.1:5174/categories', {
       method: 'POST',
       headers: {
@@ -60,12 +59,24 @@ function Categories() {
       },
       body: JSON.stringify(newCategory),
     })
-      .then((data) => {
-        console.log('New category added:', data);
-        return data;
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text || 'Error with request');
+          });
+        }
+        return response.json();
       })
       .then(() => {
-        setCategories((prev) => [...prev, newCategory]);
+        return fetch('http://127.0.0.1:5174/categories')
+          .then((res) => res.json())
+          .then((data) => {
+            const parsedData = JSON.parse(data.body).data;
+            setCategories(parsedData);
+          })
+          .catch((error) => {
+            console.error('Error fetching categories:', error);
+          });
       })
       .catch((error) => {
         console.error('Error adding new category:', error);
@@ -78,6 +89,7 @@ function Categories() {
     console.log("Edit category clicked");
   };
 
+
   const deleteCategory = async (category_numbers) => {
     try {
       for (const category_number of category_numbers) {
@@ -86,15 +98,17 @@ function Categories() {
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to delete category ID: ${category_number}`);
+          const errorData = await response.json();
+          throw new Error(errorData.data || `Failed to delete category ID: ${category_number}`);
         }
-      }
 
-      setCategories((prevCategories) =>
-        prevCategories.filter((category) => !category_numbers.includes(category.category_number))
-      );
+        setCategories((prevCategories) =>
+          prevCategories.filter((category) => !category_numbers.includes(category.category_number))
+        );
+      }
     } catch (error) {
-      console.error("Error deleting categories:", error);
+      console.error("Error deleting categories:", error.message);
+      alert(error.message);
     }
   };
 

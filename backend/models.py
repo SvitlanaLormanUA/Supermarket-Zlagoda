@@ -409,7 +409,7 @@ def add_new_category(category_data):
  
         return {
             "status_code": 201,
-            "body": jsonify({"category_name": (category_data['category_name'], category_data['category_number'])}),
+            "body": jsonify({"data": "Category added successfully"}),            
             "headers": {"Content-Type": "application/json"}
         }
  
