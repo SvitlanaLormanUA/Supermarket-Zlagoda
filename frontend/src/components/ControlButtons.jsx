@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AddItemModal from "./AddItemModal";
+import EditItemModal from "./EditItemModal";
 import DeleteItemModal from "./DeleteItemModal";
 
 function ControlButtons({
@@ -12,6 +13,7 @@ function ControlButtons({
   itemIdKey = "id"
 }) {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
   return (
@@ -20,7 +22,7 @@ function ControlButtons({
         Add
       </button>
 
-      <button className="action-button edit-button" onClick={onEdit}>
+      <button className="action-button edit-button" onClick={() => setEditModalOpen(true)}>
         Edit
       </button>
 
@@ -38,6 +40,20 @@ function ControlButtons({
           setAddModalOpen(false);
         }}
       />
+
+      <EditItemModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={(data) => {
+          onEdit(data);
+          setEditModalOpen(false);
+        }}
+        fields={modalFields}
+        items={deleteItems} 
+        itemKey={itemKey}
+        itemIdKey={itemIdKey}
+      />
+
 
       <DeleteItemModal
         items={deleteItems}

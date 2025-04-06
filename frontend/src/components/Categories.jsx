@@ -3,12 +3,14 @@ import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
 import AddItemModal from './AddItemModal';
+import EditItemModal from "./EditItemModal";
 import DeleteItemModal from "./DeleteItemModal";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const categoryFields = [
     { name: "category_name", label: "Category Name" },
@@ -83,12 +85,32 @@ function Categories() {
       });
   };
 
-
-  const editCategory = () => {
-    // example
-    console.log("Edit category clicked");
+  const editCategory = async (editedData) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5174/categories/${editedData.category_number}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedData),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error updating category');
+      }
+  
+      const updatedResponse = await fetch('http://127.0.0.1:5174/categories');
+      const updatedData = await updatedResponse.json();
+  
+      const parsedData = updatedData.data || JSON.parse(updatedData.body).data;
+      setCategories(parsedData);
+    } catch (error) {
+      console.error('Error editing the category:', error);
+      alert(error.message);
+    }
   };
-
+  
 
   const deleteCategory = async (category_numbers) => {
     try {
@@ -129,7 +151,7 @@ function Categories() {
 
       <ControlButtons
         onAdd={(data) => saveNewCategory(data)}
-        onEdit={editCategory}
+        onEdit={(ids) => editCategory(ids)}
         onDelete={(ids) => deleteCategory(ids)}
         modalFields={categoryFields}
         deleteItems={categories}
@@ -142,6 +164,16 @@ function Categories() {
         isOpen={isModalOpen}
         onClose={() => setModalOpen(false)}
         onSave={saveNewCategory}
+      />
+
+      <EditItemModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={editCategory}
+        fields={categoryFields}
+        items={categories}
+        itemKey="category_name"
+        itemIdKey="category_number"
       />
 
       <DeleteItemModal

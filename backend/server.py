@@ -8,6 +8,7 @@ from models import (
     delete_product,
     delete_category,
     update_product,
+    update_category,
     get_total_price,
     get_total_quantity,
     add_new_category,
@@ -38,6 +39,13 @@ async def upd_product(request):
     product_id = request.path_params.get("id")
     product_data = json.loads(request.body)
     return update_product(product_id, product_data)
+
+@app.patch("/categories/:id")
+async def upd_category(request):
+    category_number = request.path_params.get("id")
+    category_data = json.loads(request.body)
+    return update_category(category_number, category_data)
+
  
 @app.delete("/products/:id")
 async def del_product(request):
