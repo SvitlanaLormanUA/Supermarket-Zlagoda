@@ -250,3 +250,52 @@ def get_total_quantity():
     finally:
         if conn:
             conn.close()
+
+
+def get_all_customer_cards():
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+ 
+        cursor.execute('''
+            SELECT card_number, cust_surname, cust_name, cust_patronymic, 
+                phone_number, city, street, zip_code, percent 
+            FROM customer_card
+        ''')
+ 
+        customer_cards = cursor.fetchall()
+        result = []
+        for card in customer_cards:
+            card_dict = {
+                'card_number': card[0],
+                'cust_surname': card[1],
+                'cust_name': card[2],
+                'cust_patronymic': card[3] if card[3] else "",
+                'phone_number': card[4],
+                'city': card[5],
+                'street': card[6],
+                'zip_code': card[7],
+                'percent': card[8]
+            }
+            result.append(card_dict)
+ 
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+ 
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
