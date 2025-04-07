@@ -40,46 +40,48 @@ function DeleteItemModal({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>Delete Item</h2>
+    <div className="modal-container">
+      <div className="modal-overlay">
+        <div className="modal">
+          <h2>Delete Item</h2>
 
-        {items.length > 0 ? (
-          <ul className="item-list">
-            {items.map((item) => {
-              const itemId = item[itemIdKey];
-              const itemLabel = item[itemKey];
+          {items.length > 0 ? (
+            <ul className="item-list">
+              {items.map((item) => {
+                const itemId = item[itemIdKey];
+                const itemLabel = item[itemKey];
 
-              return (
-                <li key={itemId}>
-                  <label>
-                    <input
-                      type="checkbox"
-                      checked={selectedItems.includes(itemId)}
-                      onChange={() => handleCheckboxChange(itemId)}
-                    />
-                    {itemLabel}
-                  </label>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p>No items available for deletion.</p>
-        )}
+                return (
+                  <li key={itemId}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={selectedItems.includes(itemId)}
+                        onChange={() => handleCheckboxChange(itemId)}
+                      />
+                      {itemLabel}
+                    </label>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <p>No items available for deletion.</p>
+          )}
 
-        <div className="modal-buttons">
-          <button
-            type="submit"
-            className="delete-btn"
-            onClick={handleDelete}
-            disabled={selectedItems.length === 0}
-          >
-            Delete
-          </button>
-          <button type="button" onClick={onClose} className="cancel-button">
-            Cancel
-          </button>
+          <div className="modal-buttons">
+            <button
+              type="submit"
+              className="delete-btn"
+              onClick={handleDelete}
+              disabled={selectedItems.length === 0}
+            >
+              Delete
+            </button>
+            <button type="button" onClick={onClose} className="cancel-button">
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>
