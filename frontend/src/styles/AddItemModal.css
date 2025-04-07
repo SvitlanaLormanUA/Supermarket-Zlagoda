@@ -60,18 +60,27 @@
     margin-bottom: 10px;
 }
 
-.modal-field input {
+.modal-field input,
+.modal-field select {
     width: 100%;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
     box-sizing: border-box;
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 .modal-buttons {
     display: flex;
     justify-content: space-around;
+}
+
+.modal-field select {
+    background-color: #fff;
+    cursor: pointer;
 }
 
 .save-button,

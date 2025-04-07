@@ -15,7 +15,6 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Форма відправлена, дані:", formData);
     onSave(formData);
     setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
     onClose();
@@ -32,19 +31,56 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
             {fields.map((field) => (
               <div key={field.name} className="modal-field">
                 <label htmlFor={field.name}>{field.label}:</label>
-                <input
-                  id={field.name}
-                  name={field.name}
-                  type="text"
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                  placeholder={`Enter ${field.label}`}
-                />
+
+                {field.type === 'boolean' ? (
+                  <select
+                    id={field.name}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    <option value="true">True</option>
+                    <option value="false">False</option>
+                  </select>
+                ) : field.type === 'fk' && Array.isArray(field.options) ? (
+                  <select
+                    id={field.name}
+                    name={field.name}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                  >
+                    <option value="">Select</option>
+                    {field.options.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    id={field.name}
+                    name={field.name}
+                    type="text"
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    placeholder={`Enter ${field.label}`}
+                  />
+                )}
               </div>
             ))}
             <div className="modal-buttons">
               <button type="submit" className="save-button">Save</button>
-              <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
+              <button
+                type="button"
+                onClick={() => {
+                  setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
+                  onClose();
+                }}
+                className="cancel-button"
+              >
+                Cancel
+              </button>
             </div>
           </form>
         </div>
