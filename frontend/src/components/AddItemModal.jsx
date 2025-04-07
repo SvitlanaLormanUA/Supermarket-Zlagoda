@@ -24,28 +24,30 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h2>Add New Item</h2>
-        <form onSubmit={handleSubmit}>
-          {fields.map((field) => (
-            <div key={field.name} className="modal-field">
-              <label htmlFor={field.name}>{field.label}:</label>
-              <input
-                id={field.name}
-                name={field.name}
-                type="text"
-                value={formData[field.name]}
-                onChange={handleChange}
-                placeholder={`Enter ${field.label}`}
-              />
+    <div className="modal-container">
+      <div className="modal-overlay">
+        <div className="modal">
+          <h2>Add New Item</h2>
+          <form onSubmit={handleSubmit}>
+            {fields.map((field) => (
+              <div key={field.name} className="modal-field">
+                <label htmlFor={field.name}>{field.label}:</label>
+                <input
+                  id={field.name}
+                  name={field.name}
+                  type="text"
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={`Enter ${field.label}`}
+                />
+              </div>
+            ))}
+            <div className="modal-buttons">
+              <button type="submit" className="save-button">Save</button>
+              <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
             </div>
-          ))}
-          <div className="modal-buttons">
-            <button type="submit" className="save-button">Save</button>
-            <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
