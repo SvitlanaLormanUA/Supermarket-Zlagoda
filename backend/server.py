@@ -12,7 +12,8 @@ from models import (
     get_total_price,
     get_total_quantity,
     add_new_category,
-    get_all_customer_cards
+    get_all_customer_cards,
+    get_products_info
 )
 
 import json
@@ -25,6 +26,10 @@ ALLOW_CORS(app, origins="*")
 @app.get("/products")
 async def get_products():
     return get_all_store_products()
+
+@app.get("/allproducts")
+async def get_products_information():
+    return get_products_info()
  
 @app.get("/categories")
 async def get_categories():

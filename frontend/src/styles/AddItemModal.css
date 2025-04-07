@@ -1,9 +1,9 @@
-.modal-overlay {
+.modal-container {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    height: 100vh;
+    width: 100vw;
     background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
@@ -11,14 +11,32 @@
     z-index: 1000;
 }
 
+.modal-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
 .modal {
     background-color: white;
     padding: 30px;
     border-radius: 16px;
-    width: 400px;
+    width: 400px;  
+    max-height: 400px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal form {
+    flex: 1;
     overflow-y: auto;
+    padding-right: 10px;
+    box-sizing: border-box;
 }
 
 .modal h2 {
@@ -42,18 +60,27 @@
     margin-bottom: 10px;
 }
 
-.modal-field input {
+.modal-field input,
+.modal-field select {
     width: 100%;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
     font-size: 16px;
     box-sizing: border-box;
+    appearance: none; 
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 .modal-buttons {
     display: flex;
     justify-content: space-around;
+}
+
+.modal-field select {
+    background-color: #fff;
+    cursor: pointer;
 }
 
 .save-button,

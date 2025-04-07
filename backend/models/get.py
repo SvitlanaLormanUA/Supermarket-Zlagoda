@@ -299,3 +299,38 @@ def get_all_customer_cards():
     finally:
         if conn:
             conn.close()
+
+
+def get_products_info():
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id_product, product_name
+            FROM product
+        ''')
+
+        products = cursor.fetchall()
+        result = [{'id_product': row[0], 'product_name': row[1]} for row in products]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()            
