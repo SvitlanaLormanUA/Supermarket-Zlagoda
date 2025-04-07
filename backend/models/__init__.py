@@ -5,7 +5,8 @@ from .get import (
     get_product_info,
     get_total_price,
     get_total_quantity,
-    get_all_customer_cards
+    get_all_customer_cards,
+    get_products_info
 )
 
 from .add import (
@@ -37,5 +38,6 @@ __all__ = [
     'delete_product',
     'delete_category',
     'update_product',
-    'update_category'
+    'update_category',
+    'get_products_info'
 ]
