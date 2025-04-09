@@ -38,7 +38,16 @@ function EditItemModal({ isOpen, onClose, onSave, fields, items, itemKey = "name
                 <div className="modal">
                     <div className="modal-header">
                         <h2>Edit Item</h2>
-                        <button className="close-button" onClick={onClose}>×</button>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
+                                onClose();
+                            }}
+                            className="close-button"
+                        >
+                            ×
+                        </button>
                     </div>
                     <div className="edit-table-container">
                         <table className="item-table">

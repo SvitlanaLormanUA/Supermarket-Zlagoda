@@ -28,7 +28,16 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
         <div className="modal">
           <div className="modal-header">
             <h2>Add Item</h2>
-            <button className="close-button" onClick={onClose}>×</button>
+            <button
+              type="button"
+              onClick={() => {
+                setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
+                onClose();
+              }}
+              className="close-button"
+            >
+              ×
+            </button>
           </div>
           <form onSubmit={handleSubmit}>
             {fields.map((field) => (
