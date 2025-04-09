@@ -13,6 +13,29 @@ def update_product(product_id, product_data):
             WHERE id_product = ?
         ''', (product_data['category_number'], product_data['product_name'], product_data['characteristics'], product_id))
 
+        conn.commit()
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": "Product updated successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+def update_store_product(product_id, product_data):
+    conn = None
+    try:
+        conn = sqlite3.connect('./database/supermarket.db')
+        cursor = conn.cursor()
+
         cursor.execute('''
             UPDATE store_product
             SET UPC = ?, UPC_prom = ?, selling_price = ?, products_number = ?, promotional_product = ?
@@ -25,8 +48,14 @@ def update_product(product_id, product_data):
             product_data['promotional_product'],
             product_id
         ))
-
         conn.commit()
+
+        if cursor.rowcount == 0:
+            return {
+                "status_code": 404,
+                "body": jsonify({"data": "No product found to update"}),
+                "headers": {"Content-Type": "application/json"}
+            }
 
         return {
             "status_code": 200,
