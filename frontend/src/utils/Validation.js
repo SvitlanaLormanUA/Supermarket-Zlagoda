@@ -13,7 +13,7 @@ export const validateUniqueProductInStore = (newProduct, productsInStore) => {
 }
 
 export const validateProductInStore = (newProduct) => {
-    const requiredFields = ['UPC', 'id_product', 'selling_price', 'products_number', 'promotional_product'];
+    const requiredFields = ['UPC', 'id_product', 'selling_price', 'products_number'];
     for (let field of requiredFields) {
         if (field !== 'UPC_prom' && !newProduct[field]) {
             alert(`${field} cannot be empty.`);
