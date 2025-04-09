@@ -61,6 +61,7 @@ def get_all_store_products():
             SELECT 
                 sp.UPC,
                 sp.UPC_prom,
+                p.id_product,
                 p.product_name,
                 p.characteristics,
                 c.category_name,
@@ -78,12 +79,13 @@ def get_all_store_products():
             product_dict = {
                 'UPC': product[0],
                 'UPC_prom': product[1],
-                'product_name': product[2],
-                'characteristics': product[3],
-                'category_name': product[4],
-                'selling_price': float(product[5]),
-                'products_number': int(product[6]),
-                'promotional_product': bool(product[7])
+                'id_product': product[2],
+                'product_name': product[3],
+                'characteristics': product[4],
+                'category_name': product[5],
+                'selling_price': float(product[6]),
+                'products_number': int(product[7]),
+                'promotional_product': bool(product[8])
             }
             result.append(product_dict)
 

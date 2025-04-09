@@ -14,8 +14,8 @@ function Categories() {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const categoryFields = [
-    { name: "category_name", label: "Category Name" },
-    // not all fields(just example)
+    { name: "category_number", label: "Category Number", readOnly: true },
+    { name: "category_name", label: "Category Name" }
   ];
   const [categoryProducts, setCategoryProducts] = useState({});
 
@@ -89,6 +89,9 @@ function Categories() {
   };
 
   const editCategory = async (editedData) => {
+    if (!validateCategories(editedData)) {
+      return;
+    }
     try {
       const response = await fetch(`http://127.0.0.1:5174/categories/${editedData.category_number}`, {
         method: "PATCH",

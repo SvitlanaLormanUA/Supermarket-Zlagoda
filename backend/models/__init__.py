@@ -23,6 +23,7 @@ from .delete import (
 
 from .update import (
     update_product,
+    update_store_product,
     update_category
 )
 
@@ -40,6 +41,7 @@ __all__ = [
     'delete_product',
     'delete_category',
     'update_product',
+    'update_store_product',
     'update_category',
     'get_products_info'
 ]
