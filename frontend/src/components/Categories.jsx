@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { validateCategories } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -53,7 +54,9 @@ function Categories() {
   };
 
   const saveNewCategory = (newCategory) => {
-
+    if (!validateCategories(newCategory)) {
+      return;
+    }
     return fetch('http://127.0.0.1:5174/categories', {
       method: 'POST',
       headers: {

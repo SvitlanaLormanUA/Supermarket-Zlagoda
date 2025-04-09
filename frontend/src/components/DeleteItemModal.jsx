@@ -43,7 +43,10 @@ function DeleteItemModal({
     <div className="modal-container">
       <div className="modal-overlay">
         <div className="modal">
-          <h2>Delete Item</h2>
+          <div className="modal-header">
+            <h2>Delete Item</h2>
+            <button className="close-button" onClick={onClose}>×</button>
+          </div>
 
           {items.length > 0 ? (
             <ul className="item-list">

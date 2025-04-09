@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { validateProductInStore } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -8,7 +9,7 @@ import DeleteItemModal from "./DeleteItemModal";
 
 function ProductsInStore() {
   const [productsInStore, setProductsInStore] = useState([]);
-  
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -57,10 +58,43 @@ function ProductsInStore() {
       });
   }, []);
 
-  const addProductsInStore = () => {
-    // example
+  
+  const addProductsInStore = (newStoreProduct) => {
+    if (!validateProductInStore(newStoreProduct, productsInStore)) {
+      return;
+    }
 
+    return fetch('http://127.0.0.1:5174/products-in-store/new_product', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newStoreProduct),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text || 'Error with request');
+          });
+        }
+        return response.json();
+      })
+      .then(() => {
+        return fetch('http://127.0.0.1:5174/products')
+          .then((res) => res.json())
+          .then((data) => {
+            const parsedData = JSON.parse(data.body).data;
+            setProductsInStore(parsedData);
+          })
+          .catch((error) => {
+            console.error('Error fetching categories:', error);
+          });
+      })
+      .catch((error) => {
+        console.error('Error adding new category:', error);
+      });
   };
+
 
   const editProductsInStore = () => {
     // example

@@ -5,6 +5,7 @@ from models import (
     get_products_by_category,
     get_product_info,
     add_new_product,
+    add_new_store_product,
     delete_product,
     delete_category,
     update_product,
@@ -69,6 +70,18 @@ async def add_product(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }
+
+@app.post("/products-in-store/new_product")
+async def add_store_product(request):
+    try:
+        product_data = json.loads(request.body)
+        return add_new_store_product(product_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"},
+        }   
  
 @app.get("/products/total_price")
 async def total_price():
