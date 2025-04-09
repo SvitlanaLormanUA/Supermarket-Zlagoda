@@ -5,6 +5,13 @@ function EditItemModal({ isOpen, onClose, onSave, fields, items, itemKey = "name
     const [formData, setFormData] = useState(null);
 
     useEffect(() => {
+        if (!isOpen) {
+            setSelectedItem(null);
+            setFormData(null);
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
         setFormData(selectedItem);
     }, [selectedItem]);
 
@@ -29,8 +36,10 @@ function EditItemModal({ isOpen, onClose, onSave, fields, items, itemKey = "name
         <div className="modal-container">
             <div className="modal-overlay">
                 <div className="modal">
-                    <h2>Edit Item</h2>
-
+                    <div className="modal-header">
+                        <h2>Edit Item</h2>
+                        <button className="close-button" onClick={onClose}>×</button>
+                    </div>
                     <div className="edit-table-container">
                         <table className="item-table">
                             <thead>

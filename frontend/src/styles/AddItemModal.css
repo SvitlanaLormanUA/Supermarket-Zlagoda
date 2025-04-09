@@ -23,13 +23,42 @@
     background-color: white;
     padding: 30px;
     border-radius: 16px;
-    width: 400px;  
+    width: 400px;
     max-height: 400px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     text-align: center;
     display: flex;
     flex-direction: column;
     overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+h2 {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.close-button {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+}
+
+.close-button:hover {
+    color: #000;
 }
 
 .modal form {
@@ -41,7 +70,7 @@
 
 .modal h2 {
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 0px;
 }
 
 .modal-field {
@@ -68,7 +97,7 @@
     border: 1px solid #ccc;
     font-size: 16px;
     box-sizing: border-box;
-    appearance: none; 
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
 }

@@ -26,7 +26,10 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
     <div className="modal-container">
       <div className="modal-overlay">
         <div className="modal">
-          <h2>Add New Item</h2>
+          <div className="modal-header">
+            <h2>Add Item</h2>
+            <button className="close-button" onClick={onClose}>×</button>
+          </div>
           <form onSubmit={handleSubmit}>
             {fields.map((field) => (
               <div key={field.name} className="modal-field">
