@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { validateProductInStore } from '../utils/Validation';
+import { validateUniqueProductInStore, validateProductInStore } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -18,9 +18,9 @@ function ProductsInStore() {
   const [UPCOptions, setUPCOptions] = useState([]);
 
   const productsInStoreFields = [
-    { name: "UPC", label: "UPC" },
+    { name: "UPC", label: "UPC", readOnly: true },
     { name: "UPC_prom", label: "UPC_prom", type: "fk", options: UPCOptions },
-    { name: "id_product", label: "Product ID", type: "fk", options: productOptions },
+    { name: "id_product", label: "Product ID", type: "fk", options: productOptions, readOnly: true },
     { name: "selling_price", label: "Price" },
     { name: "products_number", label: "Products Number" },
     { name: "promotional_product", label: "Promotional Product", type: "boolean" }
@@ -60,7 +60,7 @@ function ProductsInStore() {
 
   
   const addProductsInStore = (newStoreProduct) => {
-    if (!validateProductInStore(newStoreProduct, productsInStore)) {
+    if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) && (!validateProductInStore(newStoreProduct))) {
       return;
     }
 
@@ -96,9 +96,33 @@ function ProductsInStore() {
   };
 
 
-  const editProductsInStore = () => {
-    // example
-
+  const editProductsInStore = async (editedData) => {
+    if (!validateProductInStore(editedData)) {
+      return;
+    }
+    try {
+      const response = await fetch(`http://127.0.0.1:5174/products-in-store/${editedData.id_product}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(editedData),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Error updating category');
+      }
+  
+      const updatedResponse = await fetch('http://127.0.0.1:5174/products');
+      const updatedData = await updatedResponse.json();
+  
+      const parsedData = updatedData.data || JSON.parse(updatedData.body).data;
+      setProductsInStore(parsedData);
+    } catch (error) {
+      console.error('Error editing the category:', error);
+      alert(error.message);
+    }
   };
 
   const deleteProductsInStore = () => {
@@ -119,7 +143,7 @@ function ProductsInStore() {
         modalFields={productsInStoreFields}
         deleteItems={productsInStore}
         itemKey="product_name"
-        itemIdKey="UPC"
+        itemIdKey="id_product"
       />
 
       <AddItemModal
@@ -136,13 +160,13 @@ function ProductsInStore() {
         fields={productsInStoreFields}
         items={productsInStore}
         itemKey="product_name"
-        itemIdKey="UPC"
+        itemIdKey="id_product"
       />
 
       <DeleteItemModal
         items={productsInStore}
         itemKey="product_name"
-        itemIdKey="UPC"
+        itemIdKey="id_product"
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onDelete={deleteProductsInStore}
