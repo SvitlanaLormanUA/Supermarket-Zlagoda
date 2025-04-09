@@ -8,7 +8,7 @@ import DeleteItemModal from "./DeleteItemModal";
 
 function ProductsInStore() {
   const [productsInStore, setProductsInStore] = useState([]);
-  
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -57,10 +57,75 @@ function ProductsInStore() {
       });
   }, []);
 
-  const addProductsInStore = () => {
-    // example
+  const validateUniqueFields = (newProduct) => {
+    const existingUPC = productsInStore.some(product => product.UPC === newProduct.UPC);
+    const existingProductId = productsInStore.some(product => product.id_product === newProduct.id_product);
+  
+    if (existingUPC) {
+      alert("UPC must be unique.");
+      return false;
+    }
+    if (existingProductId) {
+      alert("Product ID must be unique.");
+      return false;
+    }
+  
+    const requiredFields = ['UPC', 'id_product', 'selling_price', 'products_number', 'promotional_product'];
+    for (let field of requiredFields) {
+      if (field !== 'UPC_prom' && !newProduct[field]) {
+        alert(`${field} cannot be empty.`);
+        return false;
+      }
+    }
+  
+    if (newProduct['UPC_prom'] && (newProduct['promotional_product'] === false || newProduct['promotional_product'] === undefined)) {
+      alert("If UPC_prom is filled, Promotional Product must be true.");
+      return false;
+    }
 
+    if (newProduct['promotional_product'] === true && !newProduct['UPC_prom']) {
+      alert("If Promotional Product is true, UPC_prom must be filled.");
+      return false;
+    }
+    return true;
   };
+  
+  const addProductsInStore = (newStoreProduct) => {
+    if (!validateUniqueFields(newStoreProduct)) {
+      return;
+    }
+
+    return fetch('http://127.0.0.1:5174/products-in-store/new_product', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newStoreProduct),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          return response.text().then((text) => {
+            throw new Error(text || 'Error with request');
+          });
+        }
+        return response.json();
+      })
+      .then(() => {
+        return fetch('http://127.0.0.1:5174/products')
+          .then((res) => res.json())
+          .then((data) => {
+            const parsedData = JSON.parse(data.body).data;
+            setProductsInStore(parsedData);
+          })
+          .catch((error) => {
+            console.error('Error fetching categories:', error);
+          });
+      })
+      .catch((error) => {
+        console.error('Error adding new category:', error);
+      });
+  };
+
 
   const editProductsInStore = () => {
     // example

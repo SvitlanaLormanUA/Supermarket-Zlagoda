@@ -11,6 +11,7 @@ from .get import (
 
 from .add import (
     add_new_product,
+    add_new_store_product,
     add_new_category,
     
 )
@@ -34,6 +35,7 @@ __all__ = [
     'get_total_quantity',
     'get_all_customer_cards',
     'add_new_product',
+    'add_new_store_product',
     'add_new_category',
     'delete_product',
     'delete_category',

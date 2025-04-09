@@ -52,8 +52,21 @@ function Categories() {
     }
   };
 
-  const saveNewCategory = (newCategory) => {
+  const validateUniqueFields = (newCategory) => {
+    const requiredFields = ['category_name'];
+    for (let field of requiredFields) {
+      if (!newCategory[field]) {
+        alert(`${field} cannot be empty.`);
+        return false;
+      }
+    }
+    return true;
+  };
 
+  const saveNewCategory = (newCategory) => {
+    if (!validateUniqueFields(newCategory)) {
+      return;
+    }
     return fetch('http://127.0.0.1:5174/categories', {
       method: 'POST',
       headers: {
