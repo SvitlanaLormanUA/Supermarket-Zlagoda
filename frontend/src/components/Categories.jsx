@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { validateCategories } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -52,19 +53,8 @@ function Categories() {
     }
   };
 
-  const validateUniqueFields = (newCategory) => {
-    const requiredFields = ['category_name'];
-    for (let field of requiredFields) {
-      if (!newCategory[field]) {
-        alert(`${field} cannot be empty.`);
-        return false;
-      }
-    }
-    return true;
-  };
-
   const saveNewCategory = (newCategory) => {
-    if (!validateUniqueFields(newCategory)) {
+    if (!validateCategories(newCategory)) {
       return;
     }
     return fetch('http://127.0.0.1:5174/categories', {
