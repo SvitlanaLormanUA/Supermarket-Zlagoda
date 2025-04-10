@@ -14,7 +14,6 @@ function Categories() {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const categoryFields = [
-    { name: "category_number", label: "Category Number", readOnly: true },
     { name: "category_name", label: "Category Name" }
   ];
   const [categoryProducts, setCategoryProducts] = useState({});
