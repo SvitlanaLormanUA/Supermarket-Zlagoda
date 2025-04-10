@@ -19,10 +19,6 @@ def delete_product(product_id):
                 "body": jsonify({"data": "Product not found"}),
                 "headers": {"Content-Type": "application/json"}
             }
-        cursor.execute('''
-            DELETE FROM store_product
-            WHERE id_product = ?
-        ''', (product_id,))
 
         cursor.execute('''
             DELETE FROM product

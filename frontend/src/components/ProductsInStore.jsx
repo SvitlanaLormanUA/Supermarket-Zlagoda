@@ -27,7 +27,7 @@ function ProductsInStore() {
   ];
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5174/products')
+    fetch('http://127.0.0.1:5174/products-in-store')
       .then((res) => res.json())
       .then((data) => {
         const parsedData = JSON.parse(data.body).data;
@@ -43,7 +43,7 @@ function ProductsInStore() {
   }, []);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5174/allproducts')
+    fetch('http://127.0.0.1:5174/product-by-ID')
       .then((res) => res.json())
       .then((data) => {
         const parsedData = JSON.parse(data.body).data;
@@ -60,7 +60,7 @@ function ProductsInStore() {
 
   
   const addProductsInStore = (newStoreProduct) => {
-    if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) && (!validateProductInStore(newStoreProduct))) {
+    if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) || (!validateProductInStore(newStoreProduct))) {
       return;
     }
 
@@ -80,7 +80,7 @@ function ProductsInStore() {
         return response.json();
       })
       .then(() => {
-        return fetch('http://127.0.0.1:5174/products')
+        return fetch('http://127.0.0.1:5174/products-in-store')
           .then((res) => res.json())
           .then((data) => {
             const parsedData = JSON.parse(data.body).data;
@@ -114,7 +114,7 @@ function ProductsInStore() {
         throw new Error(errorText || 'Error updating category');
       }
   
-      const updatedResponse = await fetch('http://127.0.0.1:5174/products');
+      const updatedResponse = await fetch('http://127.0.0.1:5174/products-in-store');
       const updatedData = await updatedResponse.json();
   
       const parsedData = updatedData.data || JSON.parse(updatedData.body).data;

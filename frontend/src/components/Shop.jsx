@@ -7,7 +7,7 @@ function Shop() {
     const [totalQuantity, setTotalQuantity] = useState(null);
 
     useEffect(() => {
-        fetch('http://127.0.0.1:5174/products/total_price')
+        fetch('http://127.0.0.1:5174/products-in-store/total_price')
             .then((res) => res.json())
             .then((data) => {
                 const parsedData = JSON.parse(data.body);
@@ -15,7 +15,7 @@ function Shop() {
             })
             .catch((error) => console.error('Error fetching data:', error));
 
-        fetch('http://127.0.0.1:5174/products/total_quantity')
+        fetch('http://127.0.0.1:5174/products-in-store/total_quantity')
             .then((res) => res.json())
             .then((data) => {
                 const parsedData = JSON.parse(data.body);
