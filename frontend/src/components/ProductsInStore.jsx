@@ -60,7 +60,7 @@ function ProductsInStore() {
 
   
   const addProductsInStore = (newStoreProduct) => {
-    if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) && (!validateProductInStore(newStoreProduct))) {
+    if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) || (!validateProductInStore(newStoreProduct))) {
       return;
     }
 

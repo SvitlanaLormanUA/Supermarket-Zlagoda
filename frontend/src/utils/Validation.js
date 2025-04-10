@@ -7,9 +7,10 @@ export const validateUniqueProductInStore = (newProduct, productsInStore) => {
         return false;
     }
     if (existingProductId) {
-        alert("Product ID must be unique.");
+        alert("ProductId must be unique.");
         return false;
     }
+    return true;
 }
 
 export const validateProductInStore = (newProduct) => {
