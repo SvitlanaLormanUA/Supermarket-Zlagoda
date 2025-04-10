@@ -17,7 +17,6 @@ function DeleteItemModal({
   }, [isOpen]);
 
   useEffect(() => {
-    console.log("Items received in DeleteItemModal:", items);
   }, [items]);
 
   if (!isOpen) return null;
