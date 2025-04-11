@@ -1,27 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function SearchAndBack() {
-    const navigate = useNavigate();
+function SearchAndBack({ onSearch }) {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
-    const handleBackClick = () => {
-        navigate(-1);
-    };
+  const handleBackClick = () => {
+    navigate(-1);
+  };
 
-    return (
-        <div className="search-back-container">
-            {/* BackButton */}
-            <button onClick={handleBackClick} className="back-button">
-                <img src="/assets/images/back.png" alt="Back" className="back-icon" />
-            </button>
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (onSearch) {
+      onSearch(value);
+    }
+  };
 
-            {/* Search */}
-            <div className="shop-search-bar">
-                <input type="text" placeholder="Search..." className="search-input" />
-                <img src="/assets/images/search.png" alt="Search" className="search-icon" />
-            </div>
-        </div>
-    );
+  return (
+    <div className="search-back-container">
+      <button onClick={handleBackClick} className="back-button">
+        <img src="/assets/images/back.png" alt="Back" className="back-icon" />
+      </button>
+
+      <div className="shop-search-bar">
+        <input
+          type="text"
+          placeholder="Search..."
+          className="search-input"
+          value={searchTerm}
+          onChange={handleInputChange}
+        />
+        <img src="/assets/images/search.png" alt="Search" className="search-icon" />
+      </div>
+    </div>
+  );
 }
 
 export default SearchAndBack;

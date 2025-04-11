@@ -58,6 +58,31 @@ function ProductsInStore() {
       });
   }, []);
 
+  
+  const handleSearch = (value) => {
+    if (!value) {
+      fetch('http://127.0.0.1:5174/products-in-store')
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = JSON.parse(data.body).data;
+          setProductsInStore(parsedData);
+        });
+    } else {
+      fetch(`http://127.0.0.1:5174/products-in-store/search/${value}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = JSON.parse(data.body).data;
+          if (Array.isArray(parsedData)) {
+            setProductsInStore(parsedData);
+          } else {
+            setProductsInStore([parsedData]);
+          }
+        })
+        .catch(() => {
+          setProductsInStore([]);
+        });
+    }
+  };
 
   const addProductsInStore = (newStoreProduct) => {
     if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) || (!validateProductInStore(newStoreProduct))) {
@@ -150,7 +175,7 @@ function ProductsInStore() {
   return (
     <div className="products-container">
       <div className="searchAndBackSection">
-        <SearchAndBack />
+        <SearchAndBack onSearch={handleSearch} />
       </div>
 
       <ControlButtons
