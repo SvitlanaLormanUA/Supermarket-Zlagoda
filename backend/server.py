@@ -16,7 +16,8 @@ from models import (
     get_total_quantity,
     add_new_category,
     get_all_customer_cards,
-    get_products_info
+    get_products_info,
+    get_store_products_by_UPC
 )
 
 import json
@@ -72,6 +73,11 @@ async def get_products_by_category_route(request):
 @app.get("/products-in-store")
 async def get_store_products():
     return get_all_store_products()
+
+@app.get("/products-in-store/search/:UPC")
+async def get_all_store_products_by_UPC(request):
+    UPC = request.path_params.get("UPC")
+    return get_store_products_by_UPC(UPC)
 
 @app.patch("/products-in-store/:id")
 async def upd_store_product(request):
