@@ -1,10 +1,13 @@
 import sqlite3
 from robyn import jsonify
+from os import environ as env
+
+DB_LINK = env.get("DB_LINK")
 
 def update_product(product_id, product_data):
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -33,7 +36,7 @@ def update_product(product_id, product_data):
 def update_store_product(product_id, product_data):
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -72,11 +75,10 @@ def update_store_product(product_id, product_data):
         if conn:
             conn.close()
 
-
 def update_category(category_number, category_data):
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
  
         cursor.execute('''

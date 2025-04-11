@@ -1,11 +1,13 @@
 import sqlite3
-from robyn import jsonify 
+from robyn import jsonify
+from os import environ as env
+
+DB_LINK = env.get("DB_LINK")
 
 def get_product_info(product_id):
     conn = None
     try:
-        # Create a new connection for this request
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -54,7 +56,7 @@ def get_all_store_products():
     conn = None
     try:
         # Create a new connection for this request
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -112,7 +114,7 @@ def get_all_store_products():
 def get_all_categories():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -152,7 +154,7 @@ def get_products_by_category(category_number):
     conn = None
     try:
         # Create a new connection for this request
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -198,7 +200,7 @@ def get_products_by_category(category_number):
 def get_total_price():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -227,7 +229,7 @@ def get_total_price():
 def get_total_quantity():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -257,7 +259,7 @@ def get_total_quantity():
 def get_all_customer_cards():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
  
         cursor.execute('''
@@ -306,7 +308,7 @@ def get_all_customer_cards():
 def get_products_info():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -336,3 +338,41 @@ def get_products_info():
     finally:
         if conn:
             conn.close()            
+
+
+# CLIENTS
+def get_clients_info():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT * FROM customer_card ORDER BY cust_surname
+        ''')
+
+        rows = cursor.fetchall()
+        # Get column names from cursor.description
+        column_names = [description[0] for description in cursor.description]
+        # Convert each row to a dictionary
+        clients = [dict(zip(column_names, row)) for row in rows]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": clients}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
