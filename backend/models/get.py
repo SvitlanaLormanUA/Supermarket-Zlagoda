@@ -1,11 +1,16 @@
 import sqlite3
+import os
 from robyn import jsonify 
+from dotenv import load_dotenv
+from urllib.parse import unquote
+
+load_dotenv()
+DB_LINK = os.getenv("DB_LINK")
 
 def get_product_info(product_id):
     conn = None
     try:
-        # Create a new connection for this request
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -54,7 +59,7 @@ def get_all_store_products():
     conn = None
     try:
         # Create a new connection for this request
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -173,7 +178,7 @@ def get_store_products_by_UPC(upc_value):
 def get_all_categories():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -212,8 +217,7 @@ def get_all_categories():
 def get_products_by_category(category_number):
     conn = None
     try:
-        # Create a new connection for this request
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -259,7 +263,7 @@ def get_products_by_category(category_number):
 def get_total_price():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -288,7 +292,7 @@ def get_total_price():
 def get_total_quantity():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -318,7 +322,7 @@ def get_total_quantity():
 def get_all_customer_cards():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
  
         cursor.execute('''
@@ -367,7 +371,7 @@ def get_all_customer_cards():
 def get_products_info():
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -397,3 +401,81 @@ def get_products_info():
     finally:
         if conn:
             conn.close()            
+
+
+# CUSTOMERS
+def get_customer_info_ordered():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT * FROM customer_card ORDER BY cust_surname
+        ''')
+
+        rows = cursor.fetchall()
+        column_names = [description[0] for description in cursor.description]
+        clients = [dict(zip(column_names, row)) for row in rows]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": clients}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+def get_customers_by_name_surname(name=None, surname=None):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        name = unquote(name) if name else None
+        surname = unquote(surname) if surname else None
+
+        print(f"Searching: name={name}, surname={surname}")  # дебаг
+
+        cursor.execute('''
+            SELECT * FROM customer_card 
+            WHERE (:name IS NULL OR cust_name LIKE '%' || :name || '%') 
+            AND (:surname IS NULL OR cust_surname LIKE '%' || :surname || '%') 
+            ORDER BY cust_surname
+        ''', {'name': name, 'surname': surname})
+
+        rows = cursor.fetchall()
+        column_names = [description[0] for description in cursor.description]
+        customers = [dict(zip(column_names, row)) for row in rows]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": customers}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
