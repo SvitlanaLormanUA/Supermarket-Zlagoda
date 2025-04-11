@@ -7,6 +7,7 @@ from models import (
     add_new_product,
     add_new_store_product,
     delete_product,
+    delete_store_product,
     delete_category,
     update_product,
     update_store_product,
@@ -89,6 +90,11 @@ async def add_store_product(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }   
+    
+@app.delete("/products-in-store/:id")
+async def del_store_product(request):
+    product_id = request.path_params.get("id")
+    return delete_store_product(product_id)   
  
 @app.get("/products-in-store/total_price")
 async def total_price():

@@ -18,6 +18,7 @@ from .add import (
 
 from .delete import (
     delete_product,
+    delete_store_product,
     delete_category
 )
 
@@ -39,6 +40,7 @@ __all__ = [
     'add_new_store_product',
     'add_new_category',
     'delete_product',
+    'delete_store_product',
     'delete_category',
     'update_product',
     'update_store_product',
