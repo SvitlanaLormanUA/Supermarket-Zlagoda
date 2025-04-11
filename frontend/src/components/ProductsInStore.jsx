@@ -59,6 +59,31 @@ function ProductsInStore() {
   }, []);
 
   
+  const handleSearch = (value) => {
+    if (!value) {
+      fetch('http://127.0.0.1:5174/products-in-store')
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = JSON.parse(data.body).data;
+          setProductsInStore(parsedData);
+        });
+    } else {
+      fetch(`http://127.0.0.1:5174/products-in-store/search/${value}`)
+        .then((res) => res.json())
+        .then((data) => {
+          const parsedData = JSON.parse(data.body).data;
+          if (Array.isArray(parsedData)) {
+            setProductsInStore(parsedData);
+          } else {
+            setProductsInStore([parsedData]);
+          }
+        })
+        .catch(() => {
+          setProductsInStore([]);
+        });
+    }
+  };
+
   const addProductsInStore = (newStoreProduct) => {
     if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) || (!validateProductInStore(newStoreProduct))) {
       return;
@@ -108,15 +133,15 @@ function ProductsInStore() {
         },
         body: JSON.stringify(editedData),
       });
-  
+
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(errorText || 'Error updating category');
+        throw new Error(errorText || 'Error updating store product');
       }
-  
+
       const updatedResponse = await fetch('http://127.0.0.1:5174/products-in-store');
       const updatedData = await updatedResponse.json();
-  
+
       const parsedData = updatedData.data || JSON.parse(updatedData.body).data;
       setProductsInStore(parsedData);
     } catch (error) {
@@ -125,15 +150,32 @@ function ProductsInStore() {
     }
   };
 
-  const deleteProductsInStore = () => {
-    // example
+  const deleteProductsInStore = async (id_product) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5174/products-in-store/${id_product}`, {
+        method: "DELETE",
+      });
 
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.data || `Cannot delete store product #${id_product}`);
+      }
+
+      const updatedResponse = await fetch('http://127.0.0.1:5174/products-in-store');
+      const updatedData = await updatedResponse.json();
+
+      const parsedData = updatedData.data || JSON.parse(updatedData.body).data;
+      setProductsInStore(parsedData);
+    } catch (error) {
+      console.error('Error editing the category:', error);
+      alert(error.message);
+    }
   };
 
   return (
     <div className="products-container">
       <div className="searchAndBackSection">
-        <SearchAndBack />
+        <SearchAndBack onSearch={handleSearch} />
       </div>
 
       <ControlButtons

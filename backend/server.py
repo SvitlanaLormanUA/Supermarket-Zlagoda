@@ -7,6 +7,7 @@ from models import (
     add_new_product,
     add_new_store_product,
     delete_product,
+    delete_store_product,
     delete_category,
     update_product,
     update_store_product,
@@ -15,7 +16,8 @@ from models import (
     get_total_quantity,
     add_new_category,
     get_all_customer_cards,
-    get_products_info
+    get_products_info,
+    get_store_products_by_UPC
 )
 
 import json
@@ -72,6 +74,11 @@ async def get_products_by_category_route(request):
 async def get_store_products():
     return get_all_store_products()
 
+@app.get("/products-in-store/search/:UPC")
+async def get_all_store_products_by_UPC(request):
+    UPC = request.path_params.get("UPC")
+    return get_store_products_by_UPC(UPC)
+
 @app.patch("/products-in-store/:id")
 async def upd_store_product(request):
     product_id = request.path_params.get("id")
@@ -89,6 +96,11 @@ async def add_store_product(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }   
+    
+@app.delete("/products-in-store/:id")
+async def del_store_product(request):
+    product_id = request.path_params.get("id")
+    return delete_store_product(product_id)   
  
 @app.get("/products-in-store/total_price")
 async def total_price():
