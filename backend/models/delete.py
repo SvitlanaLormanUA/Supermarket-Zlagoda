@@ -1,8 +1,10 @@
 import sqlite3
+import os
 from robyn import jsonify 
-from os import environ as env
+from dotenv import load_dotenv
 
-DB_LINK = env.get("DB_LINK")
+load_dotenv()
+DB_LINK = os.getenv("DB_LINK")
 
 def delete_product(product_id):
     conn = None
@@ -87,6 +89,51 @@ def delete_category(category_number):
             "headers": {"Content-Type": "application/json"}
         }
 
+    finally:
+        if conn:
+            conn.close()
+
+def delete_customer(card_number):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            DELETE FROM customer_card WHERE card_number = :card_number
+        ''', {'card_number': card_number})
+
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {
+                "status_code": 404,
+                "body": jsonify({
+                    "status": "error",
+                    "message": f"Customer with card_number {card_number} not found"
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        return {
+            "status_code": 200,
+            "body": jsonify({
+                "status": "success",
+                "message": f"Customer {card_number} deleted successfully"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
     finally:
         if conn:
             conn.close()

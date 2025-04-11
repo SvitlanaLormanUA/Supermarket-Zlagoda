@@ -6,25 +6,31 @@ from .get import (
     get_total_price,
     get_total_quantity,
     get_all_customer_cards,
-    get_products_info
+    get_products_info,
+    get_customers_by_name_surname,
+    get_customer_info_ordered,
+
 )
 
 from .add import (
     add_new_product,
     add_new_store_product,
     add_new_category,
+    add_customer
     
 )
 
 from .delete import (
     delete_product,
-    delete_category
+    delete_category,
+    delete_customer
 )
 
 from .update import (
     update_product,
     update_store_product,
-    update_category
+    update_category,
+    update_customer
 )
 
 __all__ = [
@@ -35,13 +41,21 @@ __all__ = [
     'get_total_price',
     'get_total_quantity',
     'get_all_customer_cards',
+    'get_products_info',
+    'get_customer_info_ordered',
+    'get_customers_by_name_surname'
+    
     'add_new_product',
     'add_new_store_product',
     'add_new_category',
+    'add_customer',
+
     'delete_product',
     'delete_category',
+    'delete_customer',
+
     'update_product',
     'update_store_product',
     'update_category',
-    'get_products_info'
+    'update_customer',
 ]

@@ -4,18 +4,26 @@ from models import (
     get_all_categories,
     get_products_by_category,
     get_product_info,
+    get_all_customer_cards,
+    get_customer_info_ordered,
+    get_customers_by_name_surname,
+    get_total_price,
+    get_total_quantity,
+
     add_new_product,
     add_new_store_product,
+    add_new_category,
+    add_customer,
+
     delete_product,
     delete_category,
+    delete_customer,
+
     update_product,
     update_store_product,
     update_category,
-    get_total_price,
-    get_total_quantity,
-    add_new_category,
-    get_all_customer_cards,
-    get_products_info
+    update_customer
+  
 )
 
 import json
@@ -40,7 +48,7 @@ async def upd_product(request):
 
 @app.get("/product-by-ID")
 async def get_products_information():
-    return get_products_info()
+    return get_product_info()
 
 @app.delete("/products/:id")
 async def del_product(request):
@@ -67,7 +75,6 @@ async def get_products_by_category_route(request):
 
 
 # Products In Store
-
 @app.get("/products-in-store")
 async def get_store_products():
     return get_all_store_products()
@@ -100,8 +107,6 @@ async def total_quantity():
 
 
 # Categories
-
-
 @app.get("/categories")
 async def get_categories():
     return get_all_categories()
@@ -144,9 +149,49 @@ async def add_category(request):
  
 
 # Customers Card
-
-
 @app.get("/customers-card")
 async def get_customers_cards():
-    return get_all_customer_cards()
+    return get_customer_info_ordered()
+
+@app.get("/customers-card/search")
+async def search_customers(request):
+    name = request.query_params.get("name")
+    surname = request.query_params.get("surname")
+    return get_customers_by_name_surname(name, surname)
+
+@app.post("/customers-card/new_customer")
+async def add_customer(request):
+    try:
+        customer_data = json.loads(request.body)
+        return add_customer(customer_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"},
+        }
+    
+@app.delete("/customers-card/:card_number")
+async def del_customer(request):
+    card_number = request.path_params.get("card_number")
+    return delete_customer(card_number)
+
+@app.patch("/customers-card/:card_number")
+async def update_customer_route(request):
+    try:
+        update_data = json.loads(request.body)
+        card_number = request.path_params.get("card_number")
+        return update_customer(card_number, update_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({
+                "status": "error",
+                "message": "Invalid JSON format"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
 app.start(port=PORT, host="127.0.0.1")
+
+
