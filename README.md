@@ -11,5 +11,4 @@ To run the application your .env.local file should look like this:
 
 ```
 DB_LINK # place a local link to the database
-REACT_APP_PUBLIC_DOMAIN 
 ```
