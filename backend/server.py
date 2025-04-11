@@ -9,7 +9,11 @@ from models import (
     get_customers_by_name_surname,
     get_total_price,
     get_total_quantity,
+    get_store_products_by_UPC,
+    get_total_price,
+    get_total_quantity,
 
+    add_new_category,
     add_new_product,
     add_new_store_product,
     add_new_category,
@@ -23,11 +27,7 @@ from models import (
     update_product,
     update_store_product,
     update_category,
-    get_total_price,
-    get_total_quantity,
-    add_new_category,
-    get_all_customer_cards,
-    get_products_info
+    update_customer,
 )
 
 import json
@@ -49,10 +49,6 @@ async def upd_product(request):
     product_id = request.path_params.get("id")
     product_data = json.loads(request.body)
     return update_product(product_id, product_data)
-
-@app.get("/product-by-ID")
-async def get_products_information():
-    return get_product_info()
 
 @app.delete("/products/:id")
 async def del_product(request):
