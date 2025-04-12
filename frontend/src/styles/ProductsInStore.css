@@ -13,3 +13,20 @@
     padding: 10px;
     border-radius: 8px;
 }
+
+.filter-section {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    gap: 10px;
+    /* background-color: #ffffff; */
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+}

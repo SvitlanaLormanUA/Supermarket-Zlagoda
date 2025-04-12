@@ -14,6 +14,9 @@ function ProductsInStore() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [filterDiscounted, setFilterDiscounted] = useState(false);
+  const [filterNonDiscounted, setFilterNonDiscounted] = useState(false);
+
 
   const [productOptions, setProductOptions] = useState([]);
   const [UPCOptions, setUPCOptions] = useState([]);
@@ -173,6 +176,26 @@ function ProductsInStore() {
     }
   };
 
+  const fetchFilteredProducts = (onlyDiscounted, onlyNonDiscounted) => {
+    let url = 'http://127.0.0.1:5174/products-in-store';
+
+    if (onlyDiscounted) {
+      url += '?discount=true';
+    } else if (onlyNonDiscounted) {
+      url += '?discount=false';
+    }
+
+    fetch(url)
+      .then((res) => res.json())
+      .then((data) => {
+        const parsed = data.data ?? JSON.parse(data.body)?.data;
+        setProductsInStore(parsed);
+      })
+      .catch((error) => {
+        console.error('Error fetching filtered products:', error);
+      });
+  };
+
   return (
     <div className="products-container">
       <div className="searchAndBackSection">
@@ -196,14 +219,13 @@ function ProductsInStore() {
         ]}
         onSort={(field, order) => {
           if (!field || !order) {
-            fetch('http://127.0.0.1:5174/products-in-store')
-              .then(res => res.json())
-              .then(data => {
-                const parsed = JSON.parse(data.body).data;
-                setProductsInStore(parsed);
-              });
+            fetchFilteredProducts(filterDiscounted, filterNonDiscounted);
           } else {
-            fetch(`http://127.0.0.1:5174/products-in-store/sort/${field}/${order}`)
+            let url = `http://127.0.0.1:5174/products-in-store/sort/${field}/${order}`;
+            if (filterDiscounted) url += '?discount=true';
+            else if (filterNonDiscounted) url += '?discount=false';
+
+            fetch(url)
               .then(res => res.json())
               .then(data => {
                 const parsed = JSON.parse(data.body).data;
@@ -212,6 +234,35 @@ function ProductsInStore() {
           }
         }}
       />
+
+<div className="filter-section">
+        <label>
+          <input
+            type="checkbox"
+            checked={filterDiscounted}
+            onChange={() => {
+              const newValue = !filterDiscounted;
+              setFilterDiscounted(newValue);
+              setFilterNonDiscounted(false);
+              fetchFilteredProducts(newValue, false);
+            }}
+          />
+          Only Promotional Products
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={filterNonDiscounted}
+            onChange={() => {
+              const newValue = !filterNonDiscounted;
+              setFilterNonDiscounted(newValue);
+              setFilterDiscounted(false);
+              fetchFilteredProducts(false, newValue);
+            }}
+          />
+          Non Promotional Products
+        </label>
+      </div>
 
       <AddItemModal
         fields={productsInStoreFields}

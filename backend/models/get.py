@@ -174,7 +174,7 @@ def get_store_products_by_UPC(upc_value):
             conn.close()
 
 
-def get_sorted_products_in_store(field, order):
+def get_sorted_products_in_store(field, order, discount_filter=None):
     valid_fields = {"product_name", "products_number"}
     valid_order = {"asc", "desc"}
 
@@ -207,8 +207,15 @@ def get_sorted_products_in_store(field, order):
         FROM store_product sp
         JOIN product p ON sp.id_product = p.id_product
         JOIN category c ON p.category_number = c.category_number
-        ORDER BY {field} {order.upper()}
         """
+
+        if discount_filter == "true":
+            query += " WHERE sp.promotional_product = 1"
+        elif discount_filter == "false":
+            query += " WHERE sp.promotional_product = 0"
+
+        query += f" ORDER BY {field} {order.upper()}"
+
         cursor.execute(query)
         products = cursor.fetchall()
 
@@ -246,6 +253,7 @@ def get_sorted_products_in_store(field, order):
     finally:
         if conn:
             conn.close()
+
 
 
 

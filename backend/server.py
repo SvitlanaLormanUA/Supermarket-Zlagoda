@@ -132,8 +132,9 @@ async def total_quantity():
 def sort_store_products(req):
     field = req.path_params["field"]
     order = req.path_params["order"]
+    discount_filter = req.query_params.get("discount")
 
-    result = get_sorted_products_in_store(field, order)
+    result = get_sorted_products_in_store(field, order, discount_filter)
     return jsonify(result)
 
 
