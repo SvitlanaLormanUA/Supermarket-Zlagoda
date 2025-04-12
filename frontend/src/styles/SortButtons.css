@@ -1,25 +1,32 @@
 .sort-section {
-    margin-left: 5px;
     display: flex;
     align-items: center;
     gap: 10px;
+    width: 100%;
+    border-radius: 10px;
+    background-color: #496e4a;
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .sort-label {
+    color: rgb(255, 255, 255);
+    font-size: 16px;
     font-weight: bold;
+    margin-left: 20px;
 }
 
 .sort-button {
     padding: 8px 15px;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
     background-color: #ffffff;
-    border-radius: 15px;
+    color: #496e4a;
+    font-weight: bold;
     border: none;
-    transition: background-color 0.3s, transform 0.2s;
+    border-radius: 10px;
 }
 
 .sort-button:hover {
-    background-color: #e0e0e0;
+    font-weight: bold;
 }
-

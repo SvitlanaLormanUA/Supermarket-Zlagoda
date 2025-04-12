@@ -22,7 +22,7 @@ function SortButtons({ onSort, fields = [] }) {
 
   const getButtonLabel = (label, field) => {
     if (activeField !== field) return label;
-    return `${label} (${order === 'asc' ? '↑' : '↓'})`;
+    return `${label} ${order === 'asc' ? '▲' : '▼'}`;
   };
 
   return (
