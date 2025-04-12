@@ -4,7 +4,6 @@ from models import (
     get_all_categories,
     get_products_by_category,
     get_product_info,
-    get_all_customer_cards,
     get_customer_info_ordered,
     get_customers_by_name_surname,
     get_total_price,
@@ -14,8 +13,8 @@ from models import (
     get_total_quantity,
     get_promotional_products,
     get_non_promotional_products,
+    get_products_info,
 
-    add_new_category,
     add_new_product,
     add_new_store_product,
     add_new_category,
@@ -86,6 +85,10 @@ async def get_store_products(request):
         return get_non_promotional_products()
     else: 
      return get_all_store_products()  
+    
+@app.get("/product-by-ID")
+async def get_products_information():
+    return get_products_info()
 
 @app.get("/products-in-store/search/:UPC")
 async def get_all_store_products_by_UPC(request):

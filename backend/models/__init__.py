@@ -5,7 +5,6 @@ from .get import (
     get_product_info,
     get_total_price,
     get_total_quantity,
-    get_all_customer_cards,
     get_products_info,
     get_store_products_by_UPC,
     get_promotional_products,
