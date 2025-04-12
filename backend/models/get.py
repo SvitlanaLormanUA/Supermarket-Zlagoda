@@ -174,6 +174,81 @@ def get_store_products_by_UPC(upc_value):
             conn.close()
 
 
+def get_sorted_products_in_store(field, order):
+    valid_fields = {"product_name", "products_number"}
+    valid_order = {"asc", "desc"}
+
+    if field not in valid_fields or order.lower() not in valid_order:
+        return {
+            "status_code": 400,
+            "body": jsonify({
+                "status": "error",
+                "message": "Invalid sort parameters."
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = f"""
+        SELECT  
+            sp.UPC,
+            sp.UPC_prom,
+            sp.id_product,
+            p.product_name,
+            p.characteristics,
+            c.category_name,
+            sp.selling_price,
+            sp.products_number,
+            sp.promotional_product
+        FROM store_product sp
+        JOIN product p ON sp.id_product = p.id_product
+        JOIN category c ON p.category_number = c.category_number
+        ORDER BY {field} {order.upper()}
+        """
+        cursor.execute(query)
+        products = cursor.fetchall()
+
+        result = []
+        for product in products:
+            product_dict = {
+                'UPC': product[0],
+                'UPC_prom': product[1],
+                'id_product': product[2],
+                'product_name': product[3],
+                'characteristics': product[4],
+                'category_name': product[5],
+                'selling_price': float(product[6]),
+                'products_number': int(product[7]),
+                'promotional_product': bool(product[8])
+            }
+            result.append(product_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    finally:
+        if conn:
+            conn.close()
+
+
+
 def get_all_categories():
     conn = None
     try:

@@ -14,6 +14,7 @@ from models import (
     get_promotional_products,
     get_non_promotional_products,
     get_products_info,
+    get_sorted_products_in_store,
 
     add_new_product,
     add_new_store_product,
@@ -125,6 +126,15 @@ async def total_price():
 @app.get("/products-in-store/total_quantity")
 async def total_quantity():
     return get_total_quantity()
+
+
+@app.get("/products-in-store/sort/:field/:order")
+def sort_store_products(req):
+    field = req.path_params["field"]
+    order = req.path_params["order"]
+
+    result = get_sorted_products_in_store(field, order)
+    return jsonify(result)
 
 
 # Categories
