@@ -12,6 +12,7 @@
 @import './styles/CustomersCard.css';
 @import './styles/DeleteItemModal.css';
 @import './styles/EditItemModal.css';
+@import './styles/SortButtons.css';
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 

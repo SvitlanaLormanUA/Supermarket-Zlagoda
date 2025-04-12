@@ -1,0 +1,25 @@
+.sort-section {
+    margin-left: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-label {
+    font-weight: bold;
+}
+
+.sort-button {
+    padding: 8px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #ffffff;
+    border-radius: 15px;
+    border: none;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.sort-button:hover {
+    background-color: #e0e0e0;
+}
+

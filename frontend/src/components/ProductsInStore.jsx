@@ -6,6 +6,7 @@ import CustomTable from './CustomTable';
 import AddItemModal from './AddItemModal';
 import EditItemModal from "./EditItemModal";
 import DeleteItemModal from "./DeleteItemModal";
+import SortButtons from './SortButtons';
 
 function ProductsInStore() {
   const [productsInStore, setProductsInStore] = useState([]);
@@ -58,7 +59,7 @@ function ProductsInStore() {
       });
   }, []);
 
-  
+
   const handleSearch = (value) => {
     if (!value) {
       fetch('http://127.0.0.1:5174/products-in-store')
@@ -186,6 +187,30 @@ function ProductsInStore() {
         deleteItems={productsInStore}
         itemKey="product_name"
         itemIdKey="id_product"
+      />
+
+      <SortButtons
+        fields={[
+          { key: 'product_name', label: 'Name' },
+          { key: 'products_number', label: 'Quantity' }
+        ]}
+        onSort={(field, order) => {
+          if (!field || !order) {
+            fetch('http://127.0.0.1:5174/products-in-store')
+              .then(res => res.json())
+              .then(data => {
+                const parsed = JSON.parse(data.body).data;
+                setProductsInStore(parsed);
+              });
+          } else {
+            fetch(`http://127.0.0.1:5174/products-in-store/sort/${field}/${order}`)
+              .then(res => res.json())
+              .then(data => {
+                const parsed = JSON.parse(data.body).data;
+                setProductsInStore(parsed);
+              });
+          }
+        }}
       />
 
       <AddItemModal

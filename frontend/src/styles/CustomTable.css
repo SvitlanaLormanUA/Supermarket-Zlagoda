@@ -8,6 +8,7 @@
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     background-color: #fff;
+    margin-top: 20px;
 }
 
 .custom-table th,
