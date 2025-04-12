@@ -12,6 +12,8 @@ from models import (
     get_store_products_by_UPC,
     get_total_price,
     get_total_quantity,
+    get_promotional_products,
+    get_non_promotional_products,
 
     add_new_category,
     add_new_product,
@@ -76,8 +78,14 @@ async def get_products_by_category_route(request):
 
 # Products In Store
 @app.get("/products-in-store")
-async def get_store_products():
-    return get_all_store_products()
+async def get_store_products(request):
+    discount = request.query_params.get("discount") 
+    if discount == "true":  
+        return get_promotional_products()
+    elif discount == "false":
+        return get_non_promotional_products()
+    else: 
+     return get_all_store_products()  
 
 @app.get("/products-in-store/search/:UPC")
 async def get_all_store_products_by_UPC(request):

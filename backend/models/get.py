@@ -58,7 +58,6 @@ def get_product_info(product_id):
 def get_all_store_products():
     conn = None
     try:
-        # Create a new connection for this request
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
@@ -118,7 +117,7 @@ def get_all_store_products():
 def get_store_products_by_UPC(upc_value):
     conn = None
     try:
-        conn = sqlite3.connect('./database/supermarket.db')
+        conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -402,6 +401,55 @@ def get_products_info():
         if conn:
             conn.close()            
 
+def get_promotional_products():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT p.id_product, p.product_name, sp.products_number
+            FROM product p
+            JOIN store_product sp ON p.id_product = sp.id_product
+            WHERE sp.promotional_product = 1
+            ORDER BY sp.products_number DESC
+        ''')
+
+        products = cursor.fetchall()
+        result = [{'id_product': row[0], 'product_name': row[1], 'products_number': row[2]} for row in products]
+
+        return {"status": "success", "data": result}
+
+    except sqlite3.Error as e:
+        return {"status": "error", "data": [], "message": f"Database error: {str(e)}"}
+    finally:
+        if conn:
+            conn.close()
+
+def get_non_promotional_products():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT p.id_product, p.product_name, sp.products_number
+            FROM product p
+            JOIN store_product sp ON p.id_product = sp.id_product
+            WHERE sp.promotional_product = 0
+            ORDER BY sp.products_number DESC
+        ''')
+
+        products = cursor.fetchall()
+        result = [{'id_product': row[0], 'product_name': row[1], 'products_number': row[2]} for row in products]
+
+        return {"status": "success", "data": result}
+
+    except sqlite3.Error as e:
+        return {"status": "error", "data": [], "message": f"Database error: {str(e)}"}
+    finally:
+        if conn:
+            conn.close()
 
 # CUSTOMERS
 def get_customer_info_ordered():
