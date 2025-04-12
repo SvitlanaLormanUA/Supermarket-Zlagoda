@@ -195,3 +195,65 @@ def update_customer(card_number, update_data):
     finally:
         if conn:
             conn.close()
+
+#EMPLOYEES
+def update_employee(employee_id, employee_data):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            UPDATE employee
+            SET
+                empl_surname = ?,
+                empl_name = ?,
+                empl_patronymic = ?,
+                empl_role = ?,
+                salary = ?,
+                date_of_birth = ?,
+                date_of_start = ?,
+                phone_number = ?,
+                city = ?,
+                street = ?,
+                zip_code = ?
+            WHERE id_employee = ?
+        ''', (
+            employee_data['empl_surname'],
+            employee_data['empl_name'],
+            employee_data['empl_patronymic'],
+            employee_data['empl_role'],
+            employee_data['salary'],
+            employee_data['date_of_birth'],
+            employee_data['date_of_start'],
+            employee_data['phone_number'],
+            employee_data['city'],
+            employee_data['street'],
+            employee_data['zip_code'],
+            employee_id
+        ))
+
+        conn.commit()
+
+        if cursor.rowcount == 0:
+            return {
+                "status_code": 404,
+                "body": jsonify({"data": "Employee not found"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": "Employee updated successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()

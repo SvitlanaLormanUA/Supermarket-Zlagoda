@@ -171,3 +171,59 @@ def add_customer(customer_data):
     finally:
         if conn:
             conn.close()
+
+def add_new_employee(employee_data):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO employee (
+                id_employee, empl_surname, empl_name, empl_patronymic,
+                empl_role, salary, date_of_birth, date_of_start,
+                phone_number, city, street, zip_code
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            employee_data['id_employee'],
+            employee_data['empl_surname'],
+            employee_data['empl_name'],
+            employee_data['empl_patronymic'],
+            employee_data['empl_role'],
+            employee_data['salary'],
+            employee_data['date_of_birth'],
+            employee_data['date_of_start'],
+            employee_data['phone_number'],
+            employee_data['city'],
+            employee_data['street'],
+            employee_data['zip_code']
+        ))
+
+        conn.commit()
+
+        return {
+            "status_code": 201,
+            "body": jsonify({"data": "Employee added successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.IntegrityError as e:
+        return {
+            "status_code": 400,
+            "body": jsonify({
+                "status": "error",
+                "message": f"Integrity error: {str(e)} (e.g., duplicate id_employee)"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+

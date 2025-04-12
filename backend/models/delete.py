@@ -181,3 +181,44 @@ def delete_customer(card_number):
     finally:
         if conn:
             conn.close()
+
+#EMPLOYEES
+def delete_employee(employee_id):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id_employee FROM employee WHERE id_employee = ?
+        ''', (employee_id,))
+        employee_exists = cursor.fetchone()
+
+        if not employee_exists:
+            return {
+                "status_code": 404,
+                "body": jsonify({"data": "Employee not found"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        cursor.execute('''
+            DELETE FROM employee WHERE id_employee = ?
+        ''', (employee_id,))
+
+        conn.commit()
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": "Employee deleted successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
