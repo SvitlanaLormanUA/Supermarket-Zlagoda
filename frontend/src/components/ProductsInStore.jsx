@@ -30,6 +30,10 @@ function ProductsInStore() {
   ];
 
   useEffect(() => {
+    fetchAllStoreProducts();
+  }, []);
+
+  const fetchAllStoreProducts = () => {
     fetch('http://127.0.0.1:5174/products-in-store')
       .then((res) => res.json())
       .then((data) => {
@@ -43,7 +47,7 @@ function ProductsInStore() {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
-  }, []);
+  };
 
   useEffect(() => {
     fetch('http://127.0.0.1:5174/product-by-ID')
@@ -64,12 +68,7 @@ function ProductsInStore() {
 
   const handleSearch = (value) => {
     if (!value) {
-      fetch('http://127.0.0.1:5174/products-in-store')
-        .then((res) => res.json())
-        .then((data) => {
-          const parsedData = JSON.parse(data.body).data;
-          setProductsInStore(parsedData);
-        });
+      fetchAllStoreProducts();
     } else {
       fetch(`http://127.0.0.1:5174/products-in-store/search/${value}`)
         .then((res) => res.json())
@@ -108,15 +107,7 @@ function ProductsInStore() {
         return response.json();
       })
       .then(() => {
-        return fetch('http://127.0.0.1:5174/products-in-store')
-          .then((res) => res.json())
-          .then((data) => {
-            const parsedData = JSON.parse(data.body).data;
-            setProductsInStore(parsedData);
-          })
-          .catch((error) => {
-            console.error('Error fetching categories:', error);
-          });
+        fetchAllStoreProducts();
       })
       .catch((error) => {
         console.error('Error adding new category:', error);
