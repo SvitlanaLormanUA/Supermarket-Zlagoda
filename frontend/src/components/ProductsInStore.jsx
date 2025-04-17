@@ -235,7 +235,8 @@ function ProductsInStore() {
         }}
       />
 
-<div className="filter-section">
+      <div className="filter-section">
+        <span className="filter-label">Filter:</span>
         <label>
           <input
             type="checkbox"
