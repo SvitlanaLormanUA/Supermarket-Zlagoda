@@ -16,6 +16,7 @@ from models import (
     get_products_info,
     get_sorted_products_in_store,
     get_sorted_categories,
+    get_all_receipts,
 
     add_new_product,
     add_new_store_product,
@@ -233,6 +234,13 @@ async def update_customer_route(request):
             }),
             "headers": {"Content-Type": "application/json"}
         }
+
+# Receipts
+@app.get("/receipts")
+async def get_receipts():
+    return get_all_receipts()
+
+
 
 app.start(port=PORT, host="127.0.0.1")
 

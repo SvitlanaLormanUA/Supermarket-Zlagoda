@@ -682,3 +682,54 @@ def get_all_employees():
     finally:
         if conn:
             conn.close()
+
+
+def get_all_receipts():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                check_number,
+                id_employee,
+                card_number,
+                print_date,
+                sum_total,
+                vat              
+            FROM receipt
+        ''')
+
+        receipts = cursor.fetchall()
+        result = []
+        for receipt in receipts:
+            receipt_dict = {
+                'check_number': receipt[0],
+                'id_employee': receipt[1],
+                'card_number': receipt[2],
+                'print_date': receipt[3],
+                'sum_total': receipt[4],
+                'vat': receipt[5],
+            }
+            result.append(receipt_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
