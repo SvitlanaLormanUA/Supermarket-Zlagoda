@@ -10,10 +10,18 @@ function SearchAndBack({ onSearch }) {
   };
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setSearchTerm(value);
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchClick = () => {
     if (onSearch) {
-      onSearch(value);
+      onSearch(searchTerm);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearchClick();
     }
   };
 
@@ -30,8 +38,15 @@ function SearchAndBack({ onSearch }) {
           className="search-input"
           value={searchTerm}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
         />
-        <img src="/assets/images/search.png" alt="Search" className="search-icon" />
+        <img
+          src="/assets/images/search.png"
+          alt="Search"
+          className="search-icon"
+          onClick={handleSearchClick}
+          style={{ cursor: 'pointer' }}
+        />
       </div>
     </div>
   );
