@@ -48,12 +48,6 @@ INSERT INTO store_product (
     ('678901234567', NULL, 40, 2.49, 50, FALSE)
 ''')
 
-cursor.execute(''' INSERT INTO receipt_product (check_number, UPC, product_quantity, total_price) 
-VALUES 
-    ('CHECK001', '1234567890123', 2, 50.00),  
-    ('CHECK002', '9876543210987', 1, 20.00), 
-    ('CHECK003', '2345678901234', 3, 75.00); 
-''')
 cursor.execute('''
 INSERT INTO Employee (
     id_employee, 
