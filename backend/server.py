@@ -15,6 +15,7 @@ from models import (
     get_non_promotional_products,
     get_products_info,
     get_sorted_products_in_store,
+    get_sorted_categories,
 
     add_new_product,
     add_new_store_product,
@@ -142,6 +143,15 @@ def sort_store_products(req):
 @app.get("/categories")
 async def get_categories():
     return get_all_categories()
+
+@app.get("/categories/sort/:field/:order")
+def sort_categories(req):
+    field = req.path_params["field"]
+    order = req.path_params["order"]
+
+    result = get_sorted_categories(field, order)
+    return jsonify(result)
+
 
 @app.patch("/categories/:id")
 async def upd_category(request):

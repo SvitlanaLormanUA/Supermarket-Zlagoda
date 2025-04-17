@@ -296,6 +296,64 @@ def get_all_categories():
         if conn:
             conn.close()
 
+
+def get_sorted_categories(field, order):
+    valid_fields = {"category_name", "category_number"}
+    valid_order = {"asc", "desc"}
+
+    if field not in valid_fields or order.lower() not in valid_order:
+        return {
+            "status_code": 400,
+            "body": jsonify({
+                "status": "error",
+                "message": "Invalid sort parameters."
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = f"""
+            SELECT category_number, category_name FROM category
+        """
+
+        query += f" ORDER BY {field} {order.upper()}"
+
+        cursor.execute(query)
+        categories = cursor.fetchall()
+        result = []
+        for category in categories:
+            category_dict = {
+                'category_number': category[0],
+                'category_name': category[1]
+            }
+            result.append(category_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    finally:
+        if conn:
+            conn.close()
+
+
+
 def get_products_by_category(category_number):
     conn = None
     try:

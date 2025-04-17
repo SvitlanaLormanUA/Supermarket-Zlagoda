@@ -17,7 +17,6 @@ function ProductsInStore() {
   const [filterDiscounted, setFilterDiscounted] = useState(false);
   const [filterNonDiscounted, setFilterNonDiscounted] = useState(false);
 
-
   const [productOptions, setProductOptions] = useState([]);
   const [UPCOptions, setUPCOptions] = useState([]);
 

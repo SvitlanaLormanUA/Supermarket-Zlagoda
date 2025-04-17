@@ -10,6 +10,7 @@ from .get import (
     get_promotional_products,
     get_non_promotional_products,
     get_sorted_products_in_store,
+    get_sorted_categories,
 
     get_all_employees,
 
@@ -61,6 +62,7 @@ __all__ = [
     'get_promotional_products',
     'get_non_promotional_products',
     'get_sorted_products_in_store',
+    'get_sorted_categories',
     
     'get_customer_info_ordered',
     'get_customers_by_name_surname'
