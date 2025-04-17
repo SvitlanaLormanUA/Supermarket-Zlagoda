@@ -63,10 +63,10 @@ function Shop() {
                         </button>
                     </Link>
 
-                    <Link to="" style={{ textDecoration: 'none' }}>
+                    <Link to="/shop/receipts" style={{ textDecoration: 'none' }}>
                         <button className="shop-section">
                             <img src="/assets/images/receipt.png" alt="Receipt" className="button-icon" />
-                            Print a Receipt
+                            Receipts
                         </button>
                     </Link>
 

@@ -8,6 +8,7 @@ import ProductsInStore from './components/ProductsInStore';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
+import Receipts from './components/Receipts';
 
 function App() {
   
@@ -28,6 +29,7 @@ function App() {
               <Route path="/shop/categories" element={<Categories />} />
               <Route path="/shop/products-in-store" element={<ProductsInStore />} />
               <Route path="/shop/customers-card" element={<CustomersCard />} />
+              <Route path="/shop/receipts" element={<Receipts />} />
             </Routes>
           </div>
         </>
