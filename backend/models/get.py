@@ -684,6 +684,47 @@ def get_all_employees():
             conn.close()
 
 
+def get_employee_by_id():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id_employee, empl_surname
+            FROM Employee
+        ''')
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()               
+
+
 def get_all_receipts():
     conn = None
     try:

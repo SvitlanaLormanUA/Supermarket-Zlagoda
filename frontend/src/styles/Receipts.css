@@ -1,0 +1,126 @@
+.receipt-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.receipt-modal-header {
+    position: relative;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.receipt-modal-content {
+    position: relative;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    width: 800px;
+    display: flex;
+    gap: 40px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-left,
+.modal-right {
+    flex: 1;
+}
+
+.modal-left {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 6px;
+    font-family: monospace;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.modal-right {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.modal-right input,
+.modal-right select {
+    width: 300px;
+    margin-bottom: 12px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.modal-actions {
+    width: 100%;
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-actions .save-new-receipt {
+    padding: 8px 16px;
+    border: none;
+    background-color: #1e88e5;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+table{
+    margin-top: 0px;
+}
+
+.addNewReceipt {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #1e88e5;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close-button {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+    margin-left: auto;
+}
+
+.close-button:hover {
+    color: #000;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #000000;
+    margin-right: auto;
+}
+
+.back-button:hover {
+    text-decoration: underline;
+}
+

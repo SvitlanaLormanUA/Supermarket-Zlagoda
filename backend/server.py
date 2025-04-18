@@ -17,6 +17,7 @@ from models import (
     get_sorted_products_in_store,
     get_sorted_categories,
     get_all_receipts,
+    get_employee_by_id,
 
     add_new_product,
     add_new_store_product,
@@ -239,6 +240,11 @@ async def update_customer_route(request):
 @app.get("/receipts")
 async def get_receipts():
     return get_all_receipts()
+
+
+@app.get("/employee-by-ID")
+async def get_empl_by_id():
+    return get_employee_by_id()
 
 
 
