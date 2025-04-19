@@ -1,4 +1,6 @@
 from robyn import Robyn, jsonify, ALLOW_CORS
+from robyn.exceptions import HTTPException
+from crud import create_user, authenticate_user, get_employee_id
 from models import (
     get_all_store_products,
     get_all_categories,
@@ -291,5 +293,69 @@ async def delete_employee_route(request):
     employee_id = request.path_params.get("id")
     return delete_employee(employee_id)
 
+# authentication / authorization
+@app.post("/users/register")
+async def register_user(request):
+    try:
+        data = json.loads(request.body)
+        
+        required_fields = [
+            "empl_surname", "empl_name",
+            "empl_role",
+            "email", "password"
+        ]
+        for field in required_fields:
+            if field not in data:
+                raise ValueError(f"Missing required field: {field}")
+
+        # перевірка на те, чи такий співробітник існує
+        employee_id = get_employee_id(
+            surname=data["empl_surname"],
+            name=data["empl_name"],
+            role=data["empl_role"]
+        )
+        
+        if not employee_id:
+            raise ValueError("Employee not found in HR records")
+
+        user = create_user(
+            employee_id=employee_id,
+            email=data["email"],
+            password=data["password"]
+        )
+        
+        return jsonify({
+            "account_id": user.account_id,
+            "employee_id": user.employee_id,
+            "email": user.email,
+            "is_active": user.is_active
+        })
+        
+    except json.JSONDecodeError:
+        raise HTTPException(400, "Invalid JSON")
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+@app.post("/users/login")
+async def login_user(request):
+    try:
+        data = json.loads(request.body)
+        email = data.get("email")
+        password = data.get("password")
+        
+        if not email or not password:
+            raise ValueError("Email and password are required")
+            
+        token = authenticate_user(email=email, password=password)
+        
+        if token is None:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        return jsonify({"access_token": token})
+        
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid JSON")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 app.start(port=PORT, host="127.0.0.1")

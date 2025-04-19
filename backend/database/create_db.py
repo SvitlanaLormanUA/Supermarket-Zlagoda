@@ -89,23 +89,23 @@ CREATE TABLE IF NOT EXISTS sale (
 )
 ''')
 cursor.execute('''
-CREATE TABLE IF NOT EXISTS accounts (
+CREATE TABLE IF NOT EXISTS account (
     account_id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    salt TEXT NOT NULL,
+    password_hash TEXT NOT NULL, 
     is_active BOOLEAN DEFAULT 1,
     last_login TIMESTAMP,
     failed_attempts INTEGER DEFAULT 0,
     account_locked BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
     FOREIGN KEY (employee_id) REFERENCES employee(id_employee) ON DELETE CASCADE
 )
 ''')
 
 # для швидкого пошуку за email
-cursor.execute('CREATE INDEX IF NOT EXISTS idx_accounts_email ON accounts(email)')
+cursor.execute('CREATE INDEX IF NOT EXISTS idx_account_email ON account(email)')
 
 conn.commit()
 conn.close()

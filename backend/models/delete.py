@@ -202,18 +202,28 @@ def delete_employee(employee_id):
             }
 
         cursor.execute('''
-            DELETE FROM employee WHERE id_employee = ?
+            DELETE FROM account 
+            WHERE employee_id = ?
+        ''', (employee_id,))
+        
+        cursor.execute('''
+            DELETE FROM employee 
+            WHERE id_employee = ?
         ''', (employee_id,))
 
         conn.commit()
 
         return {
             "status_code": 200,
-            "body": jsonify({"data": "Employee deleted successfully"}),
+            "body": jsonify({
+                "data": f"Employee {employee_id} and associated account deleted successfully"
+            }),
             "headers": {"Content-Type": "application/json"}
         }
 
     except sqlite3.Error as e:
+        if conn:
+            conn.rollback()
         return {
             "status_code": 500,
             "body": jsonify({"data": f"Database error: {str(e)}"}),
