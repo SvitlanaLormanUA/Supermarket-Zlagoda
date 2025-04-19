@@ -31,6 +31,13 @@ from models import (
     update_store_product,
     update_category,
     update_customer,
+
+    get_all_employees,
+    get_employee_by_surname,
+    get_cashiers,
+    add_new_employee,
+    delete_employee,
+    update_employee,
 )
 
 import json
@@ -234,6 +241,54 @@ async def update_customer_route(request):
             "headers": {"Content-Type": "application/json"}
         }
 
+# Employees
+
+
+# вони тут вже відсортовані за прізвищем
+@app.get("/employees")
+async def get_employees():
+    return get_all_employees()
+
+@app.get("/employees/cashiers")
+async def fetch_cashiers():
+    return get_cashiers()
+
+@app.get("/employees/surname/{surname}")
+async def fetch_employee_by_surname(surname: str):
+    return get_employee_by_surname(surname)
+
+@app.post("/employees")
+async def add_employee(request):
+    try:
+        employee_data = json.loads(request.body)
+        return add_new_employee(employee_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"},
+        }
+
+@app.patch("/employees/:id")
+async def update_employee_route(request):
+    try:
+        employee_id = request.path_params.get("id")
+        employee_data = json.loads(request.body)
+        return update_employee(employee_id, employee_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({
+                "status": "error",
+                "message": "Invalid JSON format"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+@app.delete("/employees/:id")
+async def delete_employee_route(request):
+    employee_id = request.path_params.get("id")
+    return delete_employee(employee_id)
+
+
 app.start(port=PORT, host="127.0.0.1")
-
-

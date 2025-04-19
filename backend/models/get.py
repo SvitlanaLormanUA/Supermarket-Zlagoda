@@ -621,6 +621,7 @@ def get_customers_by_name_surname(name=None, surname=None):
             conn.close()
 
 #EMPLOYEES
+# вони тут вже відсортовані за прізвищем
 def get_all_employees():
     conn = None
     try:
@@ -642,6 +643,7 @@ def get_all_employees():
                 street,
                 zip_code
             FROM employee
+            ORDER BY empl_surname ASC
         ''')
 
         employees = cursor.fetchall()
@@ -660,6 +662,120 @@ def get_all_employees():
                 'city': employee[9],
                 'street': employee[10],
                 'zip_code': employee[11]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+def get_cashiers():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                id_employee,
+                empl_surname,
+                empl_name,
+                empl_patronymic,
+                empl_role,
+                salary,
+                date_of_birth,
+                date_of_start,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+            WHERE empl_role = ?
+            ORDER BY empl_surname ASC
+        ''', ('Касир',))
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1],
+                'empl_name': employee[2],
+                'empl_patronymic': employee[3],
+                'empl_role': employee[4],
+                'salary': float(employee[5]),
+                'date_of_birth': employee[6],
+                'date_of_start': employee[7],
+                'phone_number': employee[8],
+                'city': employee[9],
+                'street': employee[10],
+                'zip_code': employee[11]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_employee_by_surname(surname):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                empl_surname,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+            WHERE empl_surname = ?
+            ORDER BY empl_surname ASC
+        ''', (surname,))
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'empl_surname': employee[0],
+                'phone_number': employee[1],
+                'city': employee[2],
+                'street': employee[3],
+                'zip_code': employee[4]
             }
             result.append(employee_dict)
 

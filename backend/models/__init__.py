@@ -13,10 +13,11 @@ from .get import (
     get_sorted_categories,
 
     get_all_employees,
+    get_cashiers,
+    get_employee_by_surname,
 
     get_customers_by_name_surname,
     get_customer_info_ordered,
-
     
 
 )
@@ -65,9 +66,12 @@ __all__ = [
     'get_sorted_categories',
     
     'get_customer_info_ordered',
-    'get_customers_by_name_surname'
+    'get_customers_by_name_surname',
+
     'get_all_employees',
-    
+    'get_cashiers',
+    'get_employee_by_surname',
+
     'add_new_product',
     'add_new_store_product',
     'add_new_category',
