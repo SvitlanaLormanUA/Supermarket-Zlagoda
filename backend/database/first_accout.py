@@ -20,12 +20,19 @@ accounts_data = [
     },
 
     {
+        'employee_id': 'E004',
+        'email': 'gaponenko08@ukr.net',
+        'password': 'ManagerPass123!',
+        'is_active': 1
+    },
+
+    {
         'employee_id': 'E001',
         'email': 'olexandr.shevchenko@zl.com',
         'password': 'CashierPass456!',
         'is_active': 1
     },
-    # Касир 
+
     {
         'employee_id': 'E003',
         'email': 'koval.iruna@zl.com',
