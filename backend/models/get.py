@@ -255,6 +255,59 @@ def get_sorted_products_in_store(field, order, discount_filter=None):
             conn.close()
 
 
+def get_products_sorted(sort_by="product_name", order="ASC"):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        # Валідація параметрів
+        valid_sort_fields = ["product_name", "id_product", "category_name"]
+        valid_orders = ["ASC", "DESC"]
+        
+        if sort_by not in valid_sort_fields or order.upper() not in valid_orders:
+            return {
+                "status_code": 400,
+                "body": jsonify({"error": "Invalid sort parameters"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        query = f'''
+            SELECT 
+                p.id_product,
+                p.product_name,
+                p.characteristics,
+                c.category_name
+            FROM product p
+            LEFT JOIN category c ON p.category_number = c.category_number
+            ORDER BY {sort_by} {order}
+        '''
+
+        cursor.execute(query)
+        products = cursor.fetchall()
+        result = [{
+            'id': p[0],
+            'name': p[1],
+            'characteristics': p[2],
+            'category': p[3]
+        } for p in products]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"error": str(e)}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
 
 
 def get_all_categories():
