@@ -16,6 +16,8 @@ from models import (
     get_products_info,
     get_sorted_products_in_store,
     get_sorted_categories,
+    get_all_receipts,
+    get_employee_by_id,
 
     add_new_product,
     add_new_store_product,
@@ -249,6 +251,10 @@ async def update_customer_route(request):
 async def get_employees():
     return get_all_employees()
 
+@app.get("/employee-by-ID")
+async def get_empl_by_id():
+    return get_employee_by_id()
+
 @app.get("/employees/cashiers")
 async def fetch_cashiers():
     return get_cashiers()
@@ -291,5 +297,10 @@ async def delete_employee_route(request):
     employee_id = request.path_params.get("id")
     return delete_employee(employee_id)
 
+
+# Receipts
+@app.get("/receipts")
+async def get_receipts():
+    return get_all_receipts()
 
 app.start(port=PORT, host="127.0.0.1")

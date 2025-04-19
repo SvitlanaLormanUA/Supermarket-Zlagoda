@@ -682,6 +682,8 @@ def get_all_employees():
     finally:
         if conn:
             conn.close()
+
+
 def get_cashiers():
     conn = None
     try:
@@ -745,6 +747,8 @@ def get_cashiers():
     finally:
         if conn:
             conn.close()
+
+
 def get_employee_by_surname(surname):
     conn = None
     try:
@@ -792,6 +796,217 @@ def get_employee_by_surname(surname):
                 "data": [],
                 "message": f"Database error: {str(e)}"
             },
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_cashiers():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                id_employee,
+                empl_surname,
+                empl_name,
+                empl_patronymic,
+                empl_role,
+                salary,
+                date_of_birth,
+                date_of_start,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+            WHERE empl_role = ? COLLATE NOCASE  
+            ORDER BY empl_surname ASC
+        ''', ('Касир',))
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1],
+                'empl_name': employee[2],
+                'empl_patronymic': employee[3],
+                'empl_role': employee[4],
+                'salary': float(employee[5]),
+                'date_of_birth': employee[6],
+                'date_of_start': employee[7],
+                'phone_number': employee[8],
+                'city': employee[9],
+                'street': employee[10],
+                'zip_code': employee[11]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+            
+def get_employee_by_surname(surname):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        print(f"DEBUG: Querying surname = {surname}")  
+        surname = unquote(surname) if surname else None
+        
+        cursor.execute('''
+            SELECT 
+                empl_surname,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+            WHERE empl_surname = ? COLLATE NOCASE  
+            ORDER BY empl_surname ASC
+        ''', (surname.strip(),)) 
+
+        employees = cursor.fetchall()
+        result = [
+            {
+                'empl_surname': employee[0],
+                'phone_number': employee[1],
+                'city': employee[2],
+                'street': employee[3],
+                'zip_code': employee[4]
+            }
+            for employee in employees
+        ]
+
+        return {
+            "status_code": 200,
+            "body": {"data": result},
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": {
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            },
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_employee_by_id():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id_employee, empl_surname
+            FROM Employee
+        ''')
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()               
+
+
+def get_all_receipts():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                check_number,
+                id_employee,
+                card_number,
+                print_date,
+                sum_total,
+                vat              
+            FROM receipt
+        ''')
+
+        receipts = cursor.fetchall()
+        result = []
+        for receipt in receipts:
+            receipt_dict = {
+                'check_number': receipt[0],
+                'id_employee': receipt[1],
+                'card_number': receipt[2],
+                'print_date': receipt[3],
+                'sum_total': receipt[4],
+                'vat': receipt[5],
+            }
+            result.append(receipt_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
             "headers": {"Content-Type": "application/json"}
         }
     finally:
