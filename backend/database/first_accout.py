@@ -54,7 +54,7 @@ for account in accounts_data:
         datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     ))
 
-# Перевірка даних
+# для перевірки
 cursor.execute("SELECT * FROM accounts")
 print("Додані акаунти:")
 for row in cursor.fetchall():
