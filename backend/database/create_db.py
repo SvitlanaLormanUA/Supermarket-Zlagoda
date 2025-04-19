@@ -88,6 +88,24 @@ CREATE TABLE IF NOT EXISTS sale (
     FOREIGN KEY (check_number) REFERENCES receipt(check_number) ON UPDATE CASCADE ON DELETE CASCADE
 )
 ''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS accounts (
+    account_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    salt TEXT NOT NULL,
+    is_active BOOLEAN DEFAULT 1,
+    last_login TIMESTAMP,
+    failed_attempts INTEGER DEFAULT 0,
+    account_locked BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (employee_id) REFERENCES employee(id_employee) ON DELETE CASCADE
+)
+''')
+
+# для швидкого пошуку за email
+cursor.execute('CREATE INDEX IF NOT EXISTS idx_accounts_email ON accounts(email)')
 
 conn.commit()
 conn.close()
