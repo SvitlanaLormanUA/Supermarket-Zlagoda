@@ -5,13 +5,17 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta
 from dataclasses import dataclass
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+DB_LINK = os.getenv("DB_LINK")
 
 # Security configurations
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
 SECRET_KEY = "your-secret-key-here"  # Change this in production!
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-DATABASE_PATH = os.path.join('database', 'supermarket.db')
+
 
 @dataclass
 class User:
@@ -23,7 +27,7 @@ class User:
 
 def get_db_connection():
     """Create and return a new database connection."""
-    return sqlite3.connect(DATABASE_PATH)
+    return sqlite3.connect(DB_LINK)
 
 def get_password_hash(password: str) -> str:
     """Hash a password for storing."""

@@ -1,6 +1,7 @@
 from robyn import Robyn, jsonify, ALLOW_CORS
 from robyn.exceptions import HTTPException
-from crud import create_user, authenticate_user, get_employee_id
+from auth.crud import create_user, authenticate_user, get_employee_id
+from auth.auth_middleware import auth_required
 from models import (
     get_all_store_products,
     get_all_categories,
@@ -248,6 +249,7 @@ async def update_customer_route(request):
 
 # вони тут вже відсортовані за прізвищем
 @app.get("/employees")
+@auth_required(roles=["Manager"])
 async def get_employees():
     return get_all_employees()
 
@@ -292,6 +294,7 @@ async def update_employee_route(request):
 async def delete_employee_route(request):
     employee_id = request.path_params.get("id")
     return delete_employee(employee_id)
+
 
 # authentication / authorization
 @app.post("/users/register")
@@ -357,5 +360,15 @@ async def login_user(request):
         raise HTTPException(status_code=400, detail="Invalid JSON")
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/users/me")
+@auth_required()
+async def get_current_user(request):
+    return {
+        "email": request.identity.claims["email"],
+        "role": request.identity.claims["role"],
+        "employee_id": request.identity.claims["employee_id"]
+    }
+
 
 app.start(port=PORT, host="127.0.0.1")
