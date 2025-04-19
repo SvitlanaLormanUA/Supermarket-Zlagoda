@@ -587,8 +587,6 @@ def get_customers_by_name_surname(name=None, surname=None):
         name = unquote(name) if name else None
         surname = unquote(surname) if surname else None
 
-        print(f"Searching: name={name}, surname={surname}")  # дебаг
-
         cursor.execute('''
             SELECT * FROM customer_card 
             WHERE (:name IS NULL OR cust_name LIKE '%' || :name || '%') 
@@ -705,7 +703,7 @@ def get_cashiers():
                 street,
                 zip_code
             FROM employee
-            WHERE empl_role = ?
+            WHERE empl_role = ? COLLATE NOCASE  
             ORDER BY empl_surname ASC
         ''', ('Касир',))
 
@@ -747,14 +745,15 @@ def get_cashiers():
     finally:
         if conn:
             conn.close()
-
-
 def get_employee_by_surname(surname):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
+        print(f"DEBUG: Querying surname = {surname}")  
+        surname = unquote(surname) if surname else None
+        
         cursor.execute('''
             SELECT 
                 empl_surname,
@@ -763,36 +762,36 @@ def get_employee_by_surname(surname):
                 street,
                 zip_code
             FROM employee
-            WHERE empl_surname = ?
+            WHERE empl_surname = ? COLLATE NOCASE  
             ORDER BY empl_surname ASC
-        ''', (surname,))
+        ''', (surname.strip(),)) 
 
         employees = cursor.fetchall()
-        result = []
-        for employee in employees:
-            employee_dict = {
+        result = [
+            {
                 'empl_surname': employee[0],
                 'phone_number': employee[1],
                 'city': employee[2],
                 'street': employee[3],
                 'zip_code': employee[4]
             }
-            result.append(employee_dict)
+            for employee in employees
+        ]
 
         return {
             "status_code": 200,
-            "body": jsonify({"data": result}),
+            "body": {"data": result},
             "headers": {"Content-Type": "application/json"}
         }
 
     except sqlite3.Error as e:
         return {
             "status_code": 500,
-            "body": jsonify({
+            "body": {
                 "status": "error",
                 "data": [],
                 "message": f"Database error: {str(e)}"
-            }),
+            },
             "headers": {"Content-Type": "application/json"}
         }
     finally:

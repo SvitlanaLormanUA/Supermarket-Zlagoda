@@ -253,8 +253,9 @@ async def get_employees():
 async def fetch_cashiers():
     return get_cashiers()
 
-@app.get("/employees/surname/{surname}")
-async def fetch_employee_by_surname(surname: str):
+@app.get("/employees/:surname")
+async def fetch_employee_by_surname(request):
+    surname = request.path_params["surname"]  
     return get_employee_by_surname(surname)
 
 @app.post("/employees")
