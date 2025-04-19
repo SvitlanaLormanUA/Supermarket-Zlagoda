@@ -30,7 +30,8 @@ from .add import (
     add_new_category,
     add_customer,
 
-    add_new_employee
+    add_new_employee,
+    add_new_receipt
     
 )
 
@@ -81,6 +82,7 @@ __all__ = [
     'add_new_category',
     'add_customer',
     'add_new_employee',
+    'add_new_receipt',
     
 
     'delete_product',

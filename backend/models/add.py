@@ -100,6 +100,8 @@ def add_new_category(category_data):
     finally:
         if conn:
             conn.close()
+
+
 def add_customer(customer_data):
     conn = None
     try:
@@ -172,6 +174,7 @@ def add_customer(customer_data):
         if conn:
             conn.close()
 
+
 def add_new_employee(employee_data):
     conn = None
     try:
@@ -226,4 +229,55 @@ def add_new_employee(employee_data):
     finally:
         if conn:
             conn.close()
+
+
+def add_new_receipt(receipt_data):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            INSERT INTO receipt (check_number, id_employee, card_number, print_date, sum_total, vat)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            receipt_data['checkNumber'],
+            receipt_data['employeeId'],
+            receipt_data['cardNumber'],
+            receipt_data['printDate'],
+            float(receipt_data['sumTotal']),
+            float(receipt_data['vat'])
+        ))
+
+        for product in receipt_data.get('products', []):
+            cursor.execute('''
+                INSERT INTO sale (UPC, check_number, product_number, selling_price)
+                VALUES (?, ?, ?, ?)
+            ''', (
+                product['UPC'],
+                receipt_data['checkNumber'],
+                int(product['product_number']),
+                float(product['selling_price'])
+            ))
+
+        conn.commit()
+
+        return {
+            "status_code": 201,
+            "body": jsonify({"data": "Receipt and products added successfully"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        if conn:
+            conn.rollback()
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    finally:
+        if conn:
+            conn.close()         
 

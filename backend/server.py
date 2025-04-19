@@ -23,6 +23,7 @@ from models import (
     add_new_store_product,
     add_new_category,
     add_customer,
+    add_new_receipt,
 
     delete_product,
     delete_store_product,
@@ -302,5 +303,19 @@ async def delete_employee_route(request):
 @app.get("/receipts")
 async def get_receipts():
     return get_all_receipts()
+
+
+@app.post("/receipts")
+async def add_receipt(request):
+    try:
+        receipt_data = json.loads(request.body)
+        return add_new_receipt(receipt_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"},
+        }
+
 
 app.start(port=PORT, host="127.0.0.1")
