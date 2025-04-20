@@ -2,6 +2,7 @@ from .get import (
     get_all_store_products,
     get_all_categories,
     get_all_receipts,
+    add_receipt_with_store_products,
     get_products_by_category,
     get_product_info,
     get_total_price,
@@ -69,6 +70,7 @@ __all__ = [
     'get_non_promotional_products',
     'get_sorted_products_in_store',
     'get_products_sorted',
+    'add_receipt_with_store_products',
     'get_sorted_categories',
     
     'get_customer_info_ordered',
