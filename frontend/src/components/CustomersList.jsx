@@ -1,30 +1,8 @@
 import React, { useState } from "react";
 
-const CustomersList = ({ customerCards, addCustomer }) => {
-    // const [isAdding, setIsAdding] = useState(false);
-    // const [newCustomer, setNewCustomer] = useState({
-    //     card_number: "",
-    //     cust_surname: "",
-    //     cust_name: "",
-    //     cust_patronymic: "",
-    //     city: "",
-    //     street: "",
-    //     zip_code: "",
-    //     phone_number: "",
-    //     percent: "",
-    // });
-
+const CustomersList = ({ customerCards }) => {
     return (
         <div className="card-container">
-            <div className="add-card">
-                <div className="card-content">
-                    <div className="card-header">
-                        <h3>Add new card</h3>
-                        <span>+</span>
-                    </div>
-                </div>
-            </div>
-
             {customerCards.map((card) => (
                 <div key={card.card_number} className="customer-card">
                     <div className="card-content">
