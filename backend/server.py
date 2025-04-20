@@ -1,7 +1,9 @@
+
 from robyn import Robyn, jsonify, ALLOW_CORS
 from robyn.exceptions import HTTPException
 from auth.crud import create_user, authenticate_user, get_employee_id
-from auth.auth_middleware import auth_required
+from robyn.authentication import BearerGetter
+from auth.auth_middleware import roles_required, RoleBasedAuthHandler
 from models import (
     get_all_store_products,
     get_all_categories,
@@ -44,31 +46,36 @@ from models import (
 )
 
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Robyn(__file__)
 PORT = 5174
 
 ALLOW_CORS(app, origins="*")
+app.configure_authentication(RoleBasedAuthHandler(token_getter=BearerGetter()))
 
 # Products
-
 @app.get("/products/:id")
 async def get_product(request):
     product_id = request.path_params.get("id")
     return get_product_info(product_id)
  
-@app.patch("/products/:id")
+@app.patch("/products/:id", auth_required=True)
+@roles_required(["Manager"])
 async def upd_product(request):
     product_id = request.path_params.get("id")
     product_data = json.loads(request.body)
     return update_product(product_id, product_data)
 
-@app.delete("/products/:id")
+@app.delete("/products/:id", auth_required=True)
+@roles_required(["Manager"])
 async def del_product(request):
     product_id = request.path_params.get("id")
     return delete_product(product_id)
  
-@app.post("/products/new_product")
+@app.post("/products/new_product", auth_required=True)
+@roles_required(["Manager"])
 async def add_product(request):
     try:
         product_data = json.loads(request.body)
@@ -88,7 +95,7 @@ async def get_products_by_category_route(request):
 
 
 # Products In Store
-@app.get("/products-in-store")
+@app.get("/products-in-store", auth_required=True)
 async def get_store_products(request):
     discount = request.query_params.get("discount") 
     if discount == "true":  
@@ -98,22 +105,24 @@ async def get_store_products(request):
     else: 
      return get_all_store_products()  
     
-@app.get("/product-by-ID")
+@app.get("/product-by-ID", auth_required=True)
 async def get_products_information():
     return get_products_info()
 
-@app.get("/products-in-store/search/:UPC")
+@app.get("/products-in-store/search/:UPC", auth_required=True)
 async def get_all_store_products_by_UPC(request):
     UPC = request.path_params.get("UPC")
     return get_store_products_by_UPC(UPC)
 
-@app.patch("/products-in-store/:id")
+@app.patch("/products-in-store/:id", auth_required=True)
+@roles_required(["Manager"])
 async def upd_store_product(request):
     product_id = request.path_params.get("id")
     product_data = json.loads(request.body)
     return update_store_product(product_id, product_data)
  
-@app.post("/products-in-store/new_product")
+@app.post("/products-in-store/new_product", auth_required=True)
+@roles_required(["Manager"])
 async def add_store_product(request):
     try:
         product_data = json.loads(request.body)
@@ -125,21 +134,22 @@ async def add_store_product(request):
             "headers": {"Content-Type": "application/json"},
         }   
     
-@app.delete("/products-in-store/:id")
+@app.delete("/products-in-store/:id", auth_required=True)
+@roles_required(["Manager"])
 async def del_store_product(request):
     product_id = request.path_params.get("id")
     return delete_store_product(product_id)   
  
-@app.get("/products-in-store/total_price")
+@app.get("/products-in-store/total_price", auth_required=True)
 async def total_price():
     return get_total_price()
  
-@app.get("/products-in-store/total_quantity")
+@app.get("/products-in-store/total_quantity", auth_required=True)
 async def total_quantity():
     return get_total_quantity()
 
 
-@app.get("/products-in-store/sort/:field/:order")
+@app.get("/products-in-store/sort/:field/:order", auth_required=True)
 def sort_store_products(req):
     field = req.path_params["field"]
     order = req.path_params["order"]
@@ -150,11 +160,11 @@ def sort_store_products(req):
 
 
 # Categories
-@app.get("/categories")
+@app.get("/categories", auth_required=True)
 async def get_categories():
     return get_all_categories()
 
-@app.get("/categories/sort/:field/:order")
+@app.get("/categories/sort/:field/:order", auth_required=True)
 def sort_categories(req):
     field = req.path_params["field"]
     order = req.path_params["order"]
@@ -163,13 +173,15 @@ def sort_categories(req):
     return jsonify(result)
 
 
-@app.patch("/categories/:id")
+@app.patch("/categories/:id", auth_required=True)
+@roles_required(["Manager"])
 async def upd_category(request):
     category_number = request.path_params.get("id")
     category_data = json.loads(request.body)
     return update_category(category_number, category_data)
  
-@app.post("/categories")
+@app.post("/categories", auth_required=True)
+@roles_required(["Manager"])
 async def add_category(request):
     try:
         category_data = json.loads(request.body)
@@ -182,12 +194,14 @@ async def add_category(request):
             "headers": {"Content-Type": "application/json"},
         }
 
-@app.delete("/categories/:id")
+@app.delete("/categories/:id", auth_required=True)
+@roles_required(["Manager"])
 async def del_category(request):
     category_number = request.path_params.get("id")
     return delete_category(category_number)  
 
-@app.post("/products/category/new_category")
+@app.post("/products/category/new_category", auth_required=True)
+@roles_required(["Manager"])
 async def add_category(request):
     try:
         category_data = json.loads(request.body)
@@ -201,17 +215,17 @@ async def add_category(request):
  
 
 # Customers Card
-@app.get("/customers-card")
+@app.get("/customers-card", auth_required=True)
 async def get_customers_cards():
     return get_customer_info_ordered()
 
-@app.get("/customers-card/search")
+@app.get("/customers-card/search", auth_required=True)
 async def search_customers(request):
     name = request.query_params.get("name")
     surname = request.query_params.get("surname")
     return get_customers_by_name_surname(name, surname)
 
-@app.post("/customers-card/new_customer")
+@app.post("/customers-card/new_customer", auth_required=True)
 async def add_customer(request):
     try:
         customer_data = json.loads(request.body)
@@ -223,12 +237,12 @@ async def add_customer(request):
             "headers": {"Content-Type": "application/json"},
         }
     
-@app.delete("/customers-card/:card_number")
+@app.delete("/customers-card/:card_number", auth_required=True)
 async def del_customer(request):
     card_number = request.path_params.get("card_number")
     return delete_customer(card_number)
 
-@app.patch("/customers-card/:card_number")
+@app.patch("/customers-card/:card_number", auth_required=True)
 async def update_customer_route(request):
     try:
         update_data = json.loads(request.body)
@@ -245,12 +259,10 @@ async def update_customer_route(request):
         }
 
 # Employees
-
-
 # вони тут вже відсортовані за прізвищем
-@app.get("/employees")
-@auth_required(roles=["Manager"])
-async def get_employees():
+@app.get("/employees", auth_required=True)
+@roles_required(["Manager"])
+async def get_employees(request):
     return get_all_employees()
 
 @app.get("/employees/cashiers")
@@ -262,7 +274,8 @@ async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
     return get_employee_by_surname(surname)
 
-@app.post("/employees")
+@app.post("/employees", auth_required=True)
+@roles_required(["Manager"])
 async def add_employee(request):
     try:
         employee_data = json.loads(request.body)
@@ -274,7 +287,8 @@ async def add_employee(request):
             "headers": {"Content-Type": "application/json"},
         }
 
-@app.patch("/employees/:id")
+@app.patch("/employees/:id", auth_required=True)
+@roles_required(["Manager"])
 async def update_employee_route(request):
     try:
         employee_id = request.path_params.get("id")
@@ -290,14 +304,16 @@ async def update_employee_route(request):
             "headers": {"Content-Type": "application/json"}
         }
 
-@app.delete("/employees/:id")
+@app.delete("/employees/:id", auth_required=True)
+@roles_required(["Manager"])
 async def delete_employee_route(request):
     employee_id = request.path_params.get("id")
     return delete_employee(employee_id)
 
 
 # authentication / authorization
-@app.post("/users/register")
+@app.post("/employees/register")
+@roles_required(["Manager"])
 async def register_user(request):
     try:
         data = json.loads(request.body)
@@ -339,7 +355,7 @@ async def register_user(request):
     except ValueError as e:
         raise HTTPException(400, str(e))
 
-@app.post("/users/login")
+@app.post("/login")
 async def login_user(request):
     try:
         data = json.loads(request.body)
@@ -353,7 +369,7 @@ async def login_user(request):
         
         if token is None:
             raise HTTPException(status_code=401, detail="Invalid credentials")
-        
+        #decoded = jwt.decode(token, options={"verify_signature": False})
         return jsonify({"access_token": token})
         
     except json.JSONDecodeError:
@@ -361,14 +377,14 @@ async def login_user(request):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@app.get("/users/me")
-@auth_required()
-async def get_current_user(request):
-    return {
-        "email": request.identity.claims["email"],
-        "role": request.identity.claims["role"],
-        "employee_id": request.identity.claims["employee_id"]
-    }
+@app.post("/logout")
+async def logout_user(request):
+    
 
+
+@app.get("/users/me", auth_required=True)
+async def get_current_user(request):
+    user = request.identity.claims["user"]
+    return user
 
 app.start(port=PORT, host="127.0.0.1")

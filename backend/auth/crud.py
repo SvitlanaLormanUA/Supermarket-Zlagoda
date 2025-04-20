@@ -13,8 +13,8 @@ DB_LINK = os.getenv("DB_LINK")
 # Security configurations
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
-SECRET_KEY = "your-secret-key-here"  # Change this in production!
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = os.getenv("SECRET_KEY")
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
 
 @dataclass
@@ -23,6 +23,7 @@ class User:
     employee_id: str
     email: str
     password_hash: str
+    role: str
     is_active: bool
 
 def get_db_connection():
@@ -54,10 +55,23 @@ def get_user(user_id: int) -> Optional[User]:
     return None
 
 def get_user_by_email(email: str) -> Optional[User]:
-    """Get a user by email."""
+    """Get a user by email with employee role."""
     with get_db_connection() as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT * FROM account WHERE email = ?", (email,))
+
+        cursor.execute("""
+            SELECT 
+                a.account_id, 
+                a.employee_id, 
+                a.email, 
+                a.password_hash, 
+                a.is_active,
+                e.empl_role 
+            FROM account a
+            JOIN employee e ON a.employee_id = e.id_employee  -- JOIN з employee
+            WHERE a.email = ?
+        """, (email,))
+        
         row = cursor.fetchone()
         if row:
             return User(
@@ -65,10 +79,10 @@ def get_user_by_email(email: str) -> Optional[User]:
                 employee_id=row[1],
                 email=row[2],
                 password_hash=row[3],
-                is_active=bool(row[5])
+                is_active=bool(row[4]),
+                role=row[5]  
             )
     return None
-
 def create_user(employee_id: str, email: str, password: str) -> User:
     """Create account only for verified employees"""
     hashed_password = get_password_hash(password)
@@ -112,28 +126,34 @@ def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def decode_access_token(token: str) -> Optional[dict]:
-    """Decode and verify a JWT token."""
     try:
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-    except JWTError:
+    except jwt.ExpiredSignatureError:
+        print("Token has expired")
+        return None
+    except JWTError as e:
+        print(f"Invalid token: {e}")
         return None
 
 def authenticate_user(email: str, password: str) -> Optional[str]:
-    """Authenticate user and return JWT token if successful."""
     user = get_user_by_email(email)
     if not user or not user.is_active:
         return None
     
     if not verify_password(password, user.password_hash):
         return None
-        
-    return create_access_token(
-        data={
-            "sub": user.email,
-            "employee_id": user.employee_id,
-            "account_id": user.account_id
-        }
-    )
+    
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT empl_role FROM employee WHERE id_employee = ?', (user.employee_id,))
+        role = cursor.fetchone()[0]  
+    
+    return create_access_token({
+        "sub": user.email,
+        "employee_id": user.employee_id,
+        "account_id": user.account_id,
+        "role": role  
+    })
 def get_employee_id(surname: str, name: str, patronymic: str, role: str) -> Optional[str]:
     """Get employee ID from HR records"""
     with get_db_connection() as conn:
