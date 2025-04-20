@@ -22,6 +22,7 @@ from .get import (
 
     get_customers_by_name_surname,
     get_customer_info_ordered,
+    get_all_customer_cards,
     
 
 )

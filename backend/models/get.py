@@ -452,7 +452,7 @@ def get_products_by_category(category_number):
         if conn:
             conn.close()
 
-#for receipt
+
 def get_total_price():
     conn = None
     try:
@@ -481,6 +481,7 @@ def get_total_price():
     finally:
         if conn:
             conn.close()
+
 
 def get_total_quantity():
     conn = None

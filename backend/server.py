@@ -18,6 +18,9 @@ from models import (
     get_sorted_categories,
     get_all_receipts,
     get_employee_by_id,
+    get_all_employees,
+    get_employee_by_surname,
+    get_cashiers,
 
     add_new_product,
     add_new_store_product,
@@ -35,9 +38,6 @@ from models import (
     update_category,
     update_customer,
 
-    get_all_employees,
-    get_employee_by_surname,
-    get_cashiers,
     add_new_employee,
     delete_employee,
     update_employee,
