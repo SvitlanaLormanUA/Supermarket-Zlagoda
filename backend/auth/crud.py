@@ -27,15 +27,12 @@ class User:
     is_active: bool
 
 def get_db_connection():
-    """Create and return a new database connection."""
     return sqlite3.connect(DB_LINK)
 
 def get_password_hash(password: str) -> str:
-    """Hash a password for storing."""
     return pwd_context.hash(password)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a stored password against one provided by user."""
     return pwd_context.verify(plain_password, hashed_password)
 
 def get_user(user_id: int) -> Optional[User]:
@@ -116,7 +113,6 @@ def create_user(employee_id: str, email: str, password: str) -> User:
                 raise ValueError("Email already registered")
             raise ValueError(f"Database error: {str(e)}")
 def create_access_token(data: dict, expires_delta: timedelta = None) -> str:
-    """Create a JWT access token."""
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -155,7 +151,6 @@ def authenticate_user(email: str, password: str) -> Optional[str]:
         "role": role  
     })
 def get_employee_id(surname: str, name: str, patronymic: str, role: str) -> Optional[str]:
-    """Get employee ID from HR records"""
     with get_db_connection() as conn:
         cursor = conn.cursor()
         cursor.execute('''

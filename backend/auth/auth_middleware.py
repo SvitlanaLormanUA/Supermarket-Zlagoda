@@ -16,7 +16,7 @@ class RoleBasedAuthHandler(AuthenticationHandler):
      def __init__(self, token_getter):
         super().__init__(token_getter)
         self.secret_key = os.getenv("SECRET_KEY") 
-        self.algorithm = "HS256"
+        self.algorithm = os.getenv("ALGORITHM")
         print(f"Loaded SECRET_KEY: {self.secret_key}") 
 
      def authenticate(self, request: Request) -> Optional[Identity]:

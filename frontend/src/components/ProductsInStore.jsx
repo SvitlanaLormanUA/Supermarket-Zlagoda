@@ -45,7 +45,7 @@ function ProductsInStore() {
       );
     } catch (error) {
       console.error('Error fetching store products:', error);
-      alert('Failed to fetch store products.');
+      //alert('Failed to fetch store products.');
     }
   };
 
@@ -61,7 +61,7 @@ function ProductsInStore() {
         setProductOptions(productIdOptions);
       } catch (error) {
         console.error('Error fetching all products:', error);
-        alert('Failed to fetch products.');
+        //alert('Failed to fetch products.');
       }
     };
     fetchProducts();

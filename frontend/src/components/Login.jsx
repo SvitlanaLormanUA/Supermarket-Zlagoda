@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../axios'; 
 import Cookies from 'js-cookie';
 
 function Login({ onLogin }) {
@@ -12,19 +12,17 @@ function Login({ onLogin }) {
   const handleLoginClick = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5174/login', {
+      const response = await api.post('/login', {
         email,
         password,
       });
 
       const token = response.data.access_token;
-      
-      // через 7 днів -- він вже всьо
+
+      // Store token in cookies (expires in 7 days)
       Cookies.set('auth_token', token, { expires: 7, secure: true, sameSite: 'Strict' });
 
-      const userResponse = await axios.get('http://localhost:5174/users/me', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const userResponse = await api.get('/users/me');
       const userRole = userResponse.data; // e.g., "Manager"
       Cookies.set('user_role', userRole, { expires: 7, secure: true, sameSite: 'Strict' });
 
