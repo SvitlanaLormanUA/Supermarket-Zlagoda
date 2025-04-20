@@ -107,6 +107,12 @@ CREATE TABLE IF NOT EXISTS account (
 # для швидкого пошуку за email
 cursor.execute('CREATE INDEX IF NOT EXISTS idx_account_email ON account(email)')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS token_blacklist (
+        token TEXT PRIMARY KEY,
+        expires_at DATETIME NOT NULL
+);
+''')
 conn.commit()
 conn.close()
 

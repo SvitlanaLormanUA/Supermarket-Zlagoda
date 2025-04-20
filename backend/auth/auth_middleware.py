@@ -3,15 +3,13 @@ from robyn.authentication import AuthenticationHandler, BearerGetter, Identity
 from robyn import Request, jsonify
 import sqlite3
 from typing import Optional
-from auth.crud import decode_access_token, get_user_by_email, decode_access_token
+from auth.crud import decode_access_token, get_user_by_email, decode_access_token, get_db_connection
 from dotenv import load_dotenv
 from jose import JWTError, jwt
 
 load_dotenv()
 DB_LINK = os.getenv("DB_LINK")
 
-def get_db_connection():
-    return sqlite3.connect(DB_LINK)
 class RoleBasedAuthHandler(AuthenticationHandler):
      def __init__(self, token_getter):
         super().__init__(token_getter)
@@ -21,8 +19,8 @@ class RoleBasedAuthHandler(AuthenticationHandler):
 
      def authenticate(self, request: Request) -> Optional[Identity]:
         token = self.token_getter.get_token(request)
-        print(f"Extracted token: {token}")
-        if not token:
+
+        if not token or is_token_blacklisted(token):
             return None
 
         try:
@@ -36,7 +34,15 @@ class RoleBasedAuthHandler(AuthenticationHandler):
             print(f"Token validation failed: {e}")
             return None
 
-
+def is_token_blacklisted(token: str) -> bool:
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT 1 FROM token_blacklist WHERE token = ? AND expires_at > datetime('now')",
+            (token,)
+        )
+        return cursor.fetchone() is not None
+    
 def roles_required(roles: list[str]):
     def decorator(handler):
         async def wrapper(request: Request):

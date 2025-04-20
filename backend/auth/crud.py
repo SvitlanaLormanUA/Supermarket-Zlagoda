@@ -10,11 +10,11 @@ from dotenv import load_dotenv
 load_dotenv()
 DB_LINK = os.getenv("DB_LINK")
 
-# Security configurations
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 ALGORITHM = "HS256"
 SECRET_KEY = os.getenv("SECRET_KEY")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 години
 
 
 @dataclass
@@ -34,6 +34,7 @@ def get_password_hash(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
+
 
 def get_user(user_id: int) -> Optional[User]:
     """Get a user by ID."""
@@ -87,12 +88,12 @@ def create_user(employee_id: str, email: str, password: str) -> User:
     with get_db_connection() as conn:
         cursor = conn.cursor()
         try:
-            # Verify employee_id exists
+            # спочатку перевіряємо по employee_id чи існує такий працівник
             cursor.execute('SELECT 1 FROM employee WHERE id_employee = ?', (employee_id,))
             if not cursor.fetchone():
                 raise ValueError("Invalid employee ID")
 
-            # Create account
+            # потім створюємо акаунт
             cursor.execute('''
                 INSERT INTO account (employee_id, email, password_hash, is_active)
                 VALUES (?, ?, ?, 1)
@@ -163,3 +164,25 @@ def get_employee_id(surname: str, name: str, patronymic: str, role: str) -> Opti
         
         result = cursor.fetchone()
         return result[0] if result else None
+    
+def blacklist_token(token: str):
+    """When the token is blacklisted, clean expired ones too"""
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        try:
+            # спочатку очищаємо всі прострочені токени
+            cursor.execute(
+                "DELETE FROM token_blacklist WHERE expires_at < datetime('now')"
+            )
+            
+            # потім додаємо новий токен до blacklist
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            exp_time = datetime.fromtimestamp(payload["exp"])
+            
+            cursor.execute(
+                "INSERT INTO token_blacklist (token, expires_at) VALUES (?, ?)",
+                (token, exp_time)
+            )
+            conn.commit()
+        except JWTError:
+            pass

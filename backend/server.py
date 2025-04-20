@@ -1,7 +1,7 @@
 
 from robyn import Robyn, jsonify, ALLOW_CORS
 from robyn.exceptions import HTTPException
-from auth.crud import create_user, authenticate_user, get_employee_id
+from auth.crud import create_user, authenticate_user, get_employee_id, blacklist_token
 from robyn.authentication import BearerGetter
 from auth.auth_middleware import roles_required, RoleBasedAuthHandler
 from models import (
@@ -378,10 +378,24 @@ async def login_user(request):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# @app.post("/logout")
-# async def logout_user(request):
+@app.post("/logout")
+async def logout_user(request):
+    auth_header = request.headers.get("authorization")
+    if not auth_header.startswith("Bearer "):
+        return {
+            "status_code": 401,
+            "body": {"detail": "Invalid authorization header"},
+            "headers": {"WWW-Authenticate": "Bearer"}
+        }
     
-
+    token = auth_header.split(" ")[1]
+    blacklist_token(token)
+    
+    return {
+        "status_code": 200,
+        "body": {"message": "Successfully logged out"},
+        "headers": {"Content-Type": "application/json"}
+    }
 
 @app.get("/users/me", auth_required=True)
 async def get_current_user(request):
