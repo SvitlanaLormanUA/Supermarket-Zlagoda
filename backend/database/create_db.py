@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS category (
 
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS product (
-    id_product INTEGER PRIMARY KEY,
+    id_product INTEGER PRIMARY KEY AUTOINCREMENT,
     category_number INTEGER NOT NULL,
     product_name TEXT NOT NULL,
     characteristics TEXT NOT NULL,

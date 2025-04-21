@@ -13,19 +13,19 @@ VALUES
 ''')
 
 cursor.execute('''
-INSERT INTO Product (id_product, category_number, product_name, characteristics) VALUES 
- (1, 1, 'cream', 'a dairy product made from the high-fat layer skimmed from the top of milk'), 
- (2, 1, 'yougurt','a dairy product made by bacterial fermentation of milk'),
+INSERT INTO Product (category_number, product_name, characteristics) VALUES 
+ (1, 'cream', 'a dairy product made from the high-fat layer skimmed from the top of milk'), 
+ (1, 'yougurt','a dairy product made by bacterial fermentation of milk'),
    
- (20, 2, 'apple', 'a round fruit with red or green skin and sweet flesh'),
- (21, 2, 'banana', 'a long, curved fruit with a yellow skin and soft, sweet flesh'),
- (22, 2, 'orange', 'a sweet fruit with a orange skin'),
+ (2, 'apple', 'a round fruit with red or green skin and sweet flesh'),
+ (2, 'banana', 'a long, curved fruit with a yellow skin and soft, sweet flesh'),
+ (2, 'orange', 'a sweet fruit with a orange skin'),
  
- (30, 3, 'carrot', 'a root vegetable, typically orange in color'),
- (31, 3, 'broccoli', 'a green vegetable with a thick stalk and tight green flower buds'),
+ (3, 'carrot', 'a root vegetable, typically orange in color'),
+ (3, 'broccoli', 'a green vegetable with a thick stalk and tight green flower buds'),
 
- (40, 4, 'soda', 'a carbonated soft drink'),
- (41, 4, 'juice', 'a drink made from the extraction of fruits')
+ (4, 'soda', 'a carbonated soft drink'),
+ (4, 'juice', 'a drink made from the extraction of fruits')
 
 ''')
 
