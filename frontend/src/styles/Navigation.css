@@ -83,3 +83,6 @@
   margin-right: 10px;
   vertical-align: top;
 }
+.shop-section {
+  display:flex;
+}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 
-function Navigation() {
+function Navigation({ userRole }) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -26,13 +26,14 @@ function Navigation() {
           </button></Link>
         </li>
 
-        <li><Link to="/employees" style={{ textDecoration: 'none' }}>
-          <button className="shop-button">
-            <img src="/assets/images/workers.png" alt="Employees" className="button-icon" />
-            Employees
-          </button></Link>
-        </li>
-
+        { userRole==='Manager' && (<li><Link to="/employees" style={{ textDecoration: 'none' }}>
+            <button className="shop-button">
+              <img src="/assets/images/workers.png" alt="Employees" className="button-icon" />
+              Employees
+            </button></Link>
+          </li>
+          )
+      }
         <li className="dropdown">
           <button className="account-button" onClick={toggleDropdown}>
             <img src="/assets/images/account.png" alt="Account" className="button-icon" />
@@ -50,5 +51,4 @@ function Navigation() {
     </div>
   );
 }
-
 export default Navigation;
