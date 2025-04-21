@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../axios';
+import { validateCustomerCard  } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import CustomersList from './CustomersList';
 import AddItemModal from './AddItemModal';
@@ -52,11 +53,30 @@ function CustomersCard() {
   };
 
   const editCustomer = async (editedData) => {
-    console.log('Edit Customer');
+    if (!validateCustomerCard(editedData)) {
+      return;
+    }
+    try {
+      await api.patch(`/customers-card/${editedData.card_number}`, JSON.stringify(editedData));
+      await fetchAllCustomersCards();
+    } catch (error) {
+      console.error('Error editing Customers Card:', error);
+      alert(error.response?.data?.detail || 'Error updating Customers Card.');
+    }
   };
 
-  const deleteCustomer = async (category_numbers) => {
-    console.log('Delete Customer');
+  const deleteCustomer = async (card_numbers) => {
+    try {
+      for (const card_number of card_numbers) {
+        await api.delete(`/customers-card/${card_number}`);
+        setCustomerCards((prevCards) =>
+          prevCards.filter((customer) => customer.card_number !== card_number)
+        );
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      alert(error.response?.data?.detail || `Cannot delete customer: ${error.message}`);
+    }
   };
 
   const handleSearch = async (value) => {
@@ -65,23 +85,23 @@ function CustomersCard() {
         fetchAllCustomersCards();
         return;
       }
-  
+
       let name = '';
       let surname = '';
-  
+
       const parts = value.trim().split(' ');
       if (parts.length > 0) {
         surname = parts[0];
         name = parts.length > 1 ? parts.slice(1).join(' ') : '';
       }
-  
+
       const query = new URLSearchParams();
       if (name) query.append('name', name);
       if (surname) query.append('surname', surname);
-  
+
       const response = await api.get(`/customers-card/search?${query.toString()}`);
       const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
-  
+
       setCustomerCards(Array.isArray(parsedData) ? parsedData : [parsedData]);
     } catch (error) {
       console.error('Error searching customer cards:', error);
@@ -89,7 +109,7 @@ function CustomersCard() {
       alert('No customer cards found.');
     }
   };
-  
+
 
   return (
     <div className="cards-container">

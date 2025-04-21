@@ -35,10 +35,38 @@ export const validateProductInStore = (newProduct) => {
 export const validateCategories = (newCategory) => {
     const requiredFields = ['category_name'];
     for (let field of requiredFields) {
-      if (!newCategory[field]) {
-        alert(`${field} cannot be empty.`);
-        return false;
-      }
+        if (!newCategory[field]) {
+            alert(`${field} cannot be empty.`);
+            return false;
+        }
     }
     return true;
-  };
+};
+
+export const validateCustomerCard = (customer) => {
+    const requiredFields = [
+        'card_number',
+        'cust_surname',
+        'cust_name',
+        'cust_patronymic',
+        'city',
+        'street',
+        'zip_code',
+        'percent'
+    ];
+
+    for (let field of requiredFields) {
+        const value = customer[field];
+        if (value === undefined || value === null || value.toString().trim() === '') {
+            alert(`${field} cannot be empty.`);
+            return false;
+        }
+    }
+
+    const percent = parseFloat(customer.percent);
+    if (isNaN(percent) || percent < 0 || percent > 100) {
+        alert("Percent must be a number between 0 and 100.");
+        return false;
+    }
+    return true;
+};
