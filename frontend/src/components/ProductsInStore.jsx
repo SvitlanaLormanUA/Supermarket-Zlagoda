@@ -1,189 +1,143 @@
 import React, { useEffect, useState } from 'react';
+import api from '../axios'; 
 import { validateUniqueProductInStore, validateProductInStore } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
 import AddItemModal from './AddItemModal';
-import EditItemModal from "./EditItemModal";
-import DeleteItemModal from "./DeleteItemModal";
+import EditItemModal from './EditItemModal';
+import DeleteItemModal from './DeleteItemModal';
 import SortButtons from './SortButtons';
 
 function ProductsInStore() {
   const [productsInStore, setProductsInStore] = useState([]);
-
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [filterDiscounted, setFilterDiscounted] = useState(false);
   const [filterNonDiscounted, setFilterNonDiscounted] = useState(false);
-
   const [productOptions, setProductOptions] = useState([]);
   const [UPCOptions, setUPCOptions] = useState([]);
 
   const productsInStoreFields = [
-    { name: "UPC", label: "UPC", readOnly: true },
-    { name: "UPC_prom", label: "UPC_prom", type: "fk", options: UPCOptions },
-    { name: "id_product", label: "Product ID", type: "fk", options: productOptions, readOnly: true },
-    { name: "selling_price", label: "Price" },
-    { name: "products_number", label: "Products Number" },
-    { name: "promotional_product", label: "Promotional Product", type: "boolean" }
+    { name: 'UPC', label: 'UPC', readOnly: true },
+    { name: 'UPC_prom', label: 'UPC_prom', type: 'fk', options: UPCOptions },
+    { name: 'id_product', label: 'Product ID', type: 'fk', options: productOptions, readOnly: true },
+    { name: 'selling_price', label: 'Price' },
+    { name: 'products_number', label: 'Products Number' },
+    { name: 'promotional_product', label: 'Promotional Product', type: 'boolean' },
   ];
 
   useEffect(() => {
     fetchAllStoreProducts();
   }, []);
 
-  const fetchAllStoreProducts = () => {
-    fetch('http://127.0.0.1:5174/products-in-store')
-      .then((res) => res.json())
-      .then((data) => {
-        const parsedData = JSON.parse(data.body).data;
-        setProductsInStore(parsedData);
-        setUPCOptions(parsedData.map((product) => ({
+  const fetchAllStoreProducts = async () => {
+    try {
+      const response = await api.get('/products-in-store');
+      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+      setProductsInStore(parsedData);
+      setUPCOptions(
+        parsedData.map((product) => ({
           value: product.UPC,
-          label: product.product_name
-        })));
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-      });
+          label: product.product_name,
+        }))
+      );
+    } catch (error) {
+      console.error('Error fetching store products:', error);
+      //alert('Failed to fetch store products.');
+    }
   };
 
   useEffect(() => {
-    fetch('http://127.0.0.1:5174/product-by-ID')
-      .then((res) => res.json())
-      .then((data) => {
-        const parsedData = JSON.parse(data.body).data;
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get('/product-by-ID');
+        const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
         const productIdOptions = parsedData.map((product) => ({
           value: product.id_product,
-          label: product.product_name
+          label: product.product_name,
         }));
         setProductOptions(productIdOptions);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error('Error fetching all products:', error);
-      });
+        //alert('Failed to fetch products.');
+      }
+    };
+    fetchProducts();
   }, []);
 
-
-  const handleSearch = (value) => {
-    if (!value) {
-      fetchAllStoreProducts();
-    } else {
-      fetch(`http://127.0.0.1:5174/products-in-store/search/${value}`)
-        .then((res) => res.json())
-        .then((data) => {
-          const parsedData = JSON.parse(data.body).data;
-          if (Array.isArray(parsedData)) {
-            setProductsInStore(parsedData);
-          } else {
-            setProductsInStore([parsedData]);
-          }
-        })
-        .catch(() => {
-          setProductsInStore([]);
-        });
+  const handleSearch = async (value) => {
+    try {
+      if (!value) {
+        fetchAllStoreProducts();
+      } else {
+        const response = await api.get(`/products-in-store/search/${value}`);
+        const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+        setProductsInStore(Array.isArray(parsedData) ? parsedData : [parsedData]);
+      }
+    } catch (error) {
+      console.error('Error searching products:', error);
+      setProductsInStore([]);
+      alert('No products found.');
     }
   };
 
-  const addProductsInStore = (newStoreProduct) => {
-    if ((!validateUniqueProductInStore(newStoreProduct, productsInStore)) || (!validateProductInStore(newStoreProduct))) {
+  const addProductsInStore = async (newStoreProduct) => {
+    if (!validateUniqueProductInStore(newStoreProduct, productsInStore) || !validateProductInStore(newStoreProduct)) {
+      alert('Invalid product data or duplicate product.');
       return;
     }
 
-    return fetch('http://127.0.0.1:5174/products-in-store/new_product', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newStoreProduct),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          return response.text().then((text) => {
-            throw new Error(text || 'Error with request');
-          });
-        }
-        return response.json();
-      })
-      .then(() => {
-        fetchAllStoreProducts();
-      })
-      .catch((error) => {
-        console.error('Error adding new category:', error);
-      });
+    try {
+      await api.post('/products-in-store/new_product', newStoreProduct);
+      await fetchAllStoreProducts();
+    } catch (error) {
+      console.error('Error adding new store product:', error);
+      alert(error.response?.data?.detail || 'Error adding new store product.');
+    }
   };
-
 
   const editProductsInStore = async (editedData) => {
     if (!validateProductInStore(editedData)) {
+      alert('Invalid product data.');
       return;
     }
+
     try {
-      const response = await fetch(`http://127.0.0.1:5174/products-in-store/${editedData.id_product}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedData),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Error updating store product');
-      }
-
-      const updatedResponse = await fetch('http://127.0.0.1:5174/products-in-store');
-      const updatedData = await updatedResponse.json();
-
-      const parsedData = updatedData.data || JSON.parse(updatedData.body).data;
-      setProductsInStore(parsedData);
+      await api.patch(`/products-in-store/${editedData.id_product}`, editedData);
+      await fetchAllStoreProducts();
     } catch (error) {
-      console.error('Error editing the category:', error);
-      alert(error.message);
+      console.error('Error editing store product:', error);
+      alert(error.response?.data?.detail || 'Error updating store product.');
     }
   };
 
   const deleteProductsInStore = async (id_product) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5174/products-in-store/${id_product}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.data || `Cannot delete store product #${id_product}`);
-      }
-
-      const updatedResponse = await fetch('http://127.0.0.1:5174/products-in-store');
-      const updatedData = await updatedResponse.json();
-
-      const parsedData = updatedData.data || JSON.parse(updatedData.body).data;
-      setProductsInStore(parsedData);
+      await api.delete(`/products-in-store/${id_product}`);
+      await fetchAllStoreProducts();
     } catch (error) {
-      console.error('Error editing the category:', error);
-      alert(error.message);
+      console.error('Error deleting store product:', error);
+      alert(error.response?.data?.detail || `Cannot delete store product #${id_product}`);
     }
   };
 
-  const fetchFilteredProducts = (onlyDiscounted, onlyNonDiscounted) => {
-    let url = 'http://127.0.0.1:5174/products-in-store';
-
-    if (onlyDiscounted) {
-      url += '?discount=true';
-    } else if (onlyNonDiscounted) {
-      url += '?discount=false';
+  const fetchFilteredProducts = async (onlyDiscounted, onlyNonDiscounted) => {
+    try {
+      let url = '/products-in-store';
+      if (onlyDiscounted) {
+        url += '?discount=true';
+      } else if (onlyNonDiscounted) {
+        url += '?discount=false';
+      }
+      const response = await api.get(url);
+      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+      setProductsInStore(parsedData);
+    } catch (error) {
+      console.error('Error fetching filtered products:', error);
+      alert('Failed to fetch filtered products.');
     }
-
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        const parsed = data.data ?? JSON.parse(data.body)?.data;
-        setProductsInStore(parsed);
-      })
-      .catch((error) => {
-        console.error('Error fetching filtered products:', error);
-      });
   };
 
   return (
@@ -205,21 +159,25 @@ function ProductsInStore() {
       <SortButtons
         fields={[
           { key: 'product_name', label: 'Name' },
-          { key: 'products_number', label: 'Quantity' }
+          { key: 'products_number', label: 'Quantity' },
         ]}
         onSort={(field, order) => {
           if (!field || !order) {
             fetchFilteredProducts(filterDiscounted, filterNonDiscounted);
           } else {
-            let url = `http://127.0.0.1:5174/products-in-store/sort/${field}/${order}`;
+            let url = `/products-in-store/sort/${field}/${order}`;
             if (filterDiscounted) url += '?discount=true';
             else if (filterNonDiscounted) url += '?discount=false';
 
-            fetch(url)
-              .then(res => res.json())
-              .then(data => {
-                const parsed = JSON.parse(data.body).data;
-                setProductsInStore(parsed);
+            api
+              .get(url)
+              .then((response) => {
+                const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+                setProductsInStore(parsedData);
+              })
+              .catch((error) => {
+                console.error('Error sorting products:', error);
+                alert('Failed to sort products.');
               });
           }
         }}
@@ -284,9 +242,7 @@ function ProductsInStore() {
       <CustomTable
         data={productsInStore}
         title="Products In Store"
-        columns={[
-          { key: "product_name", label: "Product Name" }
-        ]}
+        columns={[{ key: 'product_name', label: 'Product Name' }]}
       />
     </div>
   );

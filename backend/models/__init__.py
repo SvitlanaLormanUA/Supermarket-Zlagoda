@@ -22,7 +22,7 @@ from .get import (
 
     get_customers_by_name_surname,
     get_customer_info_ordered,
-    get_all_customer_cards,
+    # get_all_customer_cards,
     
 
 )
@@ -64,7 +64,7 @@ __all__ = [
     'get_product_info',
     'get_total_price',
     'get_total_quantity',
-    'get_all_customer_cards',
+    # 'get_all_customer_cards',
     'get_store_products_by_UPC',
     'get_products_info',
     'get_promotional_products',

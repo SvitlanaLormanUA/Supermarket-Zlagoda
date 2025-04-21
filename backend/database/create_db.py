@@ -3,6 +3,29 @@ import sqlite3
 conn = sqlite3.connect('supermarket.db')
 cursor = conn.cursor()
 
+# cursor.execute("DELETE FROM category;")
+# cursor.execute("DELETE FROM product;")
+# cursor.execute("DELETE FROM store_product;")
+# cursor.execute("DELETE FROM employee;")
+# cursor.execute("DELETE FROM customer_card;")
+# cursor.execute("DELETE FROM receipt;")
+# cursor.execute("DELETE FROM sale;")
+# cursor.execute("DELETE FROM account;")
+# cursor.execute("DELETE FROM token_blacklist;")
+
+
+# cursor.execute("DROP TABLE IF EXISTS product;")
+# cursor.execute("DROP TABLE IF EXISTS category;")
+# cursor.execute("DROP TABLE IF EXISTS store_product;")
+# cursor.execute("DROP TABLE IF EXISTS employee;")
+# cursor.execute("DROP TABLE IF EXISTS customer_card;")
+# cursor.execute("DROP TABLE IF EXISTS receipt;")
+# cursor.execute("DROP TABLE IF EXISTS sale;")
+# cursor.execute("DROP TABLE IF EXISTS account;")
+# cursor.execute("DROP TABLE IF EXISTS token_blacklist;")
+
+
+
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS category (
     category_number INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -88,7 +111,31 @@ CREATE TABLE IF NOT EXISTS sale (
     FOREIGN KEY (check_number) REFERENCES receipt(check_number) ON UPDATE CASCADE ON DELETE CASCADE
 )
 ''')
+cursor.execute('''
+CREATE TABLE IF NOT EXISTS account (
+    account_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    employee_id TEXT NOT NULL UNIQUE,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL, 
+    is_active BOOLEAN DEFAULT 1,
+    last_login TIMESTAMP,
+    failed_attempts INTEGER DEFAULT 0,
+    account_locked BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
+    FOREIGN KEY (employee_id) REFERENCES employee(id_employee) ON DELETE CASCADE
+)
+''')
+
+# для швидкого пошуку за email
+cursor.execute('CREATE INDEX IF NOT EXISTS idx_account_email ON account(email)')
+
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS token_blacklist (
+        token TEXT PRIMARY KEY,
+        expires_at DATETIME NOT NULL
+);
+''')
 conn.commit()
 conn.close()
 

@@ -1,2 +1,3 @@
 react
-tailwindcss
+axios 
+js-cookie
