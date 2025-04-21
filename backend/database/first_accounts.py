@@ -29,15 +29,15 @@ accounts_data = [
         'email': 'olexandr.shevchenko@zl.com',
         'password': 'CashierPass456!',
         'is_active': 1
-    }
+    },
     # ,
     # на ньому тестую
-    # {
-    #     'employee_id': 'E003',
-    #     'email': 'koval.iruna@zl.com',
-    #     'password': 'KovalPass789!',
-    #     'is_active': 1
-    # }
+    {
+        'employee_id': 'E003',
+        'email': 'koval.iruna@zl.com',
+        'password': 'KovalPass789!',
+        'is_active': 1
+    }
 ]
 
 for account in accounts_data:

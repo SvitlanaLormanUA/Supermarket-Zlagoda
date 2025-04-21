@@ -3,6 +3,29 @@ import sqlite3
 conn = sqlite3.connect('supermarket.db')
 cursor = conn.cursor()
 
+# cursor.execute("DELETE FROM category;")
+# cursor.execute("DELETE FROM product;")
+# cursor.execute("DELETE FROM store_product;")
+# cursor.execute("DELETE FROM employee;")
+# cursor.execute("DELETE FROM customer_card;")
+# cursor.execute("DELETE FROM receipt;")
+# cursor.execute("DELETE FROM sale;")
+# cursor.execute("DELETE FROM account;")
+# cursor.execute("DELETE FROM token_blacklist;")
+
+
+# cursor.execute("DROP TABLE IF EXISTS product;")
+# cursor.execute("DROP TABLE IF EXISTS category;")
+# cursor.execute("DROP TABLE IF EXISTS store_product;")
+# cursor.execute("DROP TABLE IF EXISTS employee;")
+# cursor.execute("DROP TABLE IF EXISTS customer_card;")
+# cursor.execute("DROP TABLE IF EXISTS receipt;")
+# cursor.execute("DROP TABLE IF EXISTS sale;")
+# cursor.execute("DROP TABLE IF EXISTS account;")
+# cursor.execute("DROP TABLE IF EXISTS token_blacklist;")
+
+
+
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS category (
     category_number INTEGER PRIMARY KEY AUTOINCREMENT,
