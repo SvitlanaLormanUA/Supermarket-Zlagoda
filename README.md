@@ -1,4 +1,4 @@
-# Supermarket-Zlagoda-
+# Supermarket-Zlagoda
 This is a full-stack implementation for the supermarket's website. 
 
 # run the application
