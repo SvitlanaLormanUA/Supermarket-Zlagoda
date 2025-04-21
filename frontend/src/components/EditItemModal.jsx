@@ -63,8 +63,7 @@ function EditItemModal({ isOpen, onClose, onSave, fields, items, itemKey = "name
                                         <td>
                                             {selectedItem?.[itemIdKey] === item[itemIdKey] ? "✔" : ""}
                                         </td>
-                                        <td>{item[itemKey]}</td>
-                                    </tr>
+                                        <td>{typeof itemKey === "function" ? itemKey(item) : item[itemKey]}</td>                                    </tr>
                                 ))}
                             </tbody>
                         </table>

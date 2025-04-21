@@ -37,6 +37,7 @@ from models import (
     update_customer,
 
     get_all_employees,
+    get_employee_by_id,
     get_employee_by_surname,
     get_cashiers,
     add_new_employee,
@@ -49,17 +50,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Robyn(__file__)
-PORT = 5174
+
+PORT = 3000
 
 ALLOW_CORS(app, origins="*")
 app.configure_authentication(RoleBasedAuthHandler(token_getter=BearerGetter()))
 
-# Products
+@app.get("/products", auth_required=True)
+async def get_products():
+    return get_all_store_products()
+
 @app.get("/products/:id", auth_required=True)
 async def get_product(request):
     product_id = request.path_params.get("id")
     return get_product_info(product_id)
- 
+
 @app.patch("/products/:id")
 @roles_required(["Manager"])
 async def upd_product(request):
@@ -72,7 +77,7 @@ async def upd_product(request):
 async def del_product(request):
     product_id = request.path_params.get("id")
     return delete_product(product_id)
- 
+
 @app.post("/products/new_product")
 @roles_required(["Manager"])
 async def add_product(request):
@@ -259,12 +264,17 @@ async def update_customer_route(request):
 
 # Employees
 # вони тут вже відсортовані за прізвищем
-@app.get("/employees", auth_required=True)
+@app.get("/employees")
 @roles_required(["Manager"])
 async def get_employees(request):
     return get_all_employees()
 
-@app.get("/employees/cashiers", auth_required=True)
+@app.get("/employee-by-ID", auth_required=True)
+@roles_required(["Manager"])
+async def get_empl_by_id(request):
+    return get_employee_by_id()
+
+@app.get("/employees/cashiers")
 @roles_required(["Manager"])
 async def fetch_cashiers(request):
     return get_cashiers()
@@ -275,7 +285,7 @@ async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
     return get_employee_by_surname(surname)
 
-@app.post("/employees")
+@app.post("/employees", auth_required=True)
 @roles_required(["Manager"])
 async def add_employee(request):
     try:
@@ -311,6 +321,8 @@ async def delete_employee_route(request):
     employee_id = request.path_params.get("id")
     return delete_employee(employee_id)
 
+
+app.start(port=PORT, host="127.0.0.1") 
 
 # authentication / authorization
 @app.post("/employees/register", auth_required=True)

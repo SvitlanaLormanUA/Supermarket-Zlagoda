@@ -255,6 +255,59 @@ def get_sorted_products_in_store(field, order, discount_filter=None):
             conn.close()
 
 
+def get_products_sorted(sort_by="product_name", order="ASC"):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        # Валідація параметрів
+        valid_sort_fields = ["product_name", "id_product", "category_name"]
+        valid_orders = ["ASC", "DESC"]
+        
+        if sort_by not in valid_sort_fields or order.upper() not in valid_orders:
+            return {
+                "status_code": 400,
+                "body": jsonify({"error": "Invalid sort parameters"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        query = f'''
+            SELECT 
+                p.id_product,
+                p.product_name,
+                p.characteristics,
+                c.category_name
+            FROM product p
+            LEFT JOIN category c ON p.category_number = c.category_number
+            ORDER BY {sort_by} {order}
+        '''
+
+        cursor.execute(query)
+        products = cursor.fetchall()
+        result = [{
+            'id': p[0],
+            'name': p[1],
+            'characteristics': p[2],
+            'category': p[3]
+        } for p in products]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"error": str(e)}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
 
 
 def get_all_categories():
@@ -399,7 +452,7 @@ def get_products_by_category(category_number):
         if conn:
             conn.close()
 
-#for receipt
+
 def get_total_price():
     conn = None
     try:
@@ -428,6 +481,7 @@ def get_total_price():
     finally:
         if conn:
             conn.close()
+
 
 def get_total_quantity():
     conn = None
@@ -682,6 +736,8 @@ def get_all_employees():
     finally:
         if conn:
             conn.close()
+
+
 def get_cashiers():
     conn = None
     try:
@@ -745,6 +801,8 @@ def get_cashiers():
     finally:
         if conn:
             conn.close()
+
+
 def get_employee_by_surname(surname):
     conn = None
     try:
@@ -792,6 +850,330 @@ def get_employee_by_surname(surname):
                 "data": [],
                 "message": f"Database error: {str(e)}"
             },
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_cashiers():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                id_employee,
+                empl_surname,
+                empl_name,
+                empl_patronymic,
+                empl_role,
+                salary,
+                date_of_birth,
+                date_of_start,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+            WHERE empl_role = ? COLLATE NOCASE  
+            ORDER BY empl_surname ASC
+        ''', ('Касир',))
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1],
+                'empl_name': employee[2],
+                'empl_patronymic': employee[3],
+                'empl_role': employee[4],
+                'salary': float(employee[5]),
+                'date_of_birth': employee[6],
+                'date_of_start': employee[7],
+                'phone_number': employee[8],
+                'city': employee[9],
+                'street': employee[10],
+                'zip_code': employee[11]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+            
+def get_employee_by_surname(surname):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        print(f"DEBUG: Querying surname = {surname}")  
+        surname = unquote(surname) if surname else None
+        
+        cursor.execute('''
+            SELECT 
+                empl_surname,
+                phone_number,
+                city,
+                street,
+                zip_code
+            FROM employee
+            WHERE empl_surname = ? COLLATE NOCASE  
+            ORDER BY empl_surname ASC
+        ''', (surname.strip(),)) 
+
+        employees = cursor.fetchall()
+        result = [
+            {
+                'empl_surname': employee[0],
+                'phone_number': employee[1],
+                'city': employee[2],
+                'street': employee[3],
+                'zip_code': employee[4]
+            }
+            for employee in employees
+        ]
+
+        return {
+            "status_code": 200,
+            "body": {"data": result},
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": {
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            },
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_employee_by_id():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id_employee, empl_surname
+            FROM Employee
+        ''')
+
+        employees = cursor.fetchall()
+        result = []
+        for employee in employees:
+            employee_dict = {
+                'id_employee': employee[0],
+                'empl_surname': employee[1]
+            }
+            result.append(employee_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()               
+
+
+def get_all_receipts():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT 
+                check_number,
+                id_employee,
+                card_number,
+                print_date,
+                sum_total,
+                vat              
+            FROM receipt
+        ''')
+
+        receipts = cursor.fetchall()
+        result = []
+        for receipt in receipts:
+            receipt_dict = {
+                'check_number': receipt[0],
+                'id_employee': receipt[1],
+                'card_number': receipt[2],
+                'print_date': receipt[3],
+                'sum_total': receipt[4],
+                'vat': receipt[5],
+            }
+            result.append(receipt_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+def add_receipt_with_store_products(receipt_data):
+    """
+    Чек (store_products)
+    :param receipt_data: {
+        "check_number": str,
+        "id_employee": str,
+        "card_number": str (optional),
+        "print_date": str (YYYY-MM-DD HH:MM:SS),
+        "items": [
+            {
+                "UPC": str,
+                "quantity": int,
+                "selling_price": float
+            },
+            ...
+        ]
+    }
+    """
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+        
+        # Загальна сума та ПДВ
+        total = sum(item['quantity'] * item['selling_price'] for item in receipt_data['items'])
+        vat = total * 0.2  # 20% ПДВ (можна змінити)
+
+        cursor.execute('''
+            INSERT INTO receipt (
+                check_number, 
+                id_employee, 
+                card_number, 
+                print_date, 
+                sum_total, 
+                vat
+            ) VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            receipt_data['check_number'],
+            receipt_data['id_employee'],
+            receipt_data.get('card_number'),
+            receipt_data['print_date'],
+            total,
+            vat
+        ))
+
+
+        for item in receipt_data['items']:
+            # наявність?
+            cursor.execute('SELECT products_number FROM store_product WHERE UPC = ?', (item['UPC'],))
+            result = cursor.fetchone()
+            
+            if not result:
+                raise ValueError(f"Товар з UPC {item['UPC']} не знайдено")
+                
+            available_quantity = result[0]
+            if available_quantity < item['quantity']:
+                raise ValueError(f"Недостатня кількість товару {item['UPC']}. Доступно: {available_quantity}")
+
+
+            cursor.execute('''
+                INSERT INTO sale (
+                    UPC, 
+                    check_number, 
+                    product_number, 
+                    selling_price
+                ) VALUES (?, ?, ?, ?)
+            ''', (
+                item['UPC'],
+                receipt_data['check_number'],
+                item['quantity'],
+                item['selling_price']
+            ))
+
+
+            cursor.execute('''
+                UPDATE store_product 
+                SET products_number = products_number - ? 
+                WHERE UPC = ?
+            ''', (item['quantity'], item['UPC']))
+
+        conn.commit()
+
+        return {
+            "status_code": 201,
+            "body": jsonify({
+                "message": "Чек успішно додано",
+                "check_number": receipt_data['check_number'],
+                "total": total,
+                "vat": vat
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except ValueError as e:
+        if conn:
+            conn.rollback()
+        return {
+            "status_code": 400,
+            "body": jsonify({"error": str(e)}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    except sqlite3.Error as e:
+        if conn:
+            conn.rollback()
+        return {
+            "status_code": 500,
+            "body": jsonify({"error": f"Database error: {str(e)}"}),
             "headers": {"Content-Type": "application/json"}
         }
     finally:

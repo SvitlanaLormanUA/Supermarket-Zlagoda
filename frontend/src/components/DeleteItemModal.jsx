@@ -51,7 +51,7 @@ function DeleteItemModal({
             <ul className="item-list">
               {items.map((item) => {
                 const itemId = item[itemIdKey];
-                const itemLabel = item[itemKey];
+                const itemLabel = typeof itemKey === "function" ? itemKey(item) : item[itemKey];
 
                 return (
                   <li key={itemId}>
