@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import api from '../axios'; 
 import SearchAndBack from './SearchAndBack';
 
-function Shop() {
+function Shop({ userRole }) {
   const [totalPrice, setTotalPrice] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState(null);
   const [error, setError] = useState(null);
@@ -31,8 +31,7 @@ function Shop() {
     <div className="shop-container">
       <SearchAndBack />
 
-      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-
+      { userRole === 'Manager' &&
       <div className="shop-stats">
         <div className="shop-stat-card">
           <div className="shop-stat-title">Total Price of Store Products</div>
@@ -43,7 +42,7 @@ function Shop() {
           <div className="shop-stat-value">{totalQuantity !== null ? totalQuantity : 'Loading...'}</div>
         </div>
       </div>
-
+    }
       <div className="shop-sections">
         <div className="sections">
           <Link to="/shop/products-in-store" style={{ textDecoration: 'none' }}>
@@ -53,12 +52,14 @@ function Shop() {
             </button>
           </Link>
 
+        { userRole === 'Manager' &&
           <Link to="/shop/products" style={{ textDecoration: 'none' }}>
             <button className="shop-section">
               <img src="/assets/images/products.png" alt="Shop" className="button-icon" />
               Products
             </button>
           </Link>
+      }
 
           <Link to="/shop/categories" style={{ textDecoration: 'none' }}>
             <button className="shop-section">
@@ -81,12 +82,14 @@ function Shop() {
             </button>
           </Link>
 
+          { userRole === 'Manager' &&
           <Link to="" style={{ textDecoration: 'none' }}>
             <button className="shop-section">
               <img src="/assets/images/report.png" alt="Report" className="button-icon" />
               Report
             </button>
           </Link>
+        }
         </div>
       </div>
       <style jsx>{`

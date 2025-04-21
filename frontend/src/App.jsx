@@ -48,7 +48,7 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/shop"
-                element={userRole === 'Manager' ? <Shop /> : <Navigate to="/dashboard" />}
+                element={<Shop userRole={userRole} />}
               />
               <Route
                 path="/shop/products"
@@ -56,19 +56,19 @@ function App() {
               />
               <Route
                 path="/shop/categories"
-                element={userRole === 'Manager' ? <Categories /> : <Navigate to="/dashboard" />}
+                element={<Categories />}
               />
               <Route
                 path="/shop/products-in-store"
-                element={userRole === 'Manager' ? <ProductsInStore /> : <Navigate to="/dashboard" />}
+                element={<ProductsInStore />}
               />
               <Route
                 path="/shop/customers-card"
-                element={userRole === 'Manager' ? <CustomersCard /> : <Navigate to="/dashboard" />}
+                element={<CustomersCard />}
               />
               <Route
                 path="/shop/receipts"
-                element={userRole === 'Manager' ? <Receipts /> : <Navigate to="/dashboard" />}
+                element={ <Receipts /> }
               />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
