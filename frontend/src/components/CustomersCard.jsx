@@ -18,6 +18,7 @@ function CustomersCard() {
     { name: "cust_surname", label: "Customer's Surname" },
     { name: "cust_name", label: "Customer's Name" },
     { name: "cust_patronymic", label: "Customer's Patronymic" },
+    { name: "phone_number", label: "Phone" },
     { name: "city", label: "City" },
     { name: "street", label: "Street" },
     { name: "zip_code", label: "Zip Code" },
@@ -41,14 +42,18 @@ function CustomersCard() {
   };
 
   const addCustomer = async (newCustomer) => {
+    console.log('Adding customer:', newCustomer);
     try {
-      await api.post('/customers-card/new_customer', newCustomer);
-      const response = await api.get('/customers-card');
-      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
-      setCustomerCards(parsedData || []);
+      const response = await api.post('/customers-card/new_customer', newCustomer);
+      console.log('Backend response:', response.data);
+      await fetchAllCustomersCards();
     } catch (error) {
-      console.error('Error adding customer:', error);
-      alert(error.response?.data?.detail || 'Error adding customer.');
+      console.error('Error adding new customer:', error);
+      const errorMessage =
+        error.response?.data?.body
+          ? JSON.parse(error.response.data.body)?.message
+          : error.response?.data?.detail || 'Error adding new customer.';
+      alert(errorMessage);
     }
   };
 

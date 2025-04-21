@@ -230,7 +230,7 @@ async def search_customers(request):
     return get_customers_by_name_surname(name, surname)
 
 @app.post("/customers-card/new_customer", auth_required=True)
-async def add_customer(request):
+async def add_new_customer(request):
     try:
         customer_data = json.loads(request.body)
         return add_customer(customer_data)
