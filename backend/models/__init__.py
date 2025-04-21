@@ -22,6 +22,7 @@ from .get import (
 
     get_customers_by_name_surname,
     get_customer_info_ordered,
+    get_customers_by_percent
     # get_all_customer_cards,
     
 
@@ -76,6 +77,7 @@ __all__ = [
     
     'get_customer_info_ordered',
     'get_customers_by_name_surname',
+    'get_customers_by_percent',
 
     'get_all_employees',
     'get_employee_by_id',

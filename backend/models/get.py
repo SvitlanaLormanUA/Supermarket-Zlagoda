@@ -671,6 +671,40 @@ def get_customers_by_name_surname(name=None, surname=None):
     finally:
         if conn:
             conn.close()
+def get_customers_by_percent(percent, sort="asc"):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+
+        # Ensure sort is either ASC or DESC
+        sort_order = "ASC" if sort.lower() != "desc" else "DESC"
+
+        cursor.execute(f'''
+            SELECT * FROM customer_card
+            WHERE percent = ?
+            ORDER BY cust_surname {sort_order}
+        ''', (percent,))
+
+        rows = cursor.fetchall()
+        customers = [dict(row) for row in rows]
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"customers": customers}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
 
 #EMPLOYEES
 # вони тут вже відсортовані за прізвищем
