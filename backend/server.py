@@ -322,8 +322,6 @@ async def delete_employee_route(request):
     return delete_employee(employee_id)
 
 
-app.start(port=PORT, host="127.0.0.1") 
-
 # authentication / authorization
 @app.post("/employees/register", auth_required=True)
 @roles_required(["Manager"])

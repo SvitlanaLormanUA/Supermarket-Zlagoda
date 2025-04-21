@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "supermarket_frontend",
   "version": "0.1.0",
   "private": true,
@@ -46,21 +45,5 @@
   },
   "devDependencies": {
     "dotenv-webpack": "^8.1.0"
-=======
-  "name": "frontend",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "react-scripts start"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-scripts": "^5.0.1"
->>>>>>> cafbf535 (start of supermarket frontend)
   }
 }
