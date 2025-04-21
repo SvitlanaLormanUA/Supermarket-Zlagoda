@@ -105,40 +105,26 @@ def add_new_category(category_data):
 def add_customer(customer_data):
     conn = None
     try:
-        # Зверни увагу на назви!!!
-        card_number = customer_data.get('card_number')
-        surname = customer_data.get('cust_surname')
-        name = customer_data.get('cust_name')
-        patronymic = customer_data.get('cust_patronymic')
-        phone = customer_data.get('phone_number')
-        city = customer_data.get('city')
-        street = customer_data.get('street')
-        zip_code = customer_data.get('zip_code')
-        percent = customer_data.get('percent')
-
-
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
         cursor.execute('''
             INSERT INTO customer_card (
-                card_number, cust_surname, cust_name, cust_patronymic, 
+                card_number, cust_surname, cust_name, cust_patronymic,
                 phone_number, city, street, zip_code, percent
-            ) VALUES (
-                :card_number, :surname, :name, :patronymic, 
-                :phone, :city, :street, :zip, :percent
             )
-        ''', {
-            'card_number': card_number,
-            'surname': surname,
-            'name': name,
-            'patronymic': patronymic,
-            'phone': phone,
-            'city': city,
-            'street': street,
-            'zip': zip_code,
-            'percent': percent
-        })
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (
+            customer_data['card_number'],
+            customer_data['cust_surname'],
+            customer_data['cust_name'],
+            customer_data['cust_patronymic'],
+            customer_data['phone_number'],
+            customer_data['city'],
+            customer_data['street'],
+            customer_data['zip_code'],
+            customer_data['percent']
+        ))
 
         conn.commit()
 
@@ -146,7 +132,7 @@ def add_customer(customer_data):
             "status_code": 201,
             "body": jsonify({
                 "status": "success",
-                "message": f"Customer {card_number} added successfully"
+                "message": f"Customer added successfully"
             }),
             "headers": {"Content-Type": "application/json"}
         }

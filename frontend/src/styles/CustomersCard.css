@@ -69,32 +69,6 @@
     align-items: center;
 }
 
-.card-actions {
-    position: relative;
-    top: -5px;
-    display: flex;
-    gap: 10px;
-}
-
-.card-actions button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    background-color: #ffc42e;
-    padding: 5px 8px;
-}
-
-.card-actions .delete-btn:hover, .card-actions .edit-btn:hover{
-    background-color: #ffc42e;
-    border: 1px solid #ffffff;
-}
-
-.card-actions img {
-    width: 20px;
-    height: 20px;
-}
-
 .card-header h3 {
     margin-top: 0px;
     margin-bottom: 10px;
@@ -138,13 +112,6 @@
     padding: 5px;
     margin: 5px 0;
     font-size: 14px;
-}
-
-.add-card button {
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
-    cursor: pointer;
 }
 
 
