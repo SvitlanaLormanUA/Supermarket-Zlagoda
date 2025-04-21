@@ -51,7 +51,7 @@ load_dotenv()
 
 app = Robyn(__file__)
 
-PORT = 3000
+PORT = 5174
 
 ALLOW_CORS(app, origins="*")
 app.configure_authentication(RoleBasedAuthHandler(token_getter=BearerGetter()))
