@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Pagination from './Pagination';
 
 function CustomTable({ data, title, columns, rowsPerPage = 6 }) {
   const [openRow, setOpenRow] = useState(null);
@@ -28,10 +29,7 @@ function CustomTable({ data, title, columns, rowsPerPage = 6 }) {
         <tbody>
           {currentPageData.map((item, index) => (
             <React.Fragment key={startIndex + index}>
-              <tr
-                className="table-row-header"
-                onClick={() => toggleRow(index)}
-              >
+              <tr className="table-row-header" onClick={() => toggleRow(index)}>
                 {columns.map((col, colIndex) => (
                   <td key={colIndex} className="table-cell">
                     <span className="table-content">{item[col.key]}</span>
@@ -62,23 +60,11 @@ function CustomTable({ data, title, columns, rowsPerPage = 6 }) {
       </table>
 
       {totalPages > 1 && (
-        <div className="pagination-controls">
-          <button className="prev" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
-            ← Prev
-          </button>
-          {[...Array(totalPages)].map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => goToPage(idx + 1)}
-              className={currentPage === idx + 1 ? 'active' : ''}
-            >
-              {idx + 1}
-            </button>
-          ))}
-          <button className="next" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
-            Next →
-          </button>
-        </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={goToPage}
+        />
       )}
     </div>
   );
