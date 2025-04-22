@@ -23,10 +23,10 @@
 }
 
 .page-button.active {
-    background-color: #409eff;
+    background-color: #496e4a;
     color: white;
     font-weight: bold;
-    border-color: #409eff;
+    border-color: #496e4a;
 }
 
 .page-button.nav:disabled {
