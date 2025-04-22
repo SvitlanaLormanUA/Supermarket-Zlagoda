@@ -50,3 +50,56 @@
     border-radius: 8px;
     padding: 10px;
 }
+
+.pagination-controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination-controls button {
+    margin: 0 4px;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 14px;
+}
+
+/* Стили для контейнера пагинации уже есть */
+
+.pagination-controls .prev,
+.pagination-controls .next {
+    padding: 6px 12px;
+    margin: 0 4px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-controls .next,
+.pagination-controls .prev {
+    background-color: #1e88e5;
+    color: white;
+}
+
+.pagination-controls .next:hover:not(:disabled),
+.pagination-controls .prev:hover:not(:disabled) {
+    background-color: #1565c0;
+}
+
+.pagination-controls button:disabled {
+    background-color: #ddd;
+    color: #000000;
+    cursor: not-allowed;
+}
+
+
+.pagination-controls button.active {
+    background-color: #8f8f8f;
+    color:rgb(255, 255, 255);
+
+}
