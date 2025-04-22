@@ -587,6 +587,7 @@ def get_products_by_category(category_number):
             FROM product p
             LEFT JOIN store_product sp ON p.id_product = sp.id_product
             WHERE p.category_number = ?
+            ORDER BY p.product_name COLLATE NOCASE ASC
         ''', (category_number,))
 
         products = cursor.fetchall()
@@ -620,6 +621,7 @@ def get_products_by_category(category_number):
     finally:
         if conn:
             conn.close()
+
 
 
 def get_total_price():

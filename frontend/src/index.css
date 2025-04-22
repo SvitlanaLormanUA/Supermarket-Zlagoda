@@ -15,6 +15,7 @@
 @import './styles/SortButtons.css';
 @import './styles/Receipts.css';
 @import './styles/Pagination.css';
+@import './styles/ProductsModal.css';
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 

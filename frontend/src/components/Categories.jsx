@@ -9,6 +9,8 @@ import EditItemModal from './EditItemModal';
 import DeleteItemModal from './DeleteItemModal';
 import SortButtons from './SortButtons';
 
+import ProductsModal from './ProductsModal';
+
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [openCategories, setOpenCategories] = useState({});
@@ -20,9 +22,20 @@ function Categories() {
   ];
   const [categoryProducts, setCategoryProducts] = useState({});
 
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [isProductsModalOpen, setProductsModalOpen] = useState(false);
+
   useEffect(() => {
     fetchAllCategories();
   }, []);
+
+  const showProductsModal = async (categoryId) => {
+    if (!categoryProducts[categoryId]) {
+      await toggleCategory(categoryId);
+    }
+    setSelectedCategoryId(categoryId);
+    setProductsModalOpen(true);
+  };
 
   const fetchAllCategories = async () => {
     try {
@@ -175,10 +188,22 @@ function Categories() {
         onDelete={deleteCategory}
       />
 
+      <ProductsModal
+        isOpen={isProductsModalOpen}
+        onClose={() => setProductsModalOpen(false)}
+        products={categoryProducts[selectedCategoryId] || []}
+      />
+
       <CustomTable
         data={categories}
         title="Categories"
         columns={[{ key: 'category_name', label: 'Categories' }]}
+        renderExtraRow={(item) => (
+          <button
+            className="view-products-button"
+            onClick={() => showProductsModal(item.category_number)}
+          >Products</button>
+        )}
       />
     </div>
   );

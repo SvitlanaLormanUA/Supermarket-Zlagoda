@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Pagination from './Pagination';
 
-function CustomTable({ data, title, columns, rowsPerPage = 6 }) {
+function CustomTable({ data, title, columns, rowsPerPage = 6, renderExtraRow }) {
   const [openRow, setOpenRow] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -50,6 +50,7 @@ function CustomTable({ data, title, columns, rowsPerPage = 6 }) {
                           <strong>{key.replace(/_/g, ' ')}:</strong> {value || '—'}
                         </p>
                       ))}
+                      {renderExtraRow && renderExtraRow(item)}
                     </div>
                   </td>
                 </tr>
