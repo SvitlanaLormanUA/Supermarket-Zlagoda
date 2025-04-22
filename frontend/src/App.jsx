@@ -11,6 +11,17 @@ import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
 import Receipts from './components/Receipts';
 
+import { jwtDecode } from 'jwt-decode';
+
+const isTokenExpired = (token) => {
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000; // у секундах
+    return decoded.exp < currentTime; 
+  } catch (InvalidTokenError) {
+    return true; 
+  }
+};
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
@@ -19,8 +30,15 @@ function App() {
     const token = Cookies.get('auth_token');
     const role = Cookies.get('user_role');
     if (token && role) {
-      setIsLoggedIn(true);
-      setUserRole(role);
+      if (isTokenExpired(token)) {
+        handleLogout(); 
+      } else {
+        setIsLoggedIn(true);
+        setUserRole(role);
+      }
+    } else {
+      setIsLoggedIn(false);
+      setUserRole(null);
     }
   }, []);
 

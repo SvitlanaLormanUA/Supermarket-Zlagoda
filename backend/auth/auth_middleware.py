@@ -1,11 +1,10 @@
 import os
-from robyn.authentication import AuthenticationHandler, BearerGetter, Identity
-from robyn import Request, jsonify
-import sqlite3
+from robyn.authentication import AuthenticationHandler, Identity
+from robyn import Request
 from typing import Optional
 from auth.crud import decode_access_token, get_user_by_email, decode_access_token, get_db_connection
 from dotenv import load_dotenv
-from jose import JWTError, jwt
+from jose import JWTError
 
 load_dotenv()
 DB_LINK = os.getenv("DB_LINK")
@@ -25,6 +24,8 @@ class RoleBasedAuthHandler(AuthenticationHandler):
 
         try:
             payload = decode_access_token(token)
+            if payload is None:
+                return None
             useremail = payload["sub"]
 
             user = get_user_by_email(useremail)

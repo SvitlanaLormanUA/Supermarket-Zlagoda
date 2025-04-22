@@ -12,9 +12,9 @@ DB_LINK = os.getenv("DB_LINK")
 
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-ALGORITHM = "HS256"
+ALGORITHM = os.getenv("ALGORITHM")
 SECRET_KEY = os.getenv("SECRET_KEY")
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 години
+ACCESS_TOKEN_EXPIRE_MINUTES = 2880  # 48 годин
 
 
 @dataclass

@@ -1,3 +1,4 @@
 react
 axios 
 js-cookie
+jwt-decode

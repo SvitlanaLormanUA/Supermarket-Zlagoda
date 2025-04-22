@@ -13,6 +13,7 @@ from models import (
     get_product_info,
     get_customer_info_ordered,
     get_customers_by_name_surname,
+    get_customers_by_percent,
     get_total_price,
     get_total_quantity,
     get_store_products_by_UPC,
@@ -236,6 +237,16 @@ async def add_category(request):
 # Customers Card
 @app.get("/customers-card", auth_required=True)
 async def get_customers_cards(request):
+    percent = request.query_params.get("percent")
+    sort = request.query_params.get("sort", "asc")
+
+    if percent is not None:
+        try:
+            percent = int(percent)
+        except ValueError:
+            return jsonify({"error": "Invalid percent value"}), 400
+        return get_customers_by_percent(percent, sort)
+    
     return get_customer_info_ordered()
 
 @app.get("/customers-card/search", auth_required=True)
