@@ -22,6 +22,7 @@ from models import (
     get_products_info,
     get_sorted_products_in_store,
     get_sorted_categories,
+    get_sorted_products,
 
     add_new_product,
     add_new_store_product,
@@ -97,6 +98,14 @@ async def add_product(request):
             "body": jsonify({"data": "Invalid JSON format"}),
             "headers": {"Content-Type": "application/json"},
         }
+    
+@app.get("/products/sort/:field/:order", auth_required=True)
+def sort_products(req):
+    field = req.path_params["field"]
+    order = req.path_params["order"]
+
+    result = get_sorted_products(field, order)
+    return jsonify(result)    
     
 @app.get("/products/category/:category_id", auth_required=True)
 async def get_products_by_category_route(request):

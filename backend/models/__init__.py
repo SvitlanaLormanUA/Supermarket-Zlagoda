@@ -14,8 +14,9 @@ from .get import (
     get_promotional_products,
     get_non_promotional_products,
     get_sorted_products_in_store,
-    get_products_sorted,
+    # get_products_sorted,
     get_sorted_categories,
+    get_sorted_products,
 
     get_all_employees,
     get_employee_by_id,
@@ -61,6 +62,7 @@ from .update import (
 __all__ = [
     'get_all_products',
     'get_product_by_name',
+    'get_sorted_products',
     'get_all_store_products',
     'get_all_categories',
     'get_all_receipts',

@@ -66,6 +66,24 @@ function Products() {
     }
   };
 
+  const fetchSortedProducts = async () => {
+    await fetchAllProducts();
+  };
+
+  const handleSort = async (field, order) => {
+    if (!field || !order) {
+      await fetchSortedProducts();
+    } else {
+      try {
+        const response = await api.get(`/products/sort/${field}/${order}`);
+        const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+        setProducts(parsedData);
+      } catch (error) {
+        console.error('Error sorting products:', error);
+        alert('Failed to sort products.');
+      }
+    }
+  };
 
   const addProducts = async (newProduct) => {
     if (!validateProduct(newProduct)) {
@@ -144,6 +162,13 @@ function Products() {
         isOpen={isDeleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onDelete={deleteProducts}
+      />
+
+      <SortButtons
+        fields={[
+          { key: 'product_name', label: 'Name' },
+        ]}
+        onSort={handleSort}
       />
 
       <CustomTable

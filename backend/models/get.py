@@ -157,6 +157,73 @@ def get_product_info(product_id):
         if conn:
             conn.close()
 
+
+def get_sorted_products(field, order):
+    valid_fields = {"product_name"}
+    valid_order = {"asc", "desc"}
+
+    if field not in valid_fields or order.lower() not in valid_order:
+        return {
+            "status_code": 400,
+            "body": jsonify({
+                "status": "error",
+                "message": "Invalid sort parameters."
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = f"""
+        SELECT  
+            p.id_product,
+            p.category_number,
+            c.category_name,
+            p.product_name,
+            p.characteristics        
+        FROM product p
+        JOIN category c ON p.category_number = c.category_number
+        """
+
+        query += f" ORDER BY {field} {order.upper()}"
+
+        cursor.execute(query)
+        products = cursor.fetchall()
+        result = []
+        for product in products:
+            product_dict = {
+                'id_product': product[0],
+                'category_number': product[1],
+                'category_name': product[2],
+                'product_name': product[3],
+                'characteristics': product[4]
+            }
+            result.append(product_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    finally:
+        if conn:
+            conn.close()
+
+
 def get_all_store_products():
     conn = None
     try:
