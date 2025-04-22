@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../axios';
-// import { validateUniqueProductInStore, validateProductInStore } from '../utils/Validation';
+import { validateProduct} from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -51,47 +51,40 @@ function Products() {
   };
   
 
-  const addProducts = async (newStoreProduct) => {
-    console.log('add');
-    // if (!validateUniqueProductInStore(newStoreProduct, productsInStore) || !validateProductInStore(newStoreProduct)) {
-    //   alert('Invalid product data or duplicate product.');
-    //   return;
-    // }
-
-    // try {
-    //   await api.post('/products-in-store/new_product', newStoreProduct);
-    //   await fetchAllStoreProducts();
-    // } catch (error) {
-    //   console.error('Error adding new store product:', error);
-    //   alert(error.response?.data?.detail || 'Error adding new store product.');
-    // }
+  const addProducts = async (newProduct) => {
+    if (!validateProduct(newProduct)) {
+      return;
+    }
+    try {
+      await api.post('/products/new_product', newProduct);
+      await fetchAllProducts();
+    } catch (error) {
+      console.error('Error adding new product:', error);
+      alert(error.response?.data?.detail || 'Error adding new product.');
+    }
   };
 
   const editProducts = async (editedData) => {
-    console.log('edit');
-    // if (!validateProductInStore(editedData)) {
-    //   alert('Invalid product data.');
-    //   return;
-    // }
-
-    // try {
-    //   await api.patch(`/products-in-store/${editedData.id_product}`, editedData);
-    //   await fetchAllStoreProducts();
-    // } catch (error) {
-    //   console.error('Error editing store product:', error);
-    //   alert(error.response?.data?.detail || 'Error updating store product.');
-    // }
+    if (!validateProduct(editedData)) {
+      return;
+    }
+    try {
+      await api.patch(`/products/${editedData.id_product}`, editedData);
+      await fetchAllProducts();
+    } catch (error) {
+      console.error('Error editing product:', error);
+      alert(error.response?.data?.detail || 'Error updating product.');
+    }
   };
 
   const deleteProducts = async (id_product) => {
-    console.log('delete');
-    // try {
-    //   await api.delete(`/products-in-store/${id_product}`);
-    //   await fetchAllStoreProducts();
-    // } catch (error) {
-    //   console.error('Error deleting store product:', error);
-    //   alert(error.response?.data?.detail || `Cannot delete store product #${id_product}`);
-    // }
+    try {
+      await api.delete(`/products/${id_product}`);
+      await fetchAllProducts();
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert(error.response?.data?.detail || `Cannot delete product #${id_product}`);
+    }
   };
 
 

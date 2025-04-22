@@ -1,3 +1,18 @@
+export const validateProduct = (newProduct) => {
+    const requiredFields = ['category_number', 'product_name', 'characteristics'];
+    
+    for (let field of requiredFields) {
+      const value = newProduct[field];
+      if (value === undefined || value === null || value.toString().trim() === '') {
+        alert(`${field} cannot be empty.`);
+        return false;
+      }
+    }
+  
+    return true;
+  };
+  
+
 export const validateUniqueProductInStore = (newProduct, productsInStore) => {
     const existingUPC = productsInStore.some(product => product.UPC === newProduct.UPC);
     const existingProductId = productsInStore.some(product => product.id_product === newProduct.id_product);
