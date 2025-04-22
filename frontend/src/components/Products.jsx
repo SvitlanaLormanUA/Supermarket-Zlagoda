@@ -31,15 +31,67 @@ function Products() {
       const response = await api.get('/products');
       const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
       setProducts(parsedData);
-      setCategoriesOptions(
-        parsedData.map((categories) => ({
-          value: categories.category_number,
-          label: categories.category_name,
-        }))
-      );
+  
+      const uniqueCategoriesMap = new Map();
+      parsedData.forEach(product => {
+        if (!uniqueCategoriesMap.has(product.category_number)) {
+          uniqueCategoriesMap.set(product.category_number, {
+            value: product.category_number,
+            label: product.category_name
+          });
+        }
+      });
+  
+      const uniqueCategoryOptions = Array.from(uniqueCategoriesMap.values());
+      setCategoriesOptions(uniqueCategoryOptions);
+  
     } catch (error) {
       console.error('Error fetching products:', error);
     }
+  };
+  
+
+  const addProducts = async (newStoreProduct) => {
+    console.log('add');
+    // if (!validateUniqueProductInStore(newStoreProduct, productsInStore) || !validateProductInStore(newStoreProduct)) {
+    //   alert('Invalid product data or duplicate product.');
+    //   return;
+    // }
+
+    // try {
+    //   await api.post('/products-in-store/new_product', newStoreProduct);
+    //   await fetchAllStoreProducts();
+    // } catch (error) {
+    //   console.error('Error adding new store product:', error);
+    //   alert(error.response?.data?.detail || 'Error adding new store product.');
+    // }
+  };
+
+  const editProducts = async (editedData) => {
+    console.log('edit');
+    // if (!validateProductInStore(editedData)) {
+    //   alert('Invalid product data.');
+    //   return;
+    // }
+
+    // try {
+    //   await api.patch(`/products-in-store/${editedData.id_product}`, editedData);
+    //   await fetchAllStoreProducts();
+    // } catch (error) {
+    //   console.error('Error editing store product:', error);
+    //   alert(error.response?.data?.detail || 'Error updating store product.');
+    // }
+  };
+
+  const deleteProducts = async (id_product) => {
+    console.log('delete');
+    // try {
+    //   await api.delete(`/products-in-store/${id_product}`);
+    //   await fetchAllStoreProducts();
+    // } catch (error) {
+    //   console.error('Error deleting store product:', error);
+    //   alert(error.response?.data?.detail || `Cannot delete store product #${id_product}`);
+    // }
   };
 
 
@@ -48,6 +100,42 @@ function Products() {
       <div className="searchAndBackSection">
         <SearchAndBack />
       </div>
+
+      <ControlButtons
+        onAdd={(data) => addProducts(data)}
+        onEdit={(ids) => editProducts(ids)}
+        onDelete={(ids) => deleteProducts(ids)}
+        modalFields={productsFields}
+        deleteItems={products}
+        itemKey="product_name"
+        itemIdKey="id_product"
+      />
+
+      <AddItemModal
+        fields={productsFields}
+        isOpen={isModalOpen}
+        onClose={() => setModalOpen(false)}
+        onSave={addProducts}
+      />
+
+      <EditItemModal
+        isOpen={isEditModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={editProducts}
+        fields={productsFields}
+        items={products}
+        itemKey="product_name"
+        itemIdKey="id_product"
+      />
+
+      <DeleteItemModal
+        items={products}
+        itemKey="product_name"
+        itemIdKey="id_product"
+        isOpen={isDeleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onDelete={deleteProducts}
+      />
 
       <CustomTable
         data={products}

@@ -14,7 +14,14 @@ def get_all_products():
         cursor = conn.cursor()
 
         cursor.execute('''
-            SELECT id_product, category_number, product_name, characteristics FROM product
+            SELECT 
+                p.id_product, 
+                p.category_number, 
+                c.category_name,
+                p.product_name, 
+                p.characteristics
+            FROM product p
+            LEFT JOIN category c ON p.category_number = c.category_number
         ''')
 
         products = cursor.fetchall()
@@ -23,8 +30,9 @@ def get_all_products():
             product_dict = {
                 'id_product': product[0],
                 'category_number': product[1],
-                'product_name': product[2],
-                'characteristics': product[3],
+                'category_name': product[2],
+                'product_name': product[3],
+                'characteristics': product[4],
             }
             result.append(product_dict)
 
@@ -47,6 +55,7 @@ def get_all_products():
     finally:
         if conn:
             conn.close()
+
 
 
 
