@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../axios';
-import { validateProduct} from '../utils/Validation';
+import { validateProduct } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -31,7 +31,7 @@ function Products() {
       const response = await api.get('/products');
       const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
       setProducts(parsedData);
-  
+
       const uniqueCategoriesMap = new Map();
       parsedData.forEach(product => {
         if (!uniqueCategoriesMap.has(product.category_number)) {
@@ -41,15 +41,31 @@ function Products() {
           });
         }
       });
-  
+
       const uniqueCategoryOptions = Array.from(uniqueCategoriesMap.values());
       setCategoriesOptions(uniqueCategoryOptions);
-  
+
     } catch (error) {
       console.error('Error fetching products:', error);
     }
   };
-  
+
+  const handleSearch = async (value) => {
+    try {
+      if (!value) {
+        fetchAllProducts();
+      } else {
+        const response = await api.get(`/products/search/${value}`);
+        const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+        setProducts(Array.isArray(parsedData) ? parsedData : [parsedData]);
+      }
+    } catch (error) {
+      console.error('Error searching products:', error);
+      setProducts([]);
+      alert('No products found.');
+    }
+  };
+
 
   const addProducts = async (newProduct) => {
     if (!validateProduct(newProduct)) {
@@ -91,7 +107,7 @@ function Products() {
   return (
     <div className="products-container">
       <div className="searchAndBackSection">
-        <SearchAndBack />
+        <SearchAndBack onSearch={handleSearch} />
       </div>
 
       <ControlButtons

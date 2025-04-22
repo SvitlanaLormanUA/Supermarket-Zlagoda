@@ -6,6 +6,7 @@ from robyn.authentication import BearerGetter
 from auth.auth_middleware import roles_required, RoleBasedAuthHandler
 from models import (
     get_all_products,
+    get_product_by_name,
     get_all_store_products,
     get_all_categories,
     get_products_by_category,
@@ -60,6 +61,11 @@ app.configure_authentication(RoleBasedAuthHandler(token_getter=BearerGetter()))
 @app.get("/products", auth_required=True)
 async def get_products(request):
     return get_all_products()
+
+@app.get("/products/search/:product_name", auth_required=True)
+async def get_all_products_by_name(request):
+    name = request.path_params.get("product_name")
+    return get_product_by_name(name)
 
 @app.get("/products/:id", auth_required=True)
 async def get_product(request):
