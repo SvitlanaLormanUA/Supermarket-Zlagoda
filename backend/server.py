@@ -5,6 +5,7 @@ from auth.crud import create_user, authenticate_user, get_employee_id, blacklist
 from robyn.authentication import BearerGetter
 from auth.auth_middleware import roles_required, RoleBasedAuthHandler
 from models import (
+    get_all_products,
     get_all_store_products,
     get_all_categories,
     get_products_by_category,
@@ -57,8 +58,8 @@ ALLOW_CORS(app, origins="*")
 app.configure_authentication(RoleBasedAuthHandler(token_getter=BearerGetter()))
 
 @app.get("/products", auth_required=True)
-async def get_products():
-    return get_all_store_products()
+async def get_products(request):
+    return get_all_products()
 
 @app.get("/products/:id", auth_required=True)
 async def get_product(request):
@@ -96,7 +97,6 @@ async def get_products_by_category_route(request):
     category_id = request.path_params.get("category_id")
     return get_products_by_category(category_id)
  
-
 
 # Products In Store
 @app.get("/products-in-store", auth_required=True)

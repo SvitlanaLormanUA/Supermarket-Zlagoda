@@ -1,4 +1,5 @@
 from .get import (
+    get_all_products,
     get_all_store_products,
     get_all_categories,
     get_all_receipts,
@@ -57,6 +58,7 @@ from .update import (
 )
 
 __all__ = [
+    'get_all_products',
     'get_all_store_products',
     'get_all_categories',
     'get_all_receipts',

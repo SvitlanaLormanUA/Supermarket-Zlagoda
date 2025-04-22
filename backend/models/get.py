@@ -7,6 +7,49 @@ from urllib.parse import unquote
 load_dotenv()
 DB_LINK = os.getenv("DB_LINK")
 
+def get_all_products():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT id_product, category_number, product_name, characteristics FROM product
+        ''')
+
+        products = cursor.fetchall()
+        result = []
+        for product in products:
+            product_dict = {
+                'id_product': product[0],
+                'category_number': product[1],
+                'product_name': product[2],
+                'characteristics': product[3],
+            }
+            result.append(product_dict)
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+
 def get_product_info(product_id):
     conn = None
     try:
