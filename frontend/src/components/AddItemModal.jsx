@@ -25,7 +25,7 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
     if ('promotional_product' in normalizedData) {
       if (normalizedData.promotional_product === 'true') {
         normalizedData.promotional_product = 1;
-      } else if (normalizedData.promotional_product === 'false') {
+      } else if (normalizedData.promotional_product === 'false' || normalizedData.promotional_product === '') {
         normalizedData.promotional_product = 0;
       }
     }
