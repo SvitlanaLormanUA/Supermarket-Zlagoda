@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import api from '../axios';
 import { validateProduct } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
@@ -24,7 +24,28 @@ function Products() {
 
   useEffect(() => {
     fetchAllProducts();
+    fetchAllCategories();
   }, []);
+
+  const fetchAllCategories = async () => {
+    try {
+      const response = await api.get('/categories');
+      const categoriesData = response.data.data ?? JSON.parse(response.data.body).data;
+
+      const categoriesMap = new Map();
+      categoriesData.forEach(category => {
+        categoriesMap.set(category.category_number, {
+          value: category.category_number,
+          label: category.category_name
+        });
+      });
+
+      const categoriesOptions = Array.from(categoriesMap.values());
+      setCategoriesOptions(categoriesOptions);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
 
   const fetchAllProducts = async () => {
     try {
