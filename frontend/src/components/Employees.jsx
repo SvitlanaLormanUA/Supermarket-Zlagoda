@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import api from '../axios';
+import { validateEmployee, validateUniqueField } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -23,18 +24,18 @@ function Employees() {
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
 
     const employeesFields = [
-        { name: 'id_employee', label: 'ID Employee', readOnly: true},
-        { name: 'empl_surname', label: "Employee's Surname"},
+        { name: 'id_employee', label: 'ID Employee', readOnly: true },
+        { name: 'empl_surname', label: "Employee's Surname" },
         { name: 'empl_name', label: "Employee's Name", type: 'text' },
-        { name: 'empl_patronymic', label: "Employee's Patronymic"},
+        { name: 'empl_patronymic', label: "Employee's Patronymic" },
         { name: 'empl_role', label: 'Role', type: 'fk', options: RoleOptions },
-        { name: 'salary', label: 'Salary'},
+        { name: 'salary', label: 'Salary' },
         { name: 'date_of_birth', label: 'Date of Birth', type: 'date' },
         { name: 'date_of_start', label: 'Date of Start', type: 'date' },
-        { name: 'phone_number', label: 'Phone'},
-        { name: 'city', label: 'City'},
-        { name: 'street', label: 'Street'},
-        { name: 'zip_code', label: 'Zip Code'}
+        { name: 'phone_number', label: 'Phone' },
+        { name: 'city', label: 'City' },
+        { name: 'street', label: 'Street' },
+        { name: 'zip_code', label: 'Zip Code' }
     ];
 
     useEffect(() => {
@@ -54,6 +55,10 @@ function Employees() {
     };
 
     const addEmployee = async (newEmployee) => {
+        if (!validateEmployee(newEmployee) ||
+            !validateUniqueField(newEmployee, employees, 'id_employee')) {
+            return;
+        }
         try {
             const response = await api.post('/employees/new_employee', newEmployee);
             await fetchAllEmployees();
@@ -68,6 +73,9 @@ function Employees() {
     };
 
     const editEmployee = async (editedData) => {
+        if (!validateEmployee(editedData)) {
+            return;
+        }
         try {
             await api.patch(`/employees/${editedData.id_employee}`, JSON.stringify(editedData));
             await fetchAllEmployees();

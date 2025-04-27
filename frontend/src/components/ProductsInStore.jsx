@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import api from '../axios'; 
-import { validateUniqueProductInStore, validateProductInStore } from '../utils/Validation';
+import api from '../axios';
+import { validateUniqueField, validateProductInStore } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import ControlButtons from './ControlButtons';
 import CustomTable from './CustomTable';
@@ -45,7 +45,6 @@ function ProductsInStore() {
       );
     } catch (error) {
       console.error('Error fetching store products:', error);
-      //alert('Failed to fetch store products.');
     }
   };
 
@@ -61,7 +60,6 @@ function ProductsInStore() {
         setProductOptions(productIdOptions);
       } catch (error) {
         console.error('Error fetching all products:', error);
-        //alert('Failed to fetch products.');
       }
     };
     fetchProducts();
@@ -84,10 +82,10 @@ function ProductsInStore() {
   };
 
   const addProductsInStore = async (newStoreProduct) => {
-    if (!validateUniqueProductInStore(newStoreProduct, productsInStore) || !validateProductInStore(newStoreProduct)) {
-      alert('Invalid product data or duplicate product.');
+    if (!validateProductInStore(newStoreProduct) ||
+      !validateUniqueField(newStoreProduct, productsInStore, 'UPC') ||
+      !validateUniqueField(newStoreProduct, productsInStore, 'id_product'))
       return;
-    }
 
     try {
       await api.post('/products-in-store/new_product', newStoreProduct);
