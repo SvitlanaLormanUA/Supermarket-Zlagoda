@@ -1,11 +1,19 @@
 import api from '../axios';
 import { useEffect, useState } from 'react';
-
-export default function Profile() {
+import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
+export default function Profile({ onLogout}) {
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+
+  const navigate = useNavigate();
+  const handleLogout = async () => {
+    await api.post('/logout');
+    onLogout();
+    navigate('/login');
+  }
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
@@ -51,13 +59,16 @@ export default function Profile() {
     return <div className="profile-container error">{error}</div>;
   }
 
-  // Prepare combined address
+
   const address = [userData.city, userData.street, userData.zip_code]
     .filter(Boolean)
     .join(', ');
 
   return (
     <div className="profile-container">
+      <button className="delete-btn" onClick={handleLogout}>
+        Logout
+      </button>
       <h1 className="profile-title">
         Hello, {userData.empl_name || 'User'}!
       </h1>

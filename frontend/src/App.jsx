@@ -47,11 +47,12 @@ function App() {
     setUserRole(role);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Cookies.remove('auth_token');
     Cookies.remove('user_role');
     setIsLoggedIn(false);
     setUserRole(null);
+   
   };
 
   return (
@@ -60,9 +61,12 @@ function App() {
         <Login onLogin={handleLogin} />
       ) : (
         <>
+        {isLoggedIn &&
           <Navigation onLogout={handleLogout} userRole={userRole} />
+        }
           <div style={{ marginLeft: '270px', padding: '15px' }}>
             <Routes>
+            <Route path="/login" element={ <Login onLogin={handleLogin} />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/shop"
@@ -90,8 +94,8 @@ function App() {
               />
               <Route 
                 path="/profile"
-                element={<Profile />}
-                />
+                element={<Profile onLogout = {handleLogout}/>}
+                /> 
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </div>

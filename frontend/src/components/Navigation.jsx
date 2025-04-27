@@ -1,14 +1,8 @@
-import React, { useState } from 'react';
+
 import { Link } from 'react-router-dom';
 
 
 function Navigation({ userRole }) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
-
   return (
     <div className="navbar">
       <ul className="navbar-list">
@@ -34,18 +28,14 @@ function Navigation({ userRole }) {
           </li>
           )
       }
-        <li className="dropdown">
-          <button className="account-button" onClick={toggleDropdown}>
+        <li className="dropdown"><Link to="/profile" style={{ textDecoration: 'none' }}>
+          <button className="account-button">
             <img src="/assets/images/account.png" alt="Account" className="button-icon" />
-            Account ▾
+            Account
           </button>
+        </Link>
 
-          {isDropdownOpen && (
-            <ul className="dropdown-menu">
-              <li><Link to="/profile">My Account</Link></li>
-              <li><Link to="/edit-account">Edit Account</Link></li>
-            </ul>
-          )}
+        
         </li>
       </ul>
     </div>
