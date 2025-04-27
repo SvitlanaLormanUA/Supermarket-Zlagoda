@@ -290,7 +290,7 @@ async def update_customer_route(request):
 
 # Employees
 # вони тут вже відсортовані за прізвищем
-@app.get("/employees")
+@app.get("/employees", auth_required=True)
 @roles_required(["Manager"])
 async def get_employees(request):
     return get_all_employees()
@@ -311,7 +311,7 @@ async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
     return get_employee_by_surname(surname)
 
-@app.post("/employees", auth_required=True)
+@app.post("/employees/new_employee")
 @roles_required(["Manager"])
 async def add_employee(request):
     try:

@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 
 function AddItemModal({ fields, isOpen, onClose, onSave }) {
   const [formData, setFormData] = useState(
-    fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+    fields.reduce((acc, field) => ({
+      ...acc,
+      [field.name]: field.type === 'number' ? '' : field.type === 'date' ? '' : '',
+    }), {})
   );
 
   const handleChange = (e) => {
@@ -25,7 +28,10 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
     if ('promotional_product' in normalizedData) {
       if (normalizedData.promotional_product === 'true') {
         normalizedData.promotional_product = 1;
-      } else if (normalizedData.promotional_product === 'false' || normalizedData.promotional_product === '') {
+      } else if (
+        normalizedData.promotional_product === 'false' ||
+        normalizedData.promotional_product === ''
+      ) {
         normalizedData.promotional_product = 0;
       }
     }
@@ -35,7 +41,6 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
     setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
     onClose();
   };
-
 
   if (!isOpen) return null;
 
@@ -48,7 +53,9 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
             <button
               type="button"
               onClick={() => {
-                setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
+                setFormData(
+                  fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+                );
                 onClose();
               }}
               className="close-button"
@@ -61,7 +68,17 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
               <div key={field.name} className="modal-field">
                 <label htmlFor={field.name}>{field.label}:</label>
 
-                {field.type === 'boolean' ? (
+                {field.type === 'date' ? (
+                  <input
+                    type="date"
+                    id={field.name}
+                    name={field.name}
+                    value={formData[field.name] || ''}
+                    onChange={handleChange}
+                    readOnly={field.readOnly || false}
+                    placeholder="Select date"
+                  />
+                ) : field.type === 'boolean' ? (
                   <select
                     id={field.name}
                     name={field.name}
@@ -99,11 +116,15 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
               </div>
             ))}
             <div className="modal-buttons">
-              <button type="submit" className="save-button">Save</button>
+              <button type="submit" className="save-button">
+                Save
+              </button>
               <button
                 type="button"
                 onClick={() => {
-                  setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
+                  setFormData(
+                    fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {})
+                  );
                   onClose();
                 }}
                 className="cancel-button"
