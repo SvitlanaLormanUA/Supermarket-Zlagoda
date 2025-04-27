@@ -42,7 +42,7 @@ function Navigation({ userRole }) {
 
           {isDropdownOpen && (
             <ul className="dropdown-menu">
-              <li><Link to="/my-account">My Account</Link></li>
+              <li><Link to="/profile">My Account</Link></li>
               <li><Link to="/edit-account">Edit Account</Link></li>
             </ul>
           )}

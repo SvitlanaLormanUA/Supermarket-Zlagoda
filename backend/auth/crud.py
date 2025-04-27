@@ -26,6 +26,8 @@ class User:
     role: str
     is_active: bool
 
+    
+
 def get_db_connection():
     return sqlite3.connect(DB_LINK)
 
@@ -36,7 +38,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def get_user(user_id: int) -> Optional[User]:
+def get_user_by_id(user_id: int) -> Optional[User]:
     """Get a user by ID."""
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -48,7 +50,8 @@ def get_user(user_id: int) -> Optional[User]:
                 employee_id=row[1],
                 email=row[2],
                 password_hash=row[3],
-                is_active=bool(row[5])
+                is_active=bool(row[5]),
+                role=row[4]
             )
     return None
 
@@ -66,7 +69,7 @@ def get_user_by_email(email: str) -> Optional[User]:
                 a.is_active,
                 e.empl_role 
             FROM account a
-            JOIN employee e ON a.employee_id = e.id_employee  -- JOIN з employee
+            JOIN employee e ON a.employee_id = e.id_employee
             WHERE a.email = ?
         """, (email,))
         

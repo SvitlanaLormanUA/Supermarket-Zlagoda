@@ -10,7 +10,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
 import Receipts from './components/Receipts';
-
+import Profile from './components/Profile';
 import { jwtDecode } from 'jwt-decode';
 
 const isTokenExpired = (token) => {
@@ -88,6 +88,10 @@ function App() {
                 path="/shop/receipts"
                 element={ <Receipts /> }
               />
+              <Route 
+                path="/profile"
+                element={<Profile />}
+                />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </div>

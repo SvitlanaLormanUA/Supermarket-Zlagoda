@@ -5,6 +5,7 @@ from typing import Optional
 from auth.crud import decode_access_token, get_user_by_email, decode_access_token, get_db_connection
 from dotenv import load_dotenv
 from jose import JWTError
+from models.get import get_employee_info_by_id
 
 load_dotenv()
 DB_LINK = os.getenv("DB_LINK")
@@ -30,7 +31,12 @@ class RoleBasedAuthHandler(AuthenticationHandler):
 
             user = get_user_by_email(useremail)
             print(f"Decoded payload: {payload}")
-            return Identity(claims={"user": f"{ user.role }"})
+
+            #employee = get_employee_info_by_id(user.employee_id)
+            return Identity(claims={
+                "user": f"{ user.role }",
+                 "userId": f"{ user.employee_id }"
+                                    })
         except JWTError as e:  
             print(f"Token validation failed: {e}")
             return None
