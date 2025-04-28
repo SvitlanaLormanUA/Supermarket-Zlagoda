@@ -55,6 +55,10 @@ function Employees() {
         }
     };
 
+    const handleSearch = async (surname) => {
+ 
+    };
+    
     const filterEmployees = (filterCashiers) => {
         if (filterCashiers) {
             setEmployees((prevEmployees) =>
@@ -119,7 +123,7 @@ function Employees() {
     return (
         <div className="employee-container">
             <div className="searchAndBackSection">
-                <SearchAndBack />
+                <SearchAndBack onSearch={handleSearch} />
             </div>
 
             <ControlButtons
