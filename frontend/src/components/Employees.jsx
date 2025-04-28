@@ -19,6 +19,7 @@ const RoleOptions = [
 
 function Employees() {
     const [employees, setEmployees] = useState([]);
+    const [filterCashiers, setFilterCashiers] = useState(false);
     const [isModalOpen, setModalOpen] = useState(false);
     const [isEditModalOpen, setEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -52,6 +53,22 @@ function Employees() {
             setEmployees([]);
             alert('Failed to fetch employees.');
         }
+    };
+
+    const filterEmployees = (filterCashiers) => {
+        if (filterCashiers) {
+            setEmployees((prevEmployees) =>
+                prevEmployees.filter((emp) => emp.empl_role === 'Cashier')
+            );
+        } else {
+            fetchAllEmployees();
+        }
+    };
+
+    const handleFilterChange = () => {
+        const newValue = !filterCashiers;
+        setFilterCashiers(newValue);
+        filterEmployees(newValue);
     };
 
     const addEmployee = async (newEmployee) => {
@@ -114,6 +131,18 @@ function Employees() {
                 itemKey={(item) => `${item.id_employee} – ${item.empl_surname}`}
                 itemIdKey="id_employee"
             />
+
+            <div className="filter-section">
+                <span className="filter-label">Filter:</span>
+                <label>
+                    <input
+                        type="checkbox"
+                        checked={filterCashiers}
+                        onChange={handleFilterChange}
+                    />
+                    Only Cashiers
+                </label>
+            </div>
 
             <AddItemModal
                 fields={employeesFields}

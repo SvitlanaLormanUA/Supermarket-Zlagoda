@@ -1085,7 +1085,7 @@ def get_cashiers():
             FROM employee
             WHERE empl_role = ? COLLATE NOCASE  
             ORDER BY empl_surname ASC
-        ''', ('Касир',))
+        ''', ('Cashier',))
 
         employees = cursor.fetchall()
         result = []
