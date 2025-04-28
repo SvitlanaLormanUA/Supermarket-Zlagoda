@@ -358,7 +358,7 @@ async def get_empl_by_id(request):
 async def fetch_cashiers(request):
     return get_cashiers()
 
-@app.get("/employees/:surname")
+@app.get("/employees/search")
 @roles_required(["Manager"])
 async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
