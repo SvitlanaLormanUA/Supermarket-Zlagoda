@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Pagination from './Pagination';
 
 function CustomTable({ data, title, columns, rowsPerPage = 6, renderExtraRow }) {
@@ -17,6 +17,21 @@ function CustomTable({ data, title, columns, rowsPerPage = 6, renderExtraRow }) 
     setOpenRow(null);
     setCurrentPage(page);
   };
+
+  useEffect(() => {
+    if (currentPageData.length === 0 && currentPage > 1) {
+      setOpenRow(null);
+      setCurrentPage(currentPage - 1);
+    }
+    if (data.length === 0 && currentPage !== 1) {
+      setOpenRow(null);
+      setCurrentPage(1);
+    }
+    if (currentPage > totalPages && totalPages > 0) {
+      setOpenRow(null);
+      setCurrentPage(totalPages);
+    }
+  }, [data, currentPage, currentPageData.length, totalPages]);
 
   return (
     <div className="table-container">
@@ -57,6 +72,13 @@ function CustomTable({ data, title, columns, rowsPerPage = 6, renderExtraRow }) 
               )}
             </React.Fragment>
           ))}
+          {currentPageData.length === 0 && (
+            <tr>
+              <td colSpan={columns.length} className="table-empty">
+                No data available
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
 
