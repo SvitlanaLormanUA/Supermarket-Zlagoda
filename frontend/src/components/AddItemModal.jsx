@@ -18,26 +18,7 @@ function AddItemModal({ fields, isOpen, onClose, onSave }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const normalizedData = { ...formData };
-
-    if ('UPC_prom' in normalizedData && normalizedData.UPC_prom === '') {
-      normalizedData.UPC_prom = null;
-    }
-
-    if ('promotional_product' in normalizedData) {
-      if (normalizedData.promotional_product === 'true') {
-        normalizedData.promotional_product = 1;
-      } else if (
-        normalizedData.promotional_product === 'false' ||
-        normalizedData.promotional_product === ''
-      ) {
-        normalizedData.promotional_product = 0;
-      }
-    }
-
-    onSave(normalizedData);
-
+    onSave(formData); 
     setFormData(fields.reduce((acc, field) => ({ ...acc, [field.name]: '' }), {}));
     onClose();
   };

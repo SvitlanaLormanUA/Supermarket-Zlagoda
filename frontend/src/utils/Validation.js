@@ -21,23 +21,46 @@ export const validateProduct = (newProduct) => {
     return true;
 };
 
-export const validateProductInStore = (newProduct) => {
-    const requiredFields = ['UPC', 'id_product', 'selling_price', 'products_number'];
-    for (let field of requiredFields) {
-        if (field !== 'UPC_prom' && !newProduct[field]) {
-            alert(`${field} cannot be empty.`);
-            return false;
+export const validateProductInStore = (rawProduct) => {
+    const newProduct = { ...rawProduct };
+
+    if ('UPC_prom' in newProduct && newProduct.UPC_prom === '') {
+        newProduct.UPC_prom = null;
+    }
+    if ('promotional_product' in newProduct) {
+        if (newProduct.promotional_product === 'true') {
+            newProduct.promotional_product = true;
+        } else if (newProduct.promotional_product === 'false') {
+            newProduct.promotional_product = false;
         }
     }
-    if (newProduct['UPC_prom'] && (newProduct['promotional_product'] === false || newProduct['promotional_product'] === undefined)) {
-        alert("If UPC_prom is filled, Promotional Product must be true.");
-        return false;
+
+    const requiredFields = ['UPC', 'id_product', 'selling_price', 'products_number', 'promotional_product'];
+
+    for (let field of requiredFields) {
+        const value = newProduct[field];
+
+        if (value === undefined || value === null) {
+            alert(`${field} cannot be empty.`);
+            return null;
+        }
+        if (field === 'promotional_product') {
+            if (typeof value !== 'boolean') {
+                alert('Promotional Product must be true or false.');
+                return null;
+            }
+        }
     }
-    if (newProduct['promotional_product'] === true && !newProduct['UPC_prom']) {
-        alert("If Promotional Product is true, UPC_prom must be filled.");
-        return false;
+    if (newProduct.promotional_product === false && newProduct.UPC_prom) {
+        alert('If UPC_prom exists, promotional_product must be true.');
+        return null;
     }
-    return true;
+    if (newProduct.promotional_product === true && !newProduct.UPC_prom) {
+        alert('If Promotional Product is true, UPC_prom must be filled.');
+        return null;
+    }
+
+    return newProduct;
 };
 
 export const validateCategories = (newCategory) => {
@@ -123,7 +146,7 @@ export const validateEmployee = (newEmployee) => {
     let realAge = ageAtStart;
 
     if (monthDifference < 0 || (monthDifference === 0 && dayDifference < 0)) {
-        realAge--; 
+        realAge--;
     }
     if (realAge < 18) {
         alert('Employee must be at least 18 years old at the start date.');

@@ -82,13 +82,15 @@ function ProductsInStore() {
   };
 
   const addProductsInStore = async (newStoreProduct) => {
-    if (!validateProductInStore(newStoreProduct) ||
-      !validateUniqueField(newStoreProduct, productsInStore, 'UPC') ||
-      !validateUniqueField(newStoreProduct, productsInStore, 'id_product'))
-      return;
+    const validatedProduct = validateProductInStore(newStoreProduct);
+
+    if (!validatedProduct ||
+      !validateUniqueField(validatedProduct, productsInStore, 'UPC') ||
+      !validateUniqueField(newStoreProduct, productsInStore, 'id_product')
+    ) { return };
 
     try {
-      await api.post('/products-in-store/new_product', newStoreProduct);
+      await api.post('/products-in-store/new_product', validatedProduct);
       await fetchAllStoreProducts();
     } catch (error) {
       console.error('Error adding new store product:', error);
