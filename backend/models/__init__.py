@@ -27,7 +27,9 @@ from .get import (
     get_customer_info_ordered,
     get_customers_by_percent,
     get_cashier_receipt_history,
-    get_inactive_non_manager_accounts
+    get_inactive_non_manager_accounts,
+    get_total_sales_by_cashier,  
+    get_total_quantity_product  
     # get_all_customer_cards,
     
 
@@ -95,6 +97,8 @@ __all__ = [
     'get_employee_info_by_id',
     'get_cashier_receipt_history',
     'get_inactive_non_manager_accounts',
+    'get_total_sales_by_cashier',
+    'get_total_quantity_product',
 
     'add_new_product',
     'add_new_store_product',

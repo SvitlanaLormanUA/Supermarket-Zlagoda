@@ -1456,3 +1456,124 @@ def get_inactive_non_manager_accounts():
     finally:
         if conn:
             conn.close()
+
+#19. загальна сума продажів
+def get_total_sales_by_cashier(id_employee, start_date, end_date):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+        SELECT 
+            e.id_employee,
+            e.empl_surname,
+            e.empl_name,
+            SUM(s.product_number * s.selling_price) AS total_sales
+        FROM 
+            employee e
+            INNER JOIN receipt r ON e.id_employee = r.id_employee
+            INNER JOIN sale s ON r.check_number = s.check_number
+        WHERE 
+            e.id_employee = ?
+            AND r.print_date BETWEEN ? AND ?
+        GROUP BY 
+            e.id_employee, e.empl_surname, e.empl_name
+        '''
+
+        cursor.execute(query, (id_employee, start_date, end_date))
+        row = cursor.fetchone()
+
+        if not row:
+            return {
+                "status_code": 404,
+                "body": jsonify({"status": "error", "message": "No sales found for this cashier in the given period"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        result = {
+            "id_employee": row[0],
+            "empl_surname": row[1],
+            "empl_name": row[2],
+            "total_sales": round(row[3], 2) if row[3] else 0.0
+        }
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+#21. кількість поданого певного товару за період
+def get_total_quantity_product(product_id, start_date, end_date):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+        SELECT 
+            p.id_product,
+            p.product_name,
+            SUM(s.product_number) AS total_quantity,
+            MIN(sp.selling_price) AS min_price,
+            MAX(sp.selling_price) AS max_price,
+            AVG(sp.selling_price) AS avg_price
+        FROM 
+            product p
+            INNER JOIN store_product sp ON p.id_product = sp.id_product
+            INNER JOIN sale s ON sp.UPC = s.UPC
+            INNER JOIN receipt r ON s.check_number = r.check_number
+        WHERE 
+            p.id_product = ?
+            AND r.print_date BETWEEN ? AND ?
+        GROUP BY 
+            p.id_product, p.product_name
+        '''
+
+        cursor.execute(query, (product_id, start_date, end_date))
+        row = cursor.fetchone()
+
+        if not row:
+            return {
+                "status_code": 404,
+                "body": jsonify({"status": "error", "message": "No sales found for this product in the given period"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        result = {
+            "id_product": row[0],
+            "product_name": row[1],
+            "total_quantity_sold": row[2],
+            "min_price": round(row[3], 2) if row[3] else None,
+            "max_price": round(row[4], 2) if row[4] else None,
+            "avg_price": round(row[5], 2) if row[5] else None
+        }
+
+        return {
+            "status_code": 200,
+            "body": jsonify({"data": result}),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+

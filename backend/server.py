@@ -26,6 +26,8 @@ from models import (
     get_sorted_products,
     get_cashier_receipt_history,
     get_inactive_non_manager_accounts,
+    get_total_sales_by_cashier,  
+    get_total_quantity_product,  
     get_employee_info_by_id,
 
     add_new_product,
@@ -302,6 +304,41 @@ async def get_all_receipts_history(request):
 async def get_receipts_by_cashier(request):
     id_employee = request.path_params["id_employee"]  
     return get_cashier_receipt_history(id_employee)
+
+# Receipts - complicated queries 
+@app.get("/sales/cashier", auth_required=True)
+@roles_required(["Manager"])
+async def get_sales_by_cashier(request):
+    id_employee = request.query_params.get("id_employee")
+    start_date = request.query_params.get("start_date")
+    end_date = request.query_params.get("end_date")
+    
+    if not id_employee or not start_date or not end_date:
+        return {
+            "status_code": 400,
+            "body": {"message": "id_employee, start_date, and end_date are required"},
+            "headers": {"Content-Type": "application/json"}
+        }
+    
+    return get_total_sales_by_cashier(id_employee, start_date, end_date)
+
+
+@app.get("/sales/product", auth_required=True)
+@roles_required(["Manager"])
+async def get_quantity_of_product(request):
+    product_id = request.query_params.get("product_id")
+    start_date = request.query_params.get("start_date")
+    end_date = request.query_params.get("end_date")
+
+    if not product_id or not start_date or not end_date:
+        return {
+            "status_code": 400,
+            "body": {"message": "product_id, start_date, and end_date are required"},
+            "headers": {"Content-Type": "application/json"}
+        }
+    
+    return get_total_quantity_product(product_id, start_date, end_date)
+
 
 
 # Employees
