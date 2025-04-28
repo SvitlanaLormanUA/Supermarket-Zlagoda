@@ -2,7 +2,7 @@ import api from '../axios';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
-export default function Profile({ onLogout}) {
+export default function Profile({ onLogout }) {
   const [userData, setUserData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -81,7 +81,10 @@ export default function Profile({ onLogout}) {
 
           <div className="profile-details">
             <p>
-              <strong>Full Name:</strong> {userData.empl_name || ''} {userData.empl_surname || ''} {userData.patronymic || ''}
+              <strong>ID:</strong> {userData.id_employee || ''}
+            </p>
+            <p>
+              <strong>Full Name:</strong> {userData.empl_surname || ''} {userData.empl_name || ''} {userData.empl_patronymic || ''}
             </p>
             <p>
               <strong>Position:</strong> {userData.empl_role || 'N/A'}
@@ -92,6 +95,9 @@ export default function Profile({ onLogout}) {
                 <strong>Address:</strong> {address}
               </p>
             )}
+            <p>
+              <strong>Salary:</strong> {userData.salary != null ? `${userData.salary} ₴` : 'N/A'}
+            </p>
 
             {Object.entries(userData)
               .filter(
