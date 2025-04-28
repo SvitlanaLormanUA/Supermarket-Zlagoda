@@ -10,7 +10,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
 import Receipts from './components/Receipts';
-
+import Profile from './components/Profile';
 import { jwtDecode } from 'jwt-decode';
 
 const isTokenExpired = (token) => {
@@ -47,11 +47,12 @@ function App() {
     setUserRole(role);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     Cookies.remove('auth_token');
     Cookies.remove('user_role');
     setIsLoggedIn(false);
     setUserRole(null);
+   
   };
 
   return (
@@ -60,9 +61,12 @@ function App() {
         <Login onLogin={handleLogin} />
       ) : (
         <>
+        {isLoggedIn &&
           <Navigation onLogout={handleLogout} userRole={userRole} />
+        }
           <div style={{ marginLeft: '270px', padding: '15px' }}>
             <Routes>
+            <Route path="/login" element={ <Login onLogin={handleLogin} />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/shop"
@@ -88,6 +92,10 @@ function App() {
                 path="/shop/receipts"
                 element={ <Receipts /> }
               />
+              <Route 
+                path="/profile"
+                element={<Profile onLogout = {handleLogout}/>}
+                /> 
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </div>

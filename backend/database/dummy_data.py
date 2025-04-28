@@ -64,10 +64,16 @@ INSERT INTO Employee (
     zip_code
 ) 
 VALUES 
-('E001', 'Shevchenko', 'Oleksandr', 'Ivanovych', 'Cashier', 20000.00, '1985-02-15', '2010-05-01', '380671234567', 'Kyiv', 'Khreshchatyk St', '01001'),
-('E002', 'Lorman', 'Svitlana', 'Oleksandrivna', 'Manager', 28000.00, '1990-08-20', '2015-03-12', '380502395078', 'Lviv', 'Hrushevskoho St', '79000'),
-('E003', 'Koval', 'Iryna', 'Andriivna', 'Cashier', 20000.00, '1988-11-10', '2012-07-25', '380633053489', 'Odesa', 'Deribasivska St', '65000'),
-('E004', 'Gaponenko', 'Yelyzaveta', 'Andriivna', 'Manager', 20000.00, '1992-05-30', '2018-01-15', '380994567890', 'Kyiv', 'Sumska St', '61000')
+                ('E001', 'Shevchenko', 'Oleksandr', 'Ivanovych', 'Cashier', 20000.00, '1985-02-15', '2010-05-01', '380671234567', 'Kyiv', 'Khreshchatyk St', '01001'),
+                ('E002', 'Lorman', 'Svitlana', 'Oleksandrivna', 'Manager', 28000.00, '1990-08-20', '2015-03-12', '380502395078', 'Lviv', 'Hrushevskoho St', '79000'),
+                ('E003', 'Koval', 'Iryna', 'Andriivna', 'Cashier', 20000.00, '1988-11-10', '2012-07-25', '380633053489', 'Odesa', 'Deribasivska St', '65000'),
+                ('E004', 'Gaponenko', 'Yelyzaveta', 'Andriivna', 'Manager', 20000.00, '1992-05-30', '2018-01-15', '380994567890', 'Kyiv', 'Sumska St', '61000'),
+                ('E005', 'Petrenko', 'Olha', 'Vasyliivna', 'Cashier', 40000, '1990-01-01', '2021-01-01', '380671234567', 'Kyiv', 'Khreshchatyk St', '01001'),
+                ('E006', 'Ivanenko', 'Maksym', 'Oleksandrovych', 'Cashier', 40000, '1992-01-01', '2022-01-01', '380502395078', 'Lviv', 'Hrushevskoho St', '79000'),
+                ('E007', 'Sydorchuk', 'Nataliia', 'Petrivna', 'Cashier', 40000, '1993-01-01', '2022-06-01', '380633053489', 'Odesa', 'Deribasivska St', '65000'),
+                ('E008', 'Fedorenko', 'Dmytro', 'Andriiovych', 'Cashier', 40000, '1991-01-01', '2023-01-01', '380994567890', 'Kharkiv', 'Sumska St', '61000'),
+                ('E009', 'Melnyk', 'Tetiana', 'Ihorivna', 'Cashier', 40000, '1994-01-01', '2023-06-01', '380985678901', 'Dnipro', 'Dmytra Yavornytskoho Ave', '49000'),
+                ('E010', 'Kovalchuk', 'Andrii', 'Mykolaiovych', 'Cashier', 40000, '1990-06-01', '2023-03-01', '380974123456', 'Vinnytsia', 'Soborna St', '21000');
 ''')
 
 cursor.execute('''

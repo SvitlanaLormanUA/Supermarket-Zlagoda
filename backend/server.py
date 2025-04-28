@@ -24,6 +24,11 @@ from models import (
     get_sorted_products_in_store,
     get_sorted_categories,
     get_sorted_products,
+    get_cashier_receipt_history,
+    get_inactive_non_manager_accounts,
+    get_total_sales_by_cashier,  
+    get_total_quantity_product,  
+    get_employee_info_by_id,
 
     add_new_product,
     add_new_store_product,
@@ -55,7 +60,7 @@ load_dotenv()
 
 app = Robyn(__file__)
 
-PORT = 5174
+PORT = 8000
 
 ALLOW_CORS(app, origins="*")
 app.configure_authentication(RoleBasedAuthHandler(token_getter=BearerGetter()))
@@ -288,6 +293,54 @@ async def update_customer_route(request):
             "headers": {"Content-Type": "application/json"}
         }
 
+# Receipts
+@app.get("/receipts", auth_required=True)
+@roles_required(["Manager"])
+async def get_all_receipts_history(request):
+    return get_cashier_receipt_history()
+
+@app.get("/receipts/:id_employee", auth_required=True)
+@roles_required(["Manager"])
+async def get_receipts_by_cashier(request):
+    id_employee = request.path_params["id_employee"]  
+    return get_cashier_receipt_history(id_employee)
+
+# Receipts - complicated queries 
+@app.get("/sales/cashier", auth_required=True)
+@roles_required(["Manager"])
+async def get_sales_by_cashier(request):
+    id_employee = request.query_params.get("id_employee")
+    start_date = request.query_params.get("start_date")
+    end_date = request.query_params.get("end_date")
+    
+    if not id_employee or not start_date or not end_date:
+        return {
+            "status_code": 400,
+            "body": {"message": "id_employee, start_date, and end_date are required"},
+            "headers": {"Content-Type": "application/json"}
+        }
+    
+    return get_total_sales_by_cashier(id_employee, start_date, end_date)
+
+
+@app.get("/sales/product", auth_required=True)
+@roles_required(["Manager"])
+async def get_quantity_of_product(request):
+    product_id = request.query_params.get("product_id")
+    start_date = request.query_params.get("start_date")
+    end_date = request.query_params.get("end_date")
+
+    if not product_id or not start_date or not end_date:
+        return {
+            "status_code": 400,
+            "body": {"message": "product_id, start_date, and end_date are required"},
+            "headers": {"Content-Type": "application/json"}
+        }
+    
+    return get_total_quantity_product(product_id, start_date, end_date)
+
+
+
 # Employees
 # вони тут вже відсортовані за прізвищем
 @app.get("/employees")
@@ -310,6 +363,11 @@ async def fetch_cashiers(request):
 async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
     return get_employee_by_surname(surname)
+
+@app.get("/employees/inactive-accounts")
+@roles_required(["Manager"])
+async def get_inactive_non_manager_accounts_route(request):
+    return  get_inactive_non_manager_accounts()
 
 @app.post("/employees", auth_required=True)
 @roles_required(["Manager"])
@@ -435,7 +493,8 @@ async def logout_user(request):
 
 @app.get("/users/me", auth_required=True)
 async def get_current_user(request):
-    user = request.identity.claims["user"]
-    return user
+    user_id = request.identity.claims["userId"]
+    return get_employee_info_by_id(user_id)
+
 
 app.start(port=PORT, host="127.0.0.1")

@@ -19,11 +19,11 @@ function Login({ onLogin }) {
 
       const token = response.data.access_token;
 
-      // Store token in cookies (expires in 7 days)
-      Cookies.set('auth_token', token, { expires: 7, secure: true, sameSite: 'Strict' });
+      // Store token in cookies (expires in 2 days)
+      Cookies.set('auth_token', token, { expires: 2, secure: true, sameSite: 'Strict' });
 
       const userResponse = await api.get('/users/me');
-      const userRole = userResponse.data; // e.g., "Manager"
+      const userRole = (userResponse.data.data ?? JSON.parse(userResponse.data.body).data).empl_role ; // e.g., "Manager"
       Cookies.set('user_role', userRole, { expires: 7, secure: true, sameSite: 'Strict' });
 
       onLogin(userRole);
@@ -54,9 +54,9 @@ function Login({ onLogin }) {
           <button className="submit-button" type="submit">
             Log In
           </button>
-          <button className="forgot-password" type="button">
+          {/* <button className="forgot-password" type="button">
             Forgot Password?
-          </button>
+          </button> */}
         </form>
         {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
       </div>

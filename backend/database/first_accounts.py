@@ -30,16 +30,31 @@ accounts_data = [
         'password': 'CashierPass456!',
         'is_active': 1
     },
-    # ,
-    # на ньому тестую
     {
         'employee_id': 'E003',
         'email': 'koval.iruna@zl.com',
         'password': 'KovalPass789!',
         'is_active': 1
+    },
+    {
+        'employee_id': 'E005',
+        'email': 'natalia.petrenko@zl.com',
+        'password': 'PetrenkoPass101!',
+        'is_active': 1
+    },
+    {
+        'employee_id': 'E006',
+        'email': 'dmytro.ivanov@zl.com',
+        'password': 'IvanovPass202!',
+        'is_active': 1
+    },
+    {
+        'employee_id': 'E007',
+        'email': 'olena.symonenko@zl.com',
+        'password': 'SymonenkoPass303!',
+        'is_active': 1
     }
 ]
-
 for account in accounts_data:
     try:
         password_hash = hash_password(account['password'])
