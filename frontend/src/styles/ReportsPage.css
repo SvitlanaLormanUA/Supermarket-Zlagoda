@@ -1,0 +1,82 @@
+.reports-container {
+    padding: 2rem;
+    font-family: Arial, sans-serif;
+    color: #333;
+  }
+  
+  .reports-container h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .reports-container p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .report-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .report-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #f3f4f6;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .report-button:hover {
+    background-color: #e5e7eb;
+  }
+  
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke: #4b5563;
+  }
+  @media print {
+    body * {
+      visibility: hidden;
+    }
+  
+    .printable-section, .printable-section * {
+      visibility: visible;
+    }
+  
+    .printable-section {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+    }
+  }
+  
+.print-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #a00b33;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    color: white;
+  }
+  
+  .print-button:hover {
+    background-color: #c12c54;
+  }
+  
+  .print-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke: #4b5563;
+  }

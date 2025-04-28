@@ -353,6 +353,11 @@ async def get_employees(request):
 async def get_empl_by_id(request):
     return get_employee_by_id()
 
+@app.get('/employees/non-active', auth_required=True)
+@roles_required(["Manager"])
+async def get_non_active_employees(request):
+    return get_inactive_non_manager_accounts()
+
 @app.get("/employees/cashiers")
 @roles_required(["Manager"])
 async def fetch_cashiers(request):

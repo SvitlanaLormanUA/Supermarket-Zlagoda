@@ -83,7 +83,7 @@ function Shop({ userRole }) {
           </Link>
 
           { userRole === 'Manager' &&
-          <Link to="" style={{ textDecoration: 'none' }}>
+          <Link to="/shop/reports" style={{ textDecoration: 'none' }}>
             <button className="shop-section">
               <img src="/assets/images/report.png" alt="Report" className="button-icon" />
               Report

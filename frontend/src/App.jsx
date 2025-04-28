@@ -12,7 +12,7 @@ import CustomersCard from './components/CustomersCard';
 import Receipts from './components/Receipts';
 import Profile from './components/Profile';
 import Employees from './components/Employees';
-
+import ReportsPage from './components/ReportsPage';
 import { jwtDecode } from 'jwt-decode';
 
 const isTokenExpired = (token) => {
@@ -81,6 +81,10 @@ function App() {
               <Route
                 path="/shop/products"
                 element={userRole === 'Manager' ? <Products /> : <Navigate to="/dashboard" />}
+              />
+                <Route
+                path="/shop/reports"
+                element={userRole === 'Manager' ? <ReportsPage /> : <Navigate to="/dashboard" />}
               />
               <Route
                 path="/shop/categories"

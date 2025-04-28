@@ -74,6 +74,11 @@ VALUES
                 ('E008', 'Fedorenko', 'Dmytro', 'Andriiovych', 'Cashier', 40000, '1991-01-01', '2023-01-01', '380994567890', 'Kharkiv', 'Sumska St', '61000'),
                 ('E009', 'Melnyk', 'Tetiana', 'Ihorivna', 'Cashier', 40000, '1994-01-01', '2023-06-01', '380985678901', 'Dnipro', 'Dmytra Yavornytskoho Ave', '49000'),
                 ('E010', 'Kovalchuk', 'Andrii', 'Mykolaiovych', 'Cashier', 40000, '1990-06-01', '2023-03-01', '380974123456', 'Vinnytsia', 'Soborna St', '21000');
+               ('E011', 'Kozlov', 'Viktor', 'Mykhailovych', 'Cashier', 40000, '1989-03-15', '2022-04-01', '380971234561', 'Kyiv', 'Lesia Ukrainka St', '01002'),
+    ('E012', 'Moroz', 'Anna', 'Serhiivna', 'Cashier', 40000, '1991-07-22', '2021-09-15', '380962345672', 'Lviv', 'Svobody Ave', '79001'),
+    ('E013', 'Hrytsenko', 'Pavlo', 'Oleksiiovych', 'Cashier', 40000, '1990-12-05', '2023-02-10', '380953456783', 'Odesa', 'Rishelievska St', '65001'),
+    ('E014', 'Bondarenko', 'Olena', 'Ivanivna', 'Cashier', 40000, '1993-04-18', '2022-11-20', '380944567894', 'Kharkiv', 'Nauky Ave', '61001'),
+    ('E015', 'Lysenko', 'Ihor', 'Viktorovych', 'Cashier', 40000, '1988-09-30', '2021-06-05', '380935678905', 'Dnipro', 'Slobozhanskyi Ave', '49001');
 ''')
 
 cursor.execute('''
@@ -87,6 +92,7 @@ VALUES
 ('C003', 'Sydorchuk', 'Nataliia', 'Petrivna', '380633053489', 'Odesa', 'Deribasivska St', '65000', 7),  
 ('C004', 'Fedorenko', 'Dmytro', 'Andriiovych', '380994567890', 'Kharkiv', 'Sumska St', '61000', 12),  
 ('C005', 'Melnyk', 'Tetiana', 'Ihorivna', '380985678901', 'Dnipro', 'Dmytra Yavornytskoho Ave', '49000', 8);  
+
 
 ''')
 

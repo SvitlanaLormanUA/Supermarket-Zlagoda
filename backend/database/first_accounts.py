@@ -53,7 +53,39 @@ accounts_data = [
         'email': 'olena.symonenko@zl.com',
         'password': 'SymonenkoPass303!',
         'is_active': 1
+    },
+    {
+        "employee_id": "E011",
+        "email": "viktor.kozlov@zl.com",
+        "password": "KozlovPass303!",
+        "is_active": 0
+    },
+    {
+        "employee_id": "E012",
+        "email": "anna.moroz@zl.com",
+        "password": "MorozPass303!",
+        "is_active": 0
+    },
+    {
+        "employee_id": "E013",
+        "email": "pavlo.hrytsenko@zl.com",
+        "password": "HrytsenkoPass303!",
+        "is_active": 0
+    },
+    {
+        "employee_id": "E014",
+        "email": "olena.bondarenko@zl.com",
+        "password": "BondarenkoPass303!",
+        "is_active": 0
+    },
+    {
+        "employee_id": "E015",
+        "email": "ihor.lysenko@zl.com",
+        "password": "LysenkoPass303!",
+        "is_active": 0
     }
+
+    
 ]
 for account in accounts_data:
     try:

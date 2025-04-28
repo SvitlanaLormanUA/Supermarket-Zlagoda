@@ -623,7 +623,6 @@ def get_products_by_category(category_number):
             conn.close()
 
 
-
 def get_total_price():
     conn = None
     try:
@@ -1379,7 +1378,7 @@ def get_cashier_receipt_history(id_employee=None):
         if conn:
             conn.close()
 
-
+            
 def get_inactive_non_manager_accounts():
     conn = None
     try:
@@ -1392,7 +1391,8 @@ def get_inactive_non_manager_accounts():
             a.email,
             e.empl_name,
             e.empl_surname,
-            e.empl_role
+            e.empl_role,
+            e.id_employee
         FROM 
             account a
             INNER JOIN employee e ON a.employee_id = e.id_employee
@@ -1403,7 +1403,7 @@ def get_inactive_non_manager_accounts():
                 FROM receipt r 
                 WHERE r.id_employee = e.id_employee
             )
-            AND a.is_active = 1
+            AND a.is_active = 0
         ORDER BY 
             a.account_id;
         '''
@@ -1417,18 +1417,18 @@ def get_inactive_non_manager_accounts():
                 "body": jsonify({
                     "status": "success",
                     "data": [],
-                    "message": "No active accounts found for non-manager employees without receipts"
+                    "message": "No inactive accounts found for non-manager employees without receipts"
                 }),
                 "headers": {"Content-Type": "application/json"}
             }
 
-        # Structure the data
         result = [
             {
                 "account_id": row[0],
                 "email": row[1],
                 "employee_name": f"{row[2]} {row[3]}",
-                "empl_role": row[4]
+                "empl_role": row[4],
+                "employee_id": row[5],
             }
             for row in rows
         ]
@@ -1456,6 +1456,8 @@ def get_inactive_non_manager_accounts():
     finally:
         if conn:
             conn.close()
+
+
 
 #19. загальна сума продажів
 def get_total_sales_by_cashier(id_employee, start_date, end_date):
