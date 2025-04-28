@@ -99,7 +99,8 @@ function ProductsInStore() {
   };
 
   const editProductsInStore = async (editedData) => {
-    if (!validateProductInStore(editedData)) {
+    const validatedProduct = validateProductInStore(editedData);
+    if (!validatedProduct) {
       alert('Invalid product data.');
       return;
     }

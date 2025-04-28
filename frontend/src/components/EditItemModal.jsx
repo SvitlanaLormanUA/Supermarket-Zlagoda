@@ -84,7 +84,7 @@ function EditItemModal({ isOpen, onClose, onSave, fields, items, itemKey = "name
                                     ) : field.type === 'boolean' ? (
                                         <select
                                             name={field.name}
-                                            value={formData[field.name] || ""}
+                                            value={formData[field.name]}
                                             onChange={(e) => handleChange(field.name, e.target.value)}
                                         >
                                             <option value="">Select</option>
