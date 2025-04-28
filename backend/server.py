@@ -343,7 +343,7 @@ async def get_quantity_of_product(request):
 
 # Employees
 # вони тут вже відсортовані за прізвищем
-@app.get("/employees")
+@app.get("/employees", auth_required=True)
 @roles_required(["Manager"])
 async def get_employees(request):
     return get_all_employees()
@@ -369,7 +369,7 @@ async def fetch_employee_by_surname(request):
 async def get_inactive_non_manager_accounts_route(request):
     return  get_inactive_non_manager_accounts()
 
-@app.post("/employees", auth_required=True)
+@app.post("/employees/new_employee", auth_required=True)
 @roles_required(["Manager"])
 async def add_employee(request):
     try:

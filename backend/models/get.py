@@ -379,9 +379,9 @@ def get_sorted_products_in_store(field, order, discount_filter=None):
         """
 
         if discount_filter == "true":
-            query += " WHERE sp.promotional_product = 1"
+            query += " WHERE sp.promotional_product = true"
         elif discount_filter == "false":
-            query += " WHERE sp.promotional_product = 0"
+            query += " WHERE sp.promotional_product = false"
 
         query += f" ORDER BY {field} {order.upper()}"
 

@@ -11,15 +11,17 @@ import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
 import Receipts from './components/Receipts';
 import Profile from './components/Profile';
+import Employees from './components/Employees';
+
 import { jwtDecode } from 'jwt-decode';
 
 const isTokenExpired = (token) => {
   try {
     const decoded = jwtDecode(token);
     const currentTime = Date.now() / 1000; // у секундах
-    return decoded.exp < currentTime; 
+    return decoded.exp < currentTime;
   } catch (InvalidTokenError) {
-    return true; 
+    return true;
   }
 };
 function App() {
@@ -31,7 +33,7 @@ function App() {
     const role = Cookies.get('user_role');
     if (token && role) {
       if (isTokenExpired(token)) {
-        handleLogout(); 
+        handleLogout();
       } else {
         setIsLoggedIn(true);
         setUserRole(role);
@@ -69,6 +71,10 @@ function App() {
             <Route path="/login" element={ <Login onLogin={handleLogin} />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
+                path="/employees"
+                element={<Employees />}
+              />
+              <Route
                 path="/shop"
                 element={<Shop userRole={userRole} />}
               />
@@ -90,7 +96,7 @@ function App() {
               />
               <Route
                 path="/shop/receipts"
-                element={ <Receipts /> }
+                element={<Receipts />}
               />
               <Route 
                 path="/profile"
