@@ -298,8 +298,9 @@ async def update_customer_route(request):
 @app.get("/receipts", auth_required=True)
 @roles_required(["Manager"])
 async def get_all_receipts_history(request):
-    date_created = request.path_params["date_cr"];
-    if date_created
+    date_created = request.path_params["date_cr"]
+    if date_created is not None:
+        get_active_cashiers_with_receipts(date_created)
     return get_cashier_receipt_history()
 
 @app.get("/receipts/:id_employee", auth_required=True)
