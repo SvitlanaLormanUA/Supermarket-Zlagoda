@@ -1468,7 +1468,7 @@ def get_cashier_receipt_history(id_employee=None):
         if conn:
             conn.close()
 
-def get_active_cashiers_with_receipts(excluded_date=None):
+def get_active_cashiers_with_receipts(included_date=None):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
@@ -1494,13 +1494,13 @@ def get_active_cashiers_with_receipts(excluded_date=None):
         WHERE 
             a.is_active = 1
             AND a.last_login IS NOT NULL
-            AND e.empl_role = 'касир'
+            AND e.empl_role = 'Cashier'
             AND r.card_number IS NOT NULL
         '''
         
         params = []
         if excluded_date:
-            query += ' AND r.print_date != ?'
+            query += ' AND r.print_date = ?'
             params.append(excluded_date)
         
         query += ' ORDER BY a.employee_id, r.print_date DESC;'
