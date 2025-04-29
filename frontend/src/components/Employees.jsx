@@ -56,9 +56,9 @@ function Employees() {
     };
 
     const handleSearch = async (surname) => {
- 
+
     };
-    
+
     const filterEmployees = (filterCashiers) => {
         if (filterCashiers) {
             setEmployees((prevEmployees) =>
@@ -179,6 +179,11 @@ function Employees() {
                 title="Employees"
                 columns={[{ key: 'empl_surname', label: 'Employees' }]}
             />
+            <style jsx>{`
+                .back-button {
+                visibility: hidden;
+                }
+            `}</style>
         </div>
     );
 }

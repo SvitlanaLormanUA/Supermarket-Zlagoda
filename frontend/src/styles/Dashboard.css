@@ -92,3 +92,65 @@
 .text-box p {
     font-size: 20px;
 }
+
+@media (max-width: 1000px) {
+    .dashboard-columns {
+        flex-direction: column;
+        align-items: center;
+        gap: 30px;
+    }
+
+    .slider-column,
+    .info-column {
+        width: 90%;
+    }
+
+    .slider-image-wrapper img {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .info-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .info-image {
+        width: 80px;
+    }
+}
+
+@media (max-width: 700px) {
+    .slider-column {
+        display: none;
+    }
+
+    .dashboard-columns {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .info-column {
+        width: 90%;
+    }
+
+    .info-box {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .info-image {
+        width: 60px;
+        height: auto;
+    }
+
+    .text-box h3 {
+        font-size: 20px;
+    }
+
+    .text-box p {
+        font-size: 14px;
+    }
+}
