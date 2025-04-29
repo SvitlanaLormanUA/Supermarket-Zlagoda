@@ -17,6 +17,8 @@ from .get import (
     get_sorted_categories,
     get_sorted_products,
 
+    get_active_cashiers_with_receipts,
+    get_receipts_by_date,
     get_all_employees,
     get_employee_by_id,
     get_employee_info_by_id,
@@ -27,7 +29,6 @@ from .get import (
     get_customer_info_ordered,
     get_customers_by_percent,
     get_cashier_receipt_history,
-    get_inactive_non_manager_accounts,
     get_total_sales_by_cashier,  
     get_total_quantity_product  
     # get_all_customer_cards,
@@ -89,6 +90,7 @@ __all__ = [
     'get_customer_info_ordered',
     'get_customers_by_name_surname',
     'get_customers_by_percent',
+    'get_active_cashiers_with_receipts'
 
     'get_all_employees',
     'get_employee_by_id',
@@ -96,9 +98,10 @@ __all__ = [
     'get_employee_by_surname',
     'get_employee_info_by_id',
     'get_cashier_receipt_history',
-    'get_inactive_non_manager_accounts',
     'get_total_sales_by_cashier',
     'get_total_quantity_product',
+    'et_active_cashiers_with_receipts',  
+    'get_receipts_by_date',
 
     'add_new_product',
     'add_new_store_product',
@@ -120,6 +123,6 @@ __all__ = [
     'update_customer',
     'update_employee',
     'add_receipt_with_store_products'
-
+    'get_receipts_by_date',
     
 ]

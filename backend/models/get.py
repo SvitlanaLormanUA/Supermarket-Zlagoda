@@ -1276,6 +1276,96 @@ def get_all_receipts():
             conn.close()
 
 
+def get_receipts_by_date(target_date=None):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+        SELECT 
+            r.check_number,
+            r.print_date,
+            r.sum_total,
+            r.vat,
+            e.id_employee,
+            e.empl_surname || ' ' || e.empl_name AS cashier_name,
+            r.card_number,
+            COUNT(s.UPC) AS items_count
+        FROM 
+            receipt r
+        JOIN 
+            employee e ON r.id_employee = e.id_employee
+        LEFT JOIN 
+            sale s ON r.check_number = s.check_number
+        '''
+        
+        params = []
+        if target_date:
+            query += ' WHERE DATE(r.print_date) = DATE(?)'
+            params.append(target_date)
+        
+        query += '''
+        GROUP BY 
+            r.check_number, r.print_date, r.sum_total, r.vat, 
+            e.id_employee, cashier_name, r.card_number
+        ORDER BY 
+            r.print_date DESC, r.check_number;
+        '''
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+
+        if not rows:
+            message = "No receipts found" + (f" for date: {target_date}" if target_date else "")
+            return {
+                "status_code": 404,
+                "body": jsonify({
+                    "status": "success",
+                    "data": [],
+                    "message": message
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        # Structure the data
+        receipts = []
+        for row in rows:
+            receipts.append({
+                "check_number": row[0],
+                "print_date": row[1],
+                "sum_total": row[2],
+                "vat": row[3],
+                "employee_id": row[4],
+                "cashier_name": row[5],
+                "card_number": row[6],
+                "items_count": row[7]
+            })
+
+        return {
+            "status_code": 200,
+            "body": jsonify({
+                "status": "success",
+                "data": receipts,
+                "message": "Receipts retrieved successfully" + (f" for date: {target_date}" if target_date else "")
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
 # COMPLICATED QUERIES
 def get_cashier_receipt_history(id_employee=None):
     conn = None
@@ -1378,8 +1468,7 @@ def get_cashier_receipt_history(id_employee=None):
         if conn:
             conn.close()
 
-            
-def get_inactive_non_manager_accounts():
+def get_active_cashiers_with_receipts(excluded_date=None):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
@@ -1387,28 +1476,36 @@ def get_inactive_non_manager_accounts():
 
         query = '''
         SELECT 
-            a.account_id,
-            a.email,
-            e.empl_name,
+            a.employee_id,
             e.empl_surname,
-            e.empl_role,
-            e.id_employee
+            e.empl_name,
+            a.is_active,
+            a.last_login,
+            r.check_number,
+            r.card_number,
+            r.print_date,
+            r.sum_total
         FROM 
             account a
-            INNER JOIN employee e ON a.employee_id = e.id_employee
+        JOIN 
+            employee e ON a.employee_id = e.id_employee
+        JOIN 
+            receipt r ON e.id_employee = r.id_employee
         WHERE 
-            e.empl_role NOT LIKE 'Manager'
-            AND NOT EXISTS (
-                SELECT 1 
-                FROM receipt r 
-                WHERE r.id_employee = e.id_employee
-            )
-            AND a.is_active = 0
-        ORDER BY 
-            a.account_id;
+            a.is_active = 1
+            AND a.last_login IS NOT NULL
+            AND e.empl_role = 'касир'
+            AND r.card_number IS NOT NULL
         '''
+        
+        params = []
+        if excluded_date:
+            query += ' AND r.print_date != ?'
+            params.append(excluded_date)
+        
+        query += ' ORDER BY a.employee_id, r.print_date DESC;'
 
-        cursor.execute(query)
+        cursor.execute(query, params)
         rows = cursor.fetchall()
 
         if not rows:
@@ -1417,28 +1514,39 @@ def get_inactive_non_manager_accounts():
                 "body": jsonify({
                     "status": "success",
                     "data": [],
-                    "message": "No inactive accounts found for non-manager employees without receipts"
+                    "message": "No active cashiers with receipts found"
                 }),
                 "headers": {"Content-Type": "application/json"}
             }
 
-        result = [
-            {
-                "account_id": row[0],
-                "email": row[1],
-                "employee_name": f"{row[2]} {row[3]}",
-                "empl_role": row[4],
-                "employee_id": row[5],
-            }
-            for row in rows
-        ]
+        # Structure the data
+        cashiers = {}
+        for row in rows:
+            employee_id = row[0]
+            if employee_id not in cashiers:
+                cashiers[employee_id] = {
+                    "employee_id": row[0],
+                    "employee_name": f"{row[1]} {row[2]}",
+                    "is_active": bool(row[3]),
+                    "last_login": row[4],
+                    "receipts": []
+                }
+            cashiers[employee_id]["receipts"].append({
+                "check_number": row[5],
+                "card_number": row[6],
+                "print_date": row[7],
+                "sum_total": row[8]
+            })
+
+        # Convert cashiers dict to list for JSON response
+        result = list(cashiers.values())
 
         return {
             "status_code": 200,
             "body": jsonify({
                 "status": "success",
                 "data": result,
-                "message": "Inactive non-manager accounts retrieved successfully"
+                "message": "Active cashiers with receipts retrieved successfully"
             }),
             "headers": {"Content-Type": "application/json"}
         }
@@ -1456,9 +1564,6 @@ def get_inactive_non_manager_accounts():
     finally:
         if conn:
             conn.close()
-
-
-
 #19. загальна сума продажів
 def get_total_sales_by_cashier(id_employee, start_date, end_date):
     conn = None

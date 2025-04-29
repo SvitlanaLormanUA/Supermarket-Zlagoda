@@ -5,6 +5,8 @@ from auth.crud import create_user, authenticate_user, get_employee_id, blacklist
 from robyn.authentication import BearerGetter
 from auth.auth_middleware import roles_required, RoleBasedAuthHandler
 from models import (
+    get_receipts_by_date,
+    get_active_cashiers_with_receipts,
     get_all_products,
     get_product_by_name,
     get_all_store_products,
@@ -25,7 +27,6 @@ from models import (
     get_sorted_categories,
     get_sorted_products,
     get_cashier_receipt_history,
-    get_inactive_non_manager_accounts,
     get_total_sales_by_cashier,  
     get_total_quantity_product,  
     get_employee_info_by_id,
@@ -297,6 +298,8 @@ async def update_customer_route(request):
 @app.get("/receipts", auth_required=True)
 @roles_required(["Manager"])
 async def get_all_receipts_history(request):
+    date_created = request.path_params["date_cr"];
+    if date_created
     return get_cashier_receipt_history()
 
 @app.get("/receipts/:id_employee", auth_required=True)
@@ -353,10 +356,6 @@ async def get_employees(request):
 async def get_empl_by_id(request):
     return get_employee_by_id()
 
-@app.get('/employees/non-active', auth_required=True)
-@roles_required(["Manager"])
-async def get_non_active_employees(request):
-    return get_inactive_non_manager_accounts()
 
 @app.get("/employees/cashiers")
 @roles_required(["Manager"])
@@ -368,11 +367,6 @@ async def fetch_cashiers(request):
 async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
     return get_employee_by_surname(surname)
-
-@app.get("/employees/inactive-accounts")
-@roles_required(["Manager"])
-async def get_inactive_non_manager_accounts_route(request):
-    return  get_inactive_non_manager_accounts()
 
 @app.post("/employees/new_employee", auth_required=True)
 @roles_required(["Manager"])
