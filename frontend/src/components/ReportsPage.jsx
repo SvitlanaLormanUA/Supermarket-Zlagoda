@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import ReportTable from './ReportTable';
 import ReportHeader from './ReportHeader';
 import ReportButtons from './ReportButtons';
+import SearchAndBack from './SearchAndBack';
 import api from '../axios';
 
 function ReportsPage() {
@@ -81,6 +82,9 @@ function ReportsPage() {
 
   return (
     <div className="reports-container">
+      <div className="searchAndBackSection">
+        <SearchAndBack />
+      </div>
       <ReportHeader />
       <ReportButtons
         onReportSelect={handleReportButtonClick}
@@ -94,6 +98,11 @@ function ReportsPage() {
           nonActiveEmployees={nonActiveEmployees}
         />
       </div>
+      <style jsx>{`
+        .shop-search-bar {
+        visibility: hidden;
+      }
+      `}</style>
     </div>
   );
 }
