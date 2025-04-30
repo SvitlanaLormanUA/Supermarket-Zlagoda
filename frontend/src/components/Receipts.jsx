@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {  validateReceiptStep1, validateReceiptBeforeSave  } from '../utils/Validation';
+import { validateReceiptStep1, validateReceiptBeforeSave } from '../utils/Validation';
 import api from '../axios';
 
 // Logic and Validation of receipts
-function Receipts({ showModal, setShowModal }) {
+function Receipts({ showModal, setShowModal, onReceiptAdded }) {
     const [step, setStep] = useState(1);
 
     const initialFormData = {
@@ -63,23 +63,6 @@ function Receipts({ showModal, setShowModal }) {
         .filter((f) => f.name !== 'card_number')
         .map((f) => f.name);
 
-    // const validateStep1 = () => {
-    //     for (let fieldName of requiredStep1Fields) {
-    //         if (!formData[fieldName]) {
-    //             alert(`Field "${fieldName}" is required.`);
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // };
-
-    // const validateBeforeSave = () => {
-    //     if (products.length === 0) {
-    //         alert('You must add at least one product to the receipt.');
-    //         return false;
-    //     }
-    //     return true;
-    // };
 
     const handleFormChange = (e) => {
         const { name, value } = e.target;
@@ -153,9 +136,9 @@ function Receipts({ showModal, setShowModal }) {
                 ...formData,
                 products,
             };
-            console.log('payload: ', payload)
             await api.post('/receipts/new_receipt', payload);
             alert('Receipt saved successfully!');
+            onReceiptAdded && onReceiptAdded();
         } catch (error) {
             console.error('Error saving receipt:', error);
             alert(error.response?.data?.detail || 'Error saving receipt.');
