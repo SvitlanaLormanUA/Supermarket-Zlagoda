@@ -72,7 +72,6 @@ function ReportTable({ reportType, products, nonActiveEmployees }) {
                 <td>{emp.city}</td>
                 <td>{emp.street}</td>
                 <td>{emp.zip_code}</td>
-                <td>{isNonActive(emp.id_employee)}Active</td>
               </tr>
             ))}
           </tbody>
