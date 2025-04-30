@@ -9,7 +9,7 @@ import ProductsInStore from './components/ProductsInStore';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
-import Receipts from './components/Receipts';
+import ReceiptPage from './components/ReceiptPage';
 import Profile from './components/Profile';
 import Employees from './components/Employees';
 import ReportsPage from './components/ReportsPage';
@@ -100,7 +100,7 @@ function App() {
               />
               <Route
                 path="/shop/receipts"
-                element={<Receipts />}
+                element={<ReceiptPage />}
               />
               <Route 
                 path="/profile"

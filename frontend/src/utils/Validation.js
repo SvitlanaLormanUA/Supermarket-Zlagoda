@@ -161,3 +161,22 @@ export const validateEmployee = (newEmployee) => {
     return true;
 };
 
+export function validateReceiptStep1(form) {
+    const required = ['check_number', 'id_employee', 'print_date'];
+    for (let f of required) {
+        if (!form[f]) {
+            alert(`${f} is required`);
+            return false;
+        }
+    }
+    return true;
+}
+
+export function validateReceiptBeforeSave(products) {
+    if (products.length === 0) {
+        alert('Add at least one product');
+        return false;
+    }
+    return true;
+}
+

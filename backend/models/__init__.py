@@ -30,9 +30,7 @@ from .get import (
     get_customers_by_percent,
     get_cashier_receipt_history,
     get_total_sales_by_cashier,  
-    get_total_quantity_product  
-    # get_all_customer_cards,
-    
+    get_total_quantity_product    
 
 )
 
@@ -77,7 +75,6 @@ __all__ = [
     'get_product_info',
     'get_total_price',
     'get_total_quantity',
-    # 'get_all_customer_cards',
     'get_store_products_by_UPC',
     'get_products_info',
     'get_promotional_products',
@@ -100,7 +97,7 @@ __all__ = [
     'get_cashier_receipt_history',
     'get_total_sales_by_cashier',
     'get_total_quantity_product',
-    'et_active_cashiers_with_receipts',  
+    'get_active_cashiers_with_receipts',  
     'get_receipts_by_date',
 
     'add_new_product',

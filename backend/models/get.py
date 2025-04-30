@@ -1225,6 +1225,7 @@ def get_employee_info_by_id(employee_id: str, role: str = None):
         if conn:
             conn.close()
 
+
 def get_all_receipts():
     conn = None
     try:
@@ -1233,13 +1234,23 @@ def get_all_receipts():
 
         cursor.execute('''
             SELECT 
-                check_number,
-                id_employee,
-                card_number,
-                print_date,
-                sum_total,
-                vat              
-            FROM receipt
+                r.check_number,
+                r.id_employee,
+                r.card_number,
+                r.print_date,
+                r.sum_total,
+                r.vat,
+                s.UPC,
+                s.product_number,
+                s.selling_price,
+                p.product_name
+            FROM receipt r
+            LEFT JOIN employee e ON r.id_employee = e.id_employee
+            LEFT JOIN customer_card cc ON r.card_number = cc.card_number
+            INNER JOIN sale s ON r.check_number = s.check_number
+            INNER JOIN store_product sp ON s.UPC = sp.UPC
+            INNER JOIN product p ON sp.id_product = p.id_product
+            ORDER BY r.print_date DESC, r.check_number, s.UPC
         ''')
 
         receipts = cursor.fetchall()
@@ -1252,6 +1263,12 @@ def get_all_receipts():
                 'print_date': receipt[3],
                 'sum_total': receipt[4],
                 'vat': receipt[5],
+                'items': [{
+                    'UPC': receipt[6],
+                    'product_number': receipt[7],
+                    'selling_price': receipt[8],
+                    'product_name': receipt[9]
+                }]
             }
             result.append(receipt_dict)
 
@@ -1564,6 +1581,7 @@ def get_active_cashiers_with_receipts(included_date=None):
     finally:
         if conn:
             conn.close()
+
 #19. загальна сума продажів
 def get_total_sales_by_cashier(id_employee, start_date, end_date):
     conn = None

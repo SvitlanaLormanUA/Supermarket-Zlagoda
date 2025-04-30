@@ -1,0 +1,20 @@
+.add_new_receipt{
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    font-size: 16px;
+    color: #ffffff;
+    background-color: #496e4a;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.8s ease, box-shadow 0.3s ease;
+
+}
+
+.add_new_receipt:hover {
+    background-color: #5c875d;
+    cursor: pointer;
+    transition: background-color 0.8s ease, box-shadow 0.3s ease;
+}

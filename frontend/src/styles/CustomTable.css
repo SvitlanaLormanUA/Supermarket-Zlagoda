@@ -66,8 +66,6 @@
     font-size: 14px;
 }
 
-/* Стили для контейнера пагинации уже есть */
-
 .pagination-controls .prev,
 .pagination-controls .next {
     padding: 6px 12px;
@@ -96,7 +94,6 @@
     color: #000000;
     cursor: not-allowed;
 }
-
 
 .pagination-controls button.active {
     background-color: #8f8f8f;

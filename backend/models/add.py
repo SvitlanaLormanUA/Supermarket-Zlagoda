@@ -227,11 +227,11 @@ def add_new_receipt(receipt_data):
             INSERT INTO receipt (check_number, id_employee, card_number, print_date, sum_total, vat)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', (
-            receipt_data['checkNumber'],
-            receipt_data['employeeId'],
-            receipt_data['cardNumber'],
-            receipt_data['printDate'],
-            float(receipt_data['sumTotal']),
+            receipt_data['check_number'],
+            receipt_data['id_employee'],
+            receipt_data['card_number'],
+            receipt_data['print_date'],
+            float(receipt_data['sum_total']),
             float(receipt_data['vat'])
         ))
 
@@ -241,7 +241,7 @@ def add_new_receipt(receipt_data):
                 VALUES (?, ?, ?, ?)
             ''', (
                 product['UPC'],
-                receipt_data['checkNumber'],
+                receipt_data['check_number'],
                 int(product['product_number']),
                 float(product['selling_price'])
             ))

@@ -1,0 +1,111 @@
+.receipt-carousel-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.receipt-carousel {
+    width: 1000px;
+    overflow: hidden;
+}
+
+.receipt-strip {
+    display: flex;
+    gap: 16px;
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.receipt-info {
+    width: 290px;
+    background: #fdfbf3;
+    border-radius: 8px;
+    padding: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    box-shadow: none;
+    flex-shrink: 0;
+}
+
+
+.receipt-info h3,
+.receipt-info h4 {
+    margin-bottom: 6px;
+    border-bottom: 1px dashed #888;
+    padding-bottom: 3px;
+    font-size: 14px;
+}
+
+.receipt-info p {
+    margin: 2px 0;
+    font-size: 12px;
+}
+
+.receipt-info table {
+    width: 100%;
+    background: #fdfbf3;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 12px;
+    box-shadow: none;
+}
+
+.receipt-info table thead tr th {
+    all: unset;
+    font-weight: bold;
+    padding: 3px 6px;
+    display: table-cell;
+    text-align: left;
+    font-size: 12px;
+}
+
+.receipt-info table tbody tr td {
+    padding: 3px 6px;
+    text-align: left;
+    font-size: 12px;
+    background: #fdfbf3;
+}
+
+.carousel-arrow {
+    font-size: 20px;
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.4s ease-in-out;
+    z-index: 10;
+    opacity: 1;
+}
+
+.carousel-arrow.left {
+    margin-right: 12px;
+}
+
+.carousel-arrow.right {
+    margin-left: 12px;
+}
+
+.carousel-arrow.left[aria-disabled="true"],
+.carousel-arrow.right[aria-disabled="true"] {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.carousel-arrow:hover {
+    transform: scale(1.2);
+}
+
+.carousel-arrow.disabled {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.receipt-loading,
+.receipt-error {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 20px;
+    font-family: 'Courier New', Courier, monospace;
+}
