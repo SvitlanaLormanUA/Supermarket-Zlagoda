@@ -11,6 +11,7 @@ from models import (
     get_product_by_name,
     get_all_store_products,
     get_all_categories,
+    get_all_receipts,
     get_products_by_category,
     get_product_info,
     get_customer_info_ordered,
@@ -29,30 +30,30 @@ from models import (
     get_cashier_receipt_history,
     get_total_sales_by_cashier,  
     get_total_quantity_product,  
-    get_employee_info_by_id,
+    get_employee_info_by_id,   
+    get_all_employees,
+    get_employee_by_id,
+    get_employee_by_surname,
+    get_cashiers,
 
     add_new_product,
     add_new_store_product,
     add_new_category,
     add_customer,
+    add_new_receipt,
+    add_new_employee,
 
     delete_product,
     delete_store_product,
     delete_category,
     delete_customer,
+    delete_employee,
 
     update_product,
     update_store_product,
     update_category,
     update_customer,
-
-    get_all_employees,
-    get_employee_by_id,
-    get_employee_by_surname,
-    get_cashiers,
-    add_new_employee,
-    delete_employee,
-    update_employee,
+    update_employee
 )
 
 import json
@@ -298,10 +299,22 @@ async def update_customer_route(request):
 @app.get("/receipts", auth_required=True)
 @roles_required(["Manager"])
 async def get_all_receipts_history(request):
-    date_created = request.path_params["date_cr"]
+    date_created = request.query_params.get("date_cr")
     if date_created is not None:
         get_active_cashiers_with_receipts(date_created)
     return get_cashier_receipt_history()
+
+@app.post("/receipts/new_receipt", auth_required=True)
+async def add_receipt(request):
+    try:
+        receipt_data = json.loads(request.body)
+        return add_new_receipt(receipt_data)
+    except json.JSONDecodeError:
+        return {
+            "status_code": 400,
+            "body": jsonify({"data": "Invalid JSON format"}),
+            "headers": {"Content-Type": "application/json"},
+        }
 
 @app.get("/receipts/:id_employee", auth_required=True)
 @roles_required(["Manager"])
