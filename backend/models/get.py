@@ -1702,3 +1702,82 @@ def get_total_quantity_product(product_id, start_date, end_date):
             conn.close()
 
 
+def get_customers_without_category_and_receipts(category_number: int):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+        SELECT 
+            c.card_number,
+            c.cust_surname,
+            c.cust_name,
+            c.phone_number,
+            c.city
+        FROM 
+            customer_card c
+        WHERE 
+            NOT EXISTS (
+                SELECT 1
+                FROM receipt r
+                JOIN sale s ON r.check_number = s.check_number
+                JOIN store_product sp ON s.UPC = sp.UPC
+                JOIN product p ON sp.id_product = p.id_product
+                WHERE r.card_number = c.card_number
+                AND p.category_number = ?
+            )
+            AND NOT EXISTS (
+                SELECT 1 
+                FROM receipt r2 
+                WHERE r2.card_number = c.card_number
+            )
+        '''
+
+        cursor.execute(query, (category_number,))
+        rows = cursor.fetchall()
+
+        if not rows:
+            return {
+                "status_code": 404,
+                "body": jsonify({
+                    "status": "success",
+                    "data": [],
+                    "message": "No matching customers found"
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        result = []
+        for row in rows:
+            result.append({
+                "card_number": row[0],
+                "surname": row[1],
+                "name": row[2],
+                "phone": row[3],
+                "city": row[4]
+            })
+
+        return {
+            "status_code": 200,
+            "body": jsonify({
+                "status": "success",
+                "data": result,
+                "message": "Customers who never bought from given category and never had receipts"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()

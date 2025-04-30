@@ -30,7 +30,8 @@ from .get import (
     get_customers_by_percent,
     get_cashier_receipt_history,
     get_total_sales_by_cashier,  
-    get_total_quantity_product    
+    get_total_quantity_product,
+    get_customers_without_category_and_receipts    
 
 )
 
@@ -97,7 +98,8 @@ __all__ = [
     'get_cashier_receipt_history',
     'get_total_sales_by_cashier',
     'get_total_quantity_product',
-    'get_active_cashiers_with_receipts',  
+    'get_active_cashiers_with_receipts',
+    'get_customers_without_category_and_receipts',  
     'get_receipts_by_date',
 
     'add_new_product',
