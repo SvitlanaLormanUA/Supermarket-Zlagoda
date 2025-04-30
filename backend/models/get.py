@@ -283,28 +283,55 @@ def get_all_store_products():
             conn.close()
 
 
-def get_store_products_by_UPC(upc_value):
+
+def get_store_products_by_input(search_value):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
-        cursor.execute('''
-            SELECT 
-                sp.UPC,
-                sp.UPC_prom,
-                sp.id_product,
-                p.product_name,
-                p.characteristics,
-                c.category_name,
-                sp.selling_price,
-                sp.products_number,
-                sp.promotional_product
-            FROM store_product sp
-            JOIN product p ON sp.id_product = p.id_product
-            JOIN category c ON p.category_number = c.category_number
-            WHERE sp.UPC = ?
-        ''', (upc_value,))
+        # Decode and clean the input
+        search_value = unquote(search_value.strip()) if search_value else ""
+
+        # Determine if the input is a UPC (all digits) or a product name
+        is_upc = search_value.isdigit()  # Adjust this if UPC can include non-digits
+
+        if is_upc:
+            # Query for UPC
+            cursor.execute('''
+                SELECT 
+                    sp.UPC,
+                    sp.UPC_prom,
+                    sp.id_product,
+                    p.product_name,
+                    p.characteristics,
+                    c.category_name,
+                    sp.selling_price,
+                    sp.products_number,
+                    sp.promotional_product
+                FROM store_product sp
+                JOIN product p ON sp.id_product = p.id_product
+                JOIN category c ON p.category_number = c.category_number
+                WHERE sp.UPC = ?
+            ''', (search_value,))
+        else:
+            # Query for product_name (case-insensitive, partial match)
+            cursor.execute('''
+                SELECT 
+                    sp.UPC,
+                    sp.UPC_prom,
+                    sp.id_product,
+                    p.product_name,
+                    p.characteristics,
+                    c.category_name,
+                    sp.selling_price,
+                    sp.products_number,
+                    sp.promotional_product
+                FROM store_product sp
+                JOIN product p ON sp.id_product = p.id_product
+                JOIN category c ON p.category_number = c.category_number
+                WHERE p.product_name LIKE ? COLLATE NOCASE
+            ''', (f'%{search_value}%',))
 
         products = cursor.fetchall()
         result = []
@@ -324,7 +351,7 @@ def get_store_products_by_UPC(upc_value):
 
         return {
             "status_code": 200,
-            "body": jsonify({"data": result}),
+            "body": jsonify({"data": result}),  
             "headers": {"Content-Type": "application/json"}
         }
 
@@ -341,7 +368,6 @@ def get_store_products_by_UPC(upc_value):
     finally:
         if conn:
             conn.close()
-
 
 def get_sorted_products_in_store(field, order, discount_filter=None):
     valid_fields = {"product_name", "products_number"}
@@ -1042,7 +1068,7 @@ def get_employee_by_surname(surname):
 
         return {
             "status_code": 200,
-            "body": {"data": result},
+            "body": jsonify({"data": result}),
             "headers": {"Content-Type": "application/json"}
         }
 

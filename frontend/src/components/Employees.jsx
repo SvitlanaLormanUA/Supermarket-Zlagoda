@@ -56,9 +56,21 @@ function Employees() {
     };
 
     const handleSearch = async (surname) => {
-
+        if (!surname || surname.trim() === '') {
+            await fetchAllEmployees();
+            return;
+        }
+        try {
+            const response = await api.get(`/employees/search/${encodeURIComponent(surname)}`);
+            const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+            setEmployees(parsedData || []);
+        } catch (error) {
+            console.error('Error searching employees:', error);
+            setEmployees([]);
+            alert('Failed to search employees.');
+        }
     };
-
+    
     const filterEmployees = (filterCashiers) => {
         if (filterCashiers) {
             setEmployees((prevEmployees) =>

@@ -45,6 +45,8 @@ function ProductsInStore() {
       );
     } catch (error) {
       console.error('Error fetching store products:', error);
+      setProductsInStore([]);
+      alert('Failed to fetch store products.');
     }
   };
 
@@ -67,27 +69,39 @@ function ProductsInStore() {
 
   const handleSearch = async (value) => {
     try {
-      if (!value) {
-        fetchAllStoreProducts();
-      } else {
-        const response = await api.get(`/products-in-store/search/${value}`);
-        const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
-        setProductsInStore(Array.isArray(parsedData) ? parsedData : [parsedData]);
+      if (!value || value.trim() === '') {
+        await fetchAllStoreProducts();
+        return;
       }
+
+      const response = await api.get(`/products-in-store/search/${encodeURIComponent(value)}`);
+      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+      setProductsInStore(Array.isArray(parsedData) ? parsedData : [parsedData]);
     } catch (error) {
       console.error('Error searching products:', error);
+      if (error.response?.status === 401) {
+        alert('Please log in to search products.');
+        // Optionally redirect to login page
+        // window.location.href = '/login';
+      } else if (error.response?.status === 403) {
+        alert('You do not have permission to search products.');
+      } else {
+        alert(error.response?.data?.body?.message || 'No products found.');
+      }
       setProductsInStore([]);
-      alert('No products found.');
     }
   };
 
   const addProductsInStore = async (newStoreProduct) => {
     const validatedProduct = validateProductInStore(newStoreProduct);
 
-    if (!validatedProduct ||
+    if (
+      !validatedProduct ||
       !validateUniqueField(validatedProduct, productsInStore, 'UPC') ||
       !validateUniqueField(newStoreProduct, productsInStore, 'id_product')
-    ) { return };
+    ) {
+      return;
+    }
 
     try {
       await api.post('/products-in-store/new_product', validatedProduct);

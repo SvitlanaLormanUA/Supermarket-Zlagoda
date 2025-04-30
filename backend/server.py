@@ -5,6 +5,7 @@ from auth.crud import create_user, authenticate_user, get_employee_id, blacklist
 from robyn.authentication import BearerGetter
 from auth.auth_middleware import roles_required, RoleBasedAuthHandler
 from models import (
+    get_store_products_by_input,
     get_receipts_by_date,
     get_active_cashiers_with_receipts,
     get_all_products,
@@ -19,7 +20,6 @@ from models import (
     get_customers_by_percent,
     get_total_price,
     get_total_quantity,
-    get_store_products_by_UPC,
     get_total_quantity,
     get_promotional_products,
     get_non_promotional_products,
@@ -136,10 +136,10 @@ async def get_store_products(request):
 async def get_products_information(request):
     return get_products_info()
 
-@app.get("/products-in-store/search/:UPC", auth_required=True)
-async def get_all_store_products_by_UPC(request):
-    UPC = request.path_params.get("UPC")
-    return get_store_products_by_UPC(UPC)
+@app.get("/products-in-store/search/:value", auth_required=True)
+async def fetch_store_products_by_value(request):
+    search_value = request.path_params["value"]
+    return get_store_products_by_input(search_value)
 
 @app.patch("/products-in-store/:id")
 @roles_required(["Manager"])
@@ -399,7 +399,7 @@ async def get_empl_by_id(request):
 async def fetch_cashiers(request):
     return get_cashiers()
 
-@app.get("/employees/search")
+@app.get("/employees/search/:surname", auth_required=True)
 @roles_required(["Manager"])
 async def fetch_employee_by_surname(request):
     surname = request.path_params["surname"]  
