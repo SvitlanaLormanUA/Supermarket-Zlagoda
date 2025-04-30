@@ -1,19 +1,30 @@
-.add_new_receipt{
+.receipt-action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+.add_new_receipt, .receipt_statistics {
+    width: 48%;
     padding: 10px;
     border-radius: 10px;
     border: none;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px;
     color: #ffffff;
     background-color: #496e4a;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: background-color 0.8s ease, box-shadow 0.3s ease;
-
+    text-align: center;
+    text-decoration: none; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.add_new_receipt:hover {
+.add_new_receipt:hover, .receipt_statistics:hover {
     background-color: #5c875d;
     cursor: pointer;
     transition: background-color 0.8s ease, box-shadow 0.3s ease;

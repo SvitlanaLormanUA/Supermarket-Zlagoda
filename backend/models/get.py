@@ -1637,7 +1637,7 @@ def get_total_sales_by_cashier(id_employee, start_date, end_date):
         }
     finally:
         if conn:
-            conn.close()
+            conn.close() 
 
 #21. кількість поданого певного товару за період
 def get_total_quantity_product(product_id, start_date, end_date):
@@ -1672,7 +1672,10 @@ def get_total_quantity_product(product_id, start_date, end_date):
         if not row:
             return {
                 "status_code": 404,
-                "body": jsonify({"status": "error", "message": "No sales found for this product in the given period"}),
+                "body": {
+                    "status": "error",
+                    "message": "No sales found for this product in the given period"
+                },
                 "headers": {"Content-Type": "application/json"}
             }
 
@@ -1687,14 +1690,19 @@ def get_total_quantity_product(product_id, start_date, end_date):
 
         return {
             "status_code": 200,
-            "body": jsonify({"data": result}),
+            "body": {
+                "data": result
+            },
             "headers": {"Content-Type": "application/json"}
         }
 
     except sqlite3.Error as e:
         return {
             "status_code": 500,
-            "body": jsonify({"status": "error", "message": f"Database error: {str(e)}"}),
+            "body": {
+                "status": "error",
+                "message": f"Database error: {str(e)}"
+            },
             "headers": {"Content-Type": "application/json"}
         }
     finally:
