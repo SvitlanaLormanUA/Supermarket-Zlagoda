@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../axios'; 
-import SearchAndBack from './SearchAndBack';
 
 function Shop({ userRole }) {
   const [totalPrice, setTotalPrice] = useState(null);
