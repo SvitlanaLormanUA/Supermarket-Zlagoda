@@ -1,36 +1,27 @@
 import React from 'react';
-import { useEffect } from 'react';
+import { Users, UserCheck, Package, ShoppingBag, FileText } from 'lucide-react';
+
 function ReportButtons({ onReportSelect, onPrint, selectedReport }) {
-      useEffect(() => {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/lucide@latest';
-        script.onload = () => {
-          if (window.lucide) {
-            window.lucide.createIcons();
-          }
-        };
-        document.body.appendChild(script);
-      }, []);
   return (
     <div className="report-buttons no-print">
       <button className="report-button" onClick={() => onReportSelect('employees')}>
-        <i data-lucide="users" className="icon"></i>
+        <Users className="icon" />
         Employees
       </button>
       <button className="report-button" onClick={() => onReportSelect('customers-card')}>
-        <i data-lucide="user-check" className="icon"></i>
+        <UserCheck className="icon" />
         Customers
       </button>
       <button className="report-button" onClick={() => onReportSelect('products-in-store')}>
-        <i data-lucide="package" className="icon"></i>
+        <Package className="icon" />
         Store Products
       </button>
       <button className="report-button" onClick={() => onReportSelect('products')}>
-        <i data-lucide="shopping-bag" className="icon"></i>
+        <ShoppingBag className="icon" />
         Products to Purchase
       </button>
       <button className="report-button" onClick={() => onReportSelect('receipts')}>
-        <i data-lucide="file-text" className="icon"></i>
+        <FileText className="icon" />
         Receipts
       </button>
 

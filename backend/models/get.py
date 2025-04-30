@@ -290,14 +290,12 @@ def get_store_products_by_input(search_value):
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
-        # Decode and clean the input
         search_value = unquote(search_value.strip()) if search_value else ""
 
         # Determine if the input is a UPC (all digits) or a product name
-        is_upc = search_value.isdigit()  # Adjust this if UPC can include non-digits
+        is_upc = search_value.isdigit()  
 
         if is_upc:
-            # Query for UPC
             cursor.execute('''
                 SELECT 
                     sp.UPC,

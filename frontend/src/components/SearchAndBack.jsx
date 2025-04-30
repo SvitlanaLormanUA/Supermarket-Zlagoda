@@ -6,7 +6,7 @@ function SearchAndBack({ onSearch }) {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleBackClick = () => {
-    navigate(-1);
+    navigate('/shop');
   };
 
   const handleInputChange = (e) => {
