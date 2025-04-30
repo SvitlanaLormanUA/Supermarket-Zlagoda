@@ -1,0 +1,42 @@
+.statistics-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.statistics-box {
+    background-color: #f9f9f9;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.statistics-box select,
+.statistics-box input[type="date"] {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.statistics-box button {
+    align-self: flex-end;
+    padding: 10px 16px;
+    background-color: #496e4a;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}

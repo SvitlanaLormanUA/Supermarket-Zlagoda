@@ -10,6 +10,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import CustomersCard from './components/CustomersCard';
 import ReceiptPage from './components/ReceiptPage';
+import ReceiptStatistics from './components/ReceiptStatistics';
 import Profile from './components/Profile';
 import Employees from './components/Employees';
 import ReportsPage from './components/ReportsPage';
@@ -54,7 +55,7 @@ function App() {
     Cookies.remove('user_role');
     setIsLoggedIn(false);
     setUserRole(null);
-   
+
   };
 
   return (
@@ -63,12 +64,12 @@ function App() {
         <Login onLogin={handleLogin} />
       ) : (
         <>
-        {isLoggedIn &&
-          <Navigation onLogout={handleLogout} userRole={userRole} />
-        }
+          {isLoggedIn &&
+            <Navigation onLogout={handleLogout} userRole={userRole} />
+          }
           <div style={{ marginLeft: '270px', padding: '15px' }}>
             <Routes>
-            <Route path="/login" element={ <Login onLogin={handleLogin} />} />
+              <Route path="/login" element={<Login onLogin={handleLogin} />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route
                 path="/employees"
@@ -82,7 +83,7 @@ function App() {
                 path="/shop/products"
                 element={userRole === 'Manager' ? <Products /> : <Navigate to="/dashboard" />}
               />
-                <Route
+              <Route
                 path="/shop/reports"
                 element={userRole === 'Manager' ? <ReportsPage /> : <Navigate to="/dashboard" />}
               />
@@ -102,10 +103,14 @@ function App() {
                 path="/shop/receipts"
                 element={<ReceiptPage />}
               />
-              <Route 
+              <Route
+                path="/receipts/statistics"
+                element={<ReceiptStatistics />}
+              />
+              <Route
                 path="/profile"
-                element={<Profile onLogout = {handleLogout}/>}
-                /> 
+                element={<Profile onLogout={handleLogout} />}
+              />
               <Route path="*" element={<Navigate to="/dashboard" />} />
             </Routes>
           </div>

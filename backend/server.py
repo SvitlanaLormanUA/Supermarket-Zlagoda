@@ -353,10 +353,10 @@ async def get_sales_by_cashier(request):
     start_date = request.query_params.get("start_date")
     end_date = request.query_params.get("end_date")
     
-    if not id_employee or not start_date or not end_date:
+    if not start_date or not end_date:
         return {
             "status_code": 400,
-            "body": {"message": "id_employee, start_date, and end_date are required"},
+            "body": {"message": "start_date, and end_date are required"},
             "headers": {"Content-Type": "application/json"}
         }
     

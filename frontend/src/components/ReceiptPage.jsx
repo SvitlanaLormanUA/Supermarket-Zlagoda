@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import Receipts from './Receipts';
+import { Link } from 'react-router-dom';
 import SearchAndBack from './SearchAndBack';
 import FetchReceipts from './FetchReceipts';
 
@@ -17,10 +18,14 @@ function ReceiptPage() {
             <div className="searchAndBackSection">
                 <SearchAndBack />
             </div>
-
-            <button className="add_new_receipt" onClick={() => setShowModal(true)}>
-                Add New Receipt
-            </button>
+            <div className="receipt-action-buttons">
+                <button className="add_new_receipt" onClick={() => setShowModal(true)}>
+                    Add New Receipt
+                </button>
+                <Link to="/receipts/statistics" className="receipt_statistics">
+                    Statistics
+                </Link>
+            </div>
 
             <Receipts showModal={showModal} setShowModal={setShowModal} onReceiptAdded={handleFetchUpdate} />
             <FetchReceipts refetchRef={fetchReceiptsRef} />
