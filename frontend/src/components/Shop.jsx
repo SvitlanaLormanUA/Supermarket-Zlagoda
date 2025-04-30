@@ -29,8 +29,6 @@ function Shop({ userRole }) {
 
   return (
     <div className="shop-container">
-      <SearchAndBack />
-
       { userRole === 'Manager' &&
       <div className="shop-stats">
         <div className="shop-stat-card">
@@ -92,11 +90,6 @@ function Shop({ userRole }) {
         }
         </div>
       </div>
-      <style jsx>{`
-        .back-button {
-          visibility: hidden;
-        }
-      `}</style>
     </div>
   );
 }

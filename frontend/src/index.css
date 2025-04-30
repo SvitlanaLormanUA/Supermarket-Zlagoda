@@ -17,6 +17,8 @@
 @import './styles/Pagination.css';
 @import './styles/ProductsModal.css';
 @import './styles/Employees.css';
+@import './styles/FetchReceipts.css';
+@import './styles/ReceiptPage.css';
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 @import "./styles/Profile.css";
