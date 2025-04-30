@@ -13,7 +13,6 @@ from .get import (
     get_promotional_products,
     get_non_promotional_products,
     get_sorted_products_in_store,
-    # get_products_sorted,
     get_sorted_categories,
     get_sorted_products,
 
@@ -28,6 +27,7 @@ from .get import (
     get_customers_by_name_surname,
     get_customer_info_ordered,
     get_customers_by_percent,
+    
     get_cashier_receipt_history,
     get_total_sales_by_cashier,  
     get_total_quantity_product    
