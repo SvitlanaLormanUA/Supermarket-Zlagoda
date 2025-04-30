@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import SearchAndBack from './SearchAndBack';
 import api from '../axios';
-import axios from 'axios';
 import StatisticsModal from './StatisticsModal';
 
 function ReceiptStatistics() {
@@ -31,34 +30,43 @@ function ReceiptStatistics() {
     }, []);
 
     const getSalesByCashier = async () => {
-        if (!selectedCashier || !startDate || !endDate) {
+        if (!startDate || !endDate) {
             alert('Please fill all the fields');
             return;
         }
 
         try {
-            const response = await api.get('/sales/cashier', {
-                params: {
-                    id_employee: selectedCashier,
-                    start_date: startDate,
-                    end_date: endDate,
-                },
-            });
+            const params = {
+                start_date: startDate,
+                end_date: endDate,
+            };
+            if (selectedCashier) {
+                params.id_employee = selectedCashier;
+            }
+            
+            const response = await api.get('/sales/cashier', { params });
+            const responseBody = JSON.parse(response.data.body); 
 
-            const responseBody = JSON.parse(response.data.body);
-            const cashierData = responseBody.data;
-
-            if (!cashierData) {
-                alert('No data available for the selected cashier');
+            if (response.data.status_code !== 200 || !responseBody.data || responseBody.data.length === 0) {
+                alert(responseBody.message || 'No data avaliable for selected cashier');
                 return;
             }
 
-            const modalData = {
-                id_employee: cashierData.id_employee,
-                empl_surname: cashierData.empl_surname,
-                empl_name: cashierData.empl_name,
-                total_sales: cashierData.total_sales,
-            };
+            const cashierData = responseBody.data;
+
+            const modalData = Array.isArray(cashierData)
+                ? cashierData.map(data => ({
+                    id_employee: data.id_employee,
+                    empl_surname: data.empl_surname,
+                    empl_name: data.empl_name,
+                    total_sales: data.total_sales,
+                }))
+                : [{
+                    id_employee: cashierData.id_employee,
+                    empl_surname: cashierData.empl_surname,
+                    empl_name: cashierData.empl_name,
+                    total_sales: cashierData.total_sales,
+                }];
 
             setModalData(modalData);
             setShowModal(true);
@@ -180,7 +188,6 @@ function ReceiptStatistics() {
                 </section>
             </div>
             {showModal && <StatisticsModal data={modalData} onClose={() => setShowModal(false)} />}
-
         </div>
     );
 }

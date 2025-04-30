@@ -1589,39 +1589,60 @@ def get_total_sales_by_cashier(id_employee, start_date, end_date):
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
 
-        query = '''
-        SELECT 
-            e.id_employee,
-            e.empl_surname,
-            e.empl_name,
-            SUM(s.product_number * s.selling_price) AS total_sales
-        FROM 
-            employee e
-            INNER JOIN receipt r ON e.id_employee = r.id_employee
-            INNER JOIN sale s ON r.check_number = s.check_number
-        WHERE 
-            e.id_employee = ?
-            AND r.print_date BETWEEN ? AND ?
-        GROUP BY 
-            e.id_employee, e.empl_surname, e.empl_name
-        '''
+        if id_employee:
+            query = '''
+            SELECT 
+                e.id_employee,
+                e.empl_surname,
+                e.empl_name,
+                SUM(s.product_number * s.selling_price) AS total_sales
+            FROM 
+                employee e
+                INNER JOIN receipt r ON e.id_employee = r.id_employee
+                INNER JOIN sale s ON r.check_number = s.check_number
+            WHERE 
+                e.id_employee = ?
+                AND r.print_date BETWEEN ? AND ?
+            GROUP BY 
+                e.id_employee, e.empl_surname, e.empl_name
+            '''
+            cursor.execute(query, (id_employee, start_date, end_date))
+            rows = cursor.fetchall()
 
-        cursor.execute(query, (id_employee, start_date, end_date))
-        row = cursor.fetchone()
+        else:
+            query = '''
+            SELECT 
+                e.id_employee,
+                e.empl_surname,
+                e.empl_name,
+                SUM(s.product_number * s.selling_price) AS total_sales
+            FROM 
+                employee e
+                INNER JOIN receipt r ON e.id_employee = r.id_employee
+                INNER JOIN sale s ON r.check_number = s.check_number
+            WHERE 
+                r.print_date BETWEEN ? AND ?
+            GROUP BY 
+                e.id_employee, e.empl_surname, e.empl_name
+            '''
+            cursor.execute(query, (start_date, end_date))
+            rows = cursor.fetchall()
 
-        if not row:
+        if not rows:
             return {
                 "status_code": 404,
-                "body": jsonify({"status": "error", "message": "No sales found for this cashier in the given period"}),
+                "body": jsonify({"status": "error", "message": "No sales found for the given period"}),
                 "headers": {"Content-Type": "application/json"}
             }
 
-        result = {
-            "id_employee": row[0],
-            "empl_surname": row[1],
-            "empl_name": row[2],
-            "total_sales": round(row[3], 2) if row[3] else 0.0
-        }
+        result = []
+        for row in rows:
+            result.append({
+                "id_employee": row[0],
+                "empl_surname": row[1],
+                "empl_name": row[2],
+                "total_sales": round(row[3], 2) if row[3] else 0.0
+            })
 
         return {
             "status_code": 200,
@@ -1637,7 +1658,7 @@ def get_total_sales_by_cashier(id_employee, start_date, end_date):
         }
     finally:
         if conn:
-            conn.close() 
+            conn.close()
 
 #21. кількість поданого певного товару за період
 def get_total_quantity_product(product_id, start_date, end_date):
