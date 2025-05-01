@@ -85,3 +85,69 @@
   height: 1.25rem;
   stroke: #4b5563;
 }
+
+/*REPORT TABLE*/
+.report-table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+.table-wrapper {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.table-wrapper--printing {
+  max-height: none;
+  overflow: visible;
+}
+
+.table-cell {
+  padding: 10px;
+  border: 1px solid black;
+  text-align: left;
+}
+
+@media print {
+  .report-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    table-layout: auto !important;
+  }
+
+  .report-table--products,
+  .report-table--customers-card {
+    font-size: 10px !important;
+  }
+
+  .report-table--employees {
+    font-size: 8px !important;
+  }
+
+  .report-table--products .table-cell,
+  .report-table--customers-card .table-cell {
+    padding: 5px !important;
+    max-width: 120px !important;
+    word-wrap: break-word !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .report-table--employees .table-cell {
+    padding: 4px !important;
+    max-width: 80px !important;
+    word-wrap: break-word !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .report-table tr {
+    page-break-inside: avoid !important;
+  }
+
+  .table-wrapper {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}

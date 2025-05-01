@@ -1,32 +1,32 @@
-function ReportTable({ reportType, products, nonActiveEmployees }) {
+import React from 'react';
+
+function ReportTable({ reportType, products, nonActiveEmployees, isPrinting }) {
   const isNonActive = (id) => nonActiveEmployees.includes(id);
 
   if (reportType === 'products' || reportType === 'products-in-store') {
     return (
-      <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-        <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '20px' }}>
+      <div className={`table-wrapper ${isPrinting ? 'table-wrapper--printing' : ''}`}>
+        <table className={`report-table report-table--${reportType}`}>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Category Number</th>
-              <th>Category Name</th>
-              <th>Product Name</th>
-              <th>Characteristics</th>
+              <th className="table-cell">ID</th>
+              <th className="table-cell">Category Name</th>
+              <th className="table-cell">Product Name</th>
+              <th className="table-cell">Characteristics</th>
               {reportType === 'products' && (
-                <th>Total Sold Quantity</th>
+                <th className="table-cell">Total Sold Quantity</th>
               )}
             </tr>
           </thead>
           <tbody>
             {products.map((prod) => (
               <tr key={prod.id_product}>
-                <td>{prod.id_product}</td>
-                <td>{prod.category_number}</td>
-                <td>{prod.category_name}</td>
-                <td>{prod.product_name}</td>
-                <td>{prod.characteristics}</td>
+                <td className="table-cell">{prod.id_product}</td>
+                <td className="table-cell">{prod.category_name}</td>
+                <td className="table-cell">{prod.product_name}</td>
+                <td className="table-cell">{prod.characteristics}</td>
                 {reportType === 'products' && (
-                  <td>{prod.totalQuantity ?? Math.floor(Math.random() * 14)}</td>
+                  <td className="table-cell">{prod.totalQuantity ?? Math.floor(Math.random() * 14)}</td>
                 )}
               </tr>
             ))}
@@ -38,40 +38,41 @@ function ReportTable({ reportType, products, nonActiveEmployees }) {
 
   if (reportType === 'employees') {
     return (
-      <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-        <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '20px' }}>
+      <div className={`table-wrapper ${isPrinting ? 'table-wrapper--printing' : ''}`}>
+        <table className="report-table report-table--employees">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Surname</th>
-              <th>Name</th>
-              <th>Patronymic</th>
-              <th>Role</th>
-              <th>Salary</th>
-              <th>Date of Birth</th>
-              <th>Start Date</th>
-              <th>Phone Number</th>
-              <th>City</th>
-              <th>Street</th>
-              <th>ZIP Code</th>
-              <th>Status</th>
+              <th className="table-cell">ID</th>
+              <th className="table-cell">Surname</th>
+              <th className="table-cell">Name</th>
+              <th className="table-cell">Patronymic</th>
+              <th className="table-cell">Role</th>
+              <th className="table-cell">Salary</th>
+              <th className="table-cell">Date of Birth</th>
+              <th className="table-cell">Start Date</th>
+              <th className="table-cell">Phone Number</th>
+              <th className="table-cell">City</th>
+              <th className="table-cell">Street</th>
+              <th className="table-cell">ZIP Code</th>
+              <th className="table-cell">Status</th>
             </tr>
           </thead>
           <tbody>
             {products.map((emp) => (
               <tr key={emp.id_employee}>
-                <td>{emp.id_employee}</td>
-                <td>{emp.empl_surname}</td>
-                <td>{emp.empl_name}</td>
-                <td>{emp.empl_patronymic ?? '-'}</td>
-                <td>{emp.empl_role}</td>
-                <td>{emp.salary}</td>
-                <td>{emp.date_of_birth}</td>
-                <td>{emp.date_of_start}</td>
-                <td>{emp.phone_number}</td>
-                <td>{emp.city}</td>
-                <td>{emp.street}</td>
-                <td>{emp.zip_code}</td>
+                <td className="table-cell">{emp.id_employee}</td>
+                <td className="table-cell">{emp.empl_surname}</td>
+                <td className="table-cell">{emp.empl_name}</td>
+                <td className="table-cell">{emp.empl_patronymic ?? '-'}</td>
+                <td className="table-cell">{emp.empl_role}</td>
+                <td className="table-cell">{emp.salary}</td>
+                <td className="table-cell">{emp.date_of_birth}</td>
+                <td className="table-cell">{emp.date_of_start}</td>
+                <td className="table-cell">{emp.phone_number}</td>
+                <td className="table-cell">{emp.city}</td>
+                <td className="table-cell">{emp.street}</td>
+                <td className="table-cell">{emp.zip_code}</td>
+                <td className="table-cell">{isNonActive(emp.id_employee) ? 'Inactive' : 'Active'}</td>
               </tr>
             ))}
           </tbody>
@@ -82,33 +83,33 @@ function ReportTable({ reportType, products, nonActiveEmployees }) {
 
   if (reportType === 'customers-card') {
     return (
-      <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
-        <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '20px' }}>
+      <div className={`table-wrapper ${isPrinting ? 'table-wrapper--printing' : ''}`}>
+        <table className="report-table report-table--customers-card">
           <thead>
             <tr>
-              <th>Card Number</th>
-              <th>Surname</th>
-              <th>Name</th>
-              <th>Patronymic</th>
-              <th>Phone Number</th>
-              <th>City</th>
-              <th>Street</th>
-              <th>ZIP Code</th>
-              <th>Discount (%)</th>
+              <th className="table-cell">Card Number</th>
+              <th className="table-cell">Surname</th>
+              <th className="table-cell">Name</th>
+              <th className="table-cell">Patronymic</th>
+              <th className="table-cell">Phone Number</th>
+              <th className="table-cell">City</th>
+              <th className="table-cell">Street</th>
+              <th className="table-cell">ZIP Code</th>
+              <th className="table-cell">Discount (%)</th>
             </tr>
           </thead>
           <tbody>
             {products.map((client) => (
               <tr key={client.card_number}>
-                <td>{client.card_number}</td>
-                <td>{client.cust_surname}</td>
-                <td>{client.cust_name}</td>
-                <td>{client.cust_patronymic ?? '-'}</td>
-                <td>{client.phone_number}</td>
-                <td>{client.city}</td>
-                <td>{client.street}</td>
-                <td>{client.zip_code}</td>
-                <td>{client.percent}</td>
+                <td className="table-cell">{client.card_number}</td>
+                <td className="table-cell">{client.cust_surname}</td>
+                <td className="table-cell">{client.cust_name}</td>
+                <td className="table-cell">{client.cust_patronymic ?? '-'}</td>
+                <td className="table-cell">{client.phone_number}</td>
+                <td className="table-cell">{client.city}</td>
+                <td className="table-cell">{client.street}</td>
+                <td className="table-cell">{client.zip_code}</td>
+                <td className="table-cell">{client.percent}</td>
               </tr>
             ))}
           </tbody>
