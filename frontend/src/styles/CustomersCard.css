@@ -8,6 +8,38 @@
     width: 100%;
 }
 
+.filter-section input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.filter-section input:focus {
+    border-color: #496e4a;
+}
+
+.filter-section button {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #496e4a;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-section button:hover {
+    background-color: #5d8a5f;
+}
+
+.filter-section button:focus {
+    outline: none;
+} 
+
 .search-bar-container .search-input {
     width: 100%;
     padding: 12px 15px;

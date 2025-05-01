@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../axios';
-import { validateCustomerCard  } from '../utils/Validation';
+import { validateCustomerCard } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import CustomersList from './CustomersList';
 import AddItemModal from './AddItemModal';
@@ -10,6 +10,7 @@ import ControlButtons from './ControlButtons';
 
 function CustomersCard() {
   const [customerCards, setCustomerCards] = useState([]);
+  const [filterPercent, setFilterPercent] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -40,6 +41,22 @@ function CustomersCard() {
       alert('Failed to fetch customer cards.');
     }
   };
+
+  const handleFilterByPercent = async () => {
+    if (!filterPercent) {
+      fetchAllCustomersCards();
+      return;
+    }
+    try {
+      const response = await api.get(`/customers-card?percent=${filterPercent}&sort=asc`);
+      const parsedBody = JSON.parse(response.data.body);
+      setCustomerCards(parsedBody.customers || []);
+    } catch (error) {
+      console.error('Error filtering customer cards by percent:', error);
+      alert('Failed to filter customer cards.');
+    }
+  };
+
 
   const addCustomer = async (newCustomer) => {
     console.log('Adding customer:', newCustomer);
@@ -131,6 +148,18 @@ function CustomersCard() {
         itemKey={(item) => `${item.card_number} – ${item.cust_surname}`}
         itemIdKey="card_number"
       />
+      <div className="filter-section">
+        <span className="filter-label">Filter By Percent:</span>
+        <input
+          type="number"
+          id="percent"
+          value={filterPercent}
+          onChange={(e) => setFilterPercent(e.target.value)}
+          placeholder="Enter percent"
+        />
+        <button onClick={handleFilterByPercent}>Filter</button>
+      </div>
+
       <CustomersList customerCards={customerCards} />
 
       <AddItemModal
