@@ -11,7 +11,6 @@ function StatisticsModal({ data, onClose, title }) {
                         {Array.isArray(data) ? (
                             data.map((item, index) => (
                                 <div key={index} style={{ marginBottom: '20px', borderBottom: '1px solid #ccc', paddingBottom: '10px' }}>
-                                    <h3>Cashier {index + 1}</h3>
                                     {Object.keys(item).map((key) => (
                                         <p key={key}>
                                             <strong>{key.replace(/_/g, ' ').toUpperCase()}:</strong> {item[key]}

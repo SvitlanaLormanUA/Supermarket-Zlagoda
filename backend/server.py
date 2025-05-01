@@ -17,6 +17,7 @@ from models import (
     get_product_info,
     get_customer_info_ordered,
     get_customers_by_name_surname,
+    get_customers_without_category_and_receipts,
     get_customers_by_percent,
     get_total_price,
     get_total_quantity,
@@ -35,6 +36,7 @@ from models import (
     get_employee_by_id,
     get_employee_by_surname,
     get_cashiers,
+    get_receipts_by_cashier_and_period,
 
     add_new_product,
     add_new_store_product,
@@ -322,9 +324,12 @@ async def get_customers_not_bought_category(request):
 @app.get("/receipts", auth_required=True)
 @roles_required(["Manager"])
 async def get_all_receipts_history(request):
-    date_created = request.query_params.get("date_cr")
-    if date_created is not None:
-        get_active_cashiers_with_receipts(date_created)
+    date_begin = request.query_params.get("date_begin")
+    date_end = request.query_params.get("date_end")
+    if (date_begin and date_end) is not None:
+        return get_active_cashiers_with_receipts(date_begin, date_end)
+    if date_begin is not None:
+        return get_receipts_by_date(date_begin)
     return get_cashier_receipt_history()
 
 @app.post("/receipts/new_receipt", auth_required=True)
@@ -342,8 +347,11 @@ async def add_receipt(request):
 @app.get("/receipts/:id_employee", auth_required=True)
 @roles_required(["Manager"])
 async def get_receipts_by_cashier(request):
-    id_employee = request.path_params["id_employee"]  
-    return get_cashier_receipt_history(id_employee)
+    id_employee = request.path_params["id_employee"]
+    date_begin = request.query_params.get("date_begin")
+    date_end = request.query_params.get("date_end")
+
+    return get_cashier_receipt_history(id_employee, date_begin, date_end)
 
 # Receipts - complicated queries 
 @app.get("/sales/cashier", auth_required=True)

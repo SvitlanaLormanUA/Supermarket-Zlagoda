@@ -8,8 +8,13 @@ function ReceiptStatistics() {
     const [products, setProducts] = useState([]);
     const [selectedCashier, setSelectedCashier] = useState('');
     const [selectedProduct, setSelectedProduct] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [receiptsStartDate, setReceiptsStartDate] = useState('');
+    const [receiptsEndDate, setReceiptsEndDate] = useState('');
+    const [cashierStartDate, setCashierStartDate] = useState('');
+    const [cashierEndDate, setCashierEndDate] = useState('');
+    const [productStartDate, setProductStartDate] = useState('');
+    const [productEndDate, setProductEndDate] = useState('');
+
     const [modalData, setModalData] = useState(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -29,23 +34,137 @@ function ReceiptStatistics() {
             .catch((err) => console.error('Error loading products:', err));
     }, []);
 
+    const getReceiptsByCashier = async () => {
+        console.log('[getReceiptsByCashier] selectedCashier:', selectedCashier);
+        console.log('[getReceiptsByCashier] receiptsStartDate:', receiptsStartDate);
+        console.log('[getReceiptsByCashier] receiptsEndDate:', receiptsEndDate);
+
+        if (!receiptsStartDate) {
+            alert('Please fill all the fields');
+            return;
+        }
+
+        try {
+            const params = {};
+            let url;
+
+            if (!selectedCashier) {
+                if (!receiptsEndDate) {
+                    alert('Please fill all the end date');
+                    return;
+                }
+                url = '/receipts';
+                params.date_begin = receiptsStartDate;
+                params.date_end = receiptsEndDate;
+                console.log('[getReceiptsByCashier] func: get_active_cashiers_with_receipts');
+            } else if (!receiptsEndDate) {
+                url = '/receipts';
+                params.date_begin = receiptsStartDate;
+                console.log('[getReceiptsByCashier] func: get_receipts_by_date');
+            } else {
+                url = `/receipts/${selectedCashier}`;
+                params.date_begin = receiptsStartDate;
+                params.date_end = receiptsEndDate;
+                console.log('[getReceiptsByCashier] func: get_cashier_receipt_history');
+            }
+
+            console.log('[getReceiptsByCashier] GET on url:', url, 'with params:', params);
+
+            const response = await api.get(url, { params });
+            console.log('[getReceiptsByCashier] server response:', response);
+            console.log('[getReceiptsByCashier] response.data:', response.data);
+            console.log('[getReceiptsByCashier] body:', response.data.body);
+
+
+            const parsed = JSON.parse(response.data.body);
+
+            console.log('[getReceiptsByCashier] parsed data:', parsed);
+
+            if (parsed.status !== 'success' || !parsed.data || parsed.data.length === 0) {
+                alert('No data avaliable for selected cashier');
+                return;
+            }
+
+            let receiptsData = parsed.data;
+
+            if (!selectedCashier) {
+                receiptsData = parsed.data.flatMap(cashier =>
+                    cashier.receipts.map(receipt => ({
+                        check_number: receipt.check_number,
+                        id_employee: cashier.employee_id,
+                        employee_name: cashier.employee_name,
+                        print_date: receipt.print_date,
+                        sum_total: receipt.sum_total,
+                        vat: null,
+                        card_number: receipt.card_number,
+                        products: []
+                    }))
+                );
+            }
+
+            const startDate = new Date(receiptsStartDate);
+            console.log('startDate ',startDate)
+            console.log('receiptsStartDate', receiptsStartDate)
+            const endDate = receiptsEndDate ? new Date(receiptsEndDate) : startDate;
+            console.log('receiptsEndDate', endDate)
+            console.log('receiptsEndDate', receiptsEndDate)
+            receiptsData = receiptsData.filter(receipt => {
+                const printDate = new Date(receipt.print_date);
+                const isInRange = printDate >= startDate && (!receiptsEndDate || printDate <= endDate);
+                return isInRange;
+            });
+
+            if (receiptsData.length === 0) {
+                alert('No receipts in given range');
+                return;
+            }
+
+            const modalData = receiptsData.map(receipt => {
+                return {
+                    check_number: receipt.check_number,
+                    employee_name: receipt.employee_name,
+                    print_date: receipt.print_date,
+                    sum_total: receipt.sum_total,
+                    vat: receipt.vat || null,
+                    card_number: receipt.card_number,
+                    items: Array.isArray(receipt.products) ? receipt.products.map(item => {
+                        return {
+                            UPC: item.UPC,
+                            product_name: item.product_name,
+                            category_name: item.category_name,
+                            product_number: item.product_number,
+                            selling_price: item.selling_price
+                        };
+                    }) : []
+                };
+            });
+
+            setModalData(modalData);
+            setShowModal(true);
+
+        } catch (error) {
+            console.error('Error fetching data for cashier:', error);
+            alert('Failed to fetch data for cashier');
+        }
+    };
+
     const getSalesByCashier = async () => {
-        if (!startDate || !endDate) {
+        if (!cashierStartDate || !cashierEndDate) {
             alert('Please fill all the fields');
             return;
         }
 
         try {
             const params = {
-                start_date: startDate,
-                end_date: endDate,
+                start_date: cashierStartDate,
+                end_date: cashierEndDate,
             };
             if (selectedCashier) {
                 params.id_employee = selectedCashier;
             }
-            
+
             const response = await api.get('/sales/cashier', { params });
-            const responseBody = JSON.parse(response.data.body); 
+            const responseBody = JSON.parse(response.data.body);
 
             if (response.data.status_code !== 200 || !responseBody.data || responseBody.data.length === 0) {
                 alert(responseBody.message || 'No data avaliable for selected cashier');
@@ -78,7 +197,7 @@ function ReceiptStatistics() {
     };
 
     const getQuantityOfProduct = async () => {
-        if (!selectedProduct || !startDate || !endDate) {
+        if (!selectedProduct || !productStartDate || !productEndDate) {
             alert('Please fill all the fields');
             return;
         }
@@ -87,8 +206,8 @@ function ReceiptStatistics() {
             const response = await api.get('/sales/product', {
                 params: {
                     product_id: selectedProduct,
-                    start_date: startDate,
-                    end_date: endDate,
+                    start_date: productStartDate,
+                    end_date: productEndDate,
                 },
             });
 
@@ -124,19 +243,7 @@ function ReceiptStatistics() {
             <div className="statistics-section">
                 <div className="statistics-grid">
                     <section className="statistics-box">
-                        <select>
-                            <option value="">Select Cashier</option>
-                            {cashiers.map((cashier) => (
-                                <option key={cashier.id_employee} value={cashier.id_employee}>
-                                    {cashier.empl_surname}
-                                </option>
-                            ))}
-                        </select>
-                        <input type="date" />
-                        <button>→</button>
-                    </section>
-
-                    <section className="statistics-box">
+                        <h3>Receipts info by selected cashier</h3>
                         <select
                             value={selectedCashier}
                             onChange={(e) => setSelectedCashier(e.target.value)}
@@ -150,19 +257,46 @@ function ReceiptStatistics() {
                         </select>
                         <input
                             type="date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
+                            value={receiptsStartDate}
+                            onChange={(e) => setReceiptsStartDate(e.target.value)}
                         />
                         <input
                             type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
+                            value={receiptsEndDate}
+                            onChange={(e) => setReceiptsEndDate(e.target.value)}
+                        />
+                        <button onClick={getReceiptsByCashier}>→</button>
+                    </section>
+
+                    <section className="statistics-box">
+                        <h3>Total sales by selected cashier</h3>
+                        <select
+                            value={selectedCashier}
+                            onChange={(e) => setSelectedCashier(e.target.value)}
+                        >
+                            <option value="">Select Cashier</option>
+                            {cashiers.map((cashier) => (
+                                <option key={cashier.id_employee} value={cashier.id_employee}>
+                                    {cashier.id_employee} - {cashier.empl_surname}
+                                </option>
+                            ))}
+                        </select>
+                        <input
+                            type="date"
+                            value={cashierStartDate}
+                            onChange={(e) => setCashierStartDate(e.target.value)}
+                        />
+                        <input
+                            type="date"
+                            value={cashierEndDate}
+                            onChange={(e) => setCashierEndDate(e.target.value)}
                         />
                         <button onClick={getSalesByCashier}>→</button>
                     </section>
                 </div>
 
                 <section className="statistics-box" style={{ width: '400px' }}>
+                    <h3>Total quantity of sold product</h3>
                     <select
                         value={selectedProduct}
                         onChange={(e) => setSelectedProduct(e.target.value)}
@@ -176,13 +310,13 @@ function ReceiptStatistics() {
                     </select>
                     <input
                         type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
+                        value={productStartDate}
+                        onChange={(e) => setProductStartDate(e.target.value)}
                     />
                     <input
                         type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
+                        value={productEndDate}
+                        onChange={(e) => setProductEndDate(e.target.value)}
                     />
                     <button onClick={getQuantityOfProduct}>→</button>
                 </section>
