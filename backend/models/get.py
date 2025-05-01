@@ -1408,7 +1408,7 @@ def get_receipts_by_date(target_date=None):
             conn.close()
 
 # COMPLICATED QUERIES
-def get_cashier_receipt_history(id_employee=None):
+def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=None):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
@@ -1439,9 +1439,19 @@ def get_cashier_receipt_history(id_employee=None):
         '''
         
         params = []
+        conditions = []
         if id_employee:
-            query += ' WHERE e.id_employee = ?'
+            conditions.append('e.id_employee = ?')
             params.append(id_employee)
+        if date_created:
+            conditions.append('DATE(r.print_date) >= DATE(?)')
+            params.append(date_created)
+        if date_ended:
+            conditions.append('DATE(r.print_date) <= DATE(?)')
+            params.append(date_ended)
+        
+        if conditions:
+            query += ' WHERE ' + ' AND '.join(conditions)
         
         query += ' ORDER BY r.print_date DESC, r.check_number, s.UPC;'
 
@@ -1449,12 +1459,17 @@ def get_cashier_receipt_history(id_employee=None):
         rows = cursor.fetchall()
 
         if not rows:
+            message = "No receipts found"
+            if id_employee:
+                message += f" for cashier ID: {id_employee}"
+            if date_created or date_ended:
+                message += f" for period: {date_created or 'any'} to {date_ended or 'any'}"
             return {
                 "status_code": 404,
                 "body": jsonify({
                     "status": "success",
                     "data": [],
-                    "message": f"No receipts found{' for cashier ID: ' + id_employee if id_employee else ''}"
+                    "message": message
                 }),
                 "headers": {"Content-Type": "application/json"}
             }
@@ -1508,8 +1523,7 @@ def get_cashier_receipt_history(id_employee=None):
     finally:
         if conn:
             conn.close()
-
-def get_active_cashiers_with_receipts(included_date=None):
+def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
@@ -1540,10 +1554,16 @@ def get_active_cashiers_with_receipts(included_date=None):
         '''
         
         params = []
-        if excluded_date:
-            query += ' AND r.print_date = ?'
-            params.append(excluded_date)
-        
+        conditions = []
+        if date_created:
+            conditions.append('DATE(r.print_date) >= DATE(?)')
+            params.append(date_created)
+        if date_ended:
+            conditions.append('DATE(r.print_date) <= DATE(?)')
+            params.append(date_ended)
+            
+        if conditions:
+            query += ' WHERE ' + ' AND '.join(conditions)
         query += ' ORDER BY a.employee_id, r.print_date DESC;'
 
         cursor.execute(query, params)

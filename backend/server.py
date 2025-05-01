@@ -295,36 +295,17 @@ async def update_customer_route(request):
             "headers": {"Content-Type": "application/json"}
         }
 
-@app.get("/customers/inactive-category", auth_required=True)
-@roles_required(["Manager"])
-async def get_customers_not_bought_category(request):
-    try:
-        category_str = request.query_params.get("category_number")
-        if not category_str or not category_str.isdigit():
-            return {
-                "status_code": 400,
-                "body": {"message": "Valid category_number is required"},
-                "headers": {"Content-Type": "application/json"}
-            }
-
-        category_number = int(category_str)
-        return get_customers_without_category_and_receipts(category_number)
-
-    except Exception as e:
-        return {
-            "status_code": 500,
-            "body": {"message": f"Server error: {str(e)}"},
-            "headers": {"Content-Type": "application/json"}
-        }
-
 
 # Receipts
 @app.get("/receipts", auth_required=True)
 @roles_required(["Manager"])
 async def get_all_receipts_history(request):
-    date_created = request.query_params.get("date_cr")
-    if date_created is not None:
-        get_active_cashiers_with_receipts(date_created)
+    date_begin = request.query_params.get("date_begin")
+    date_end = request.query_params.get("date_end")
+    if (date_begin and date_end) is not None:
+        get_active_cashiers_with_receipts(date_begin, date_end)
+    if date_begin is not None:
+        return get_receipts_by_date(date_begin)
     return get_cashier_receipt_history()
 
 @app.post("/receipts/new_receipt", auth_required=True)
