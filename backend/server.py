@@ -323,7 +323,11 @@ async def add_receipt(request):
 @app.get("/receipts/:id_employee", auth_required=True)
 @roles_required(["Manager"])
 async def get_receipts_by_cashier(request):
-    id_employee = request.path_params["id_employee"]  
+    id_employee = request.path_params["id_employee"]
+    date_begin = request.query_params.get("date_begin")
+    date_end = request.query_params.get("date_end")
+    if (date_begin and date_end) is not None:
+        return get_cashier_receipt_history(id_employee, date_begin, date_end)
     return get_cashier_receipt_history(id_employee)
 
 # Receipts - complicated queries 
