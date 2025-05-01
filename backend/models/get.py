@@ -1255,11 +1255,14 @@ def get_all_receipts():
             conn.close()
 
 
-def get_receipts_by_date(target_date=None):
+def get_receipts_by_date(cashier_id, target_date):
+
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
+
+        print(f"[DEBUG] Filtering receipts for cashier_id={cashier_id} on date={target_date}")
 
         query = '''
         SELECT 
@@ -1277,37 +1280,17 @@ def get_receipts_by_date(target_date=None):
             employee e ON r.id_employee = e.id_employee
         LEFT JOIN 
             sale s ON r.check_number = s.check_number
-        '''
-        
-        params = []
-        if target_date:
-            query += ' WHERE DATE(r.print_date) = DATE(?)'
-            params.append(target_date)
-        
-        query += '''
+        WHERE 
+            r.id_employee = ? AND DATE(r.print_date) = DATE(?)
         GROUP BY 
             r.check_number, r.print_date, r.sum_total, r.vat, 
             e.id_employee, cashier_name, r.card_number
         ORDER BY 
             r.print_date DESC, r.check_number;
         '''
-
-        cursor.execute(query, params)
+        cursor.execute(query, (cashier_id, target_date))
         rows = cursor.fetchall()
 
-        if not rows:
-            message = "No receipts found" + (f" for date: {target_date}" if target_date else "")
-            return {
-                "status_code": 404,
-                "body": jsonify({
-                    "status": "success",
-                    "data": [],
-                    "message": message
-                }),
-                "headers": {"Content-Type": "application/json"}
-            }
-
-        # Structure the data
         receipts = []
         for row in rows:
             receipts.append({
@@ -1322,11 +1305,14 @@ def get_receipts_by_date(target_date=None):
             })
 
         return {
-            "status_code": 200,
+            "status_code": 200 if receipts else 404,
             "body": jsonify({
                 "status": "success",
                 "data": receipts,
-                "message": "Receipts retrieved successfully" + (f" for date: {target_date}" if target_date else "")
+                "message": (
+                    f"Found {len(receipts)} receipts for cashier {cashier_id} on {target_date}"
+                    if receipts else f"No receipts found for cashier {cashier_id} on {target_date}"
+                )
             }),
             "headers": {"Content-Type": "application/json"}
         }

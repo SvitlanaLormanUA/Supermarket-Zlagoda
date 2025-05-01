@@ -36,7 +36,6 @@ from models import (
     get_employee_by_id,
     get_employee_by_surname,
     get_cashiers,
-    get_receipts_by_cashier_and_period,
 
     add_new_product,
     add_new_store_product,
@@ -258,6 +257,16 @@ async def get_customers_cards(request):
     
     return get_customer_info_ordered()
 
+@app.get("/inactive-category", auth_required=True)
+@roles_required(["Manager"])
+async def get_customers_not_bought_category(request):
+    category_number = request.args.get("category_number", type=int)
+
+    if category_number is None:
+        return {"message": "Номер категорії не передано."}, 400
+    return get_customers_without_category_and_receipts(category_number)
+
+
 @app.get("/customers-card/search", auth_required=True)
 async def search_customers(request):
     name = request.query_params.get("name")
@@ -296,29 +305,6 @@ async def update_customer_route(request):
             }),
             "headers": {"Content-Type": "application/json"}
         }
-
-@app.get("/customers/inactive-category", auth_required=True)
-@roles_required(["Manager"])
-async def get_customers_not_bought_category(request):
-    try:
-        category_str = request.query_params.get("category_number")
-        if not category_str or not category_str.isdigit():
-            return {
-                "status_code": 400,
-                "body": {"message": "Valid category_number is required"},
-                "headers": {"Content-Type": "application/json"}
-            }
-
-        category_number = int(category_str)
-        return get_customers_without_category_and_receipts(category_number)
-
-    except Exception as e:
-        return {
-            "status_code": 500,
-            "body": {"message": f"Server error: {str(e)}"},
-            "headers": {"Content-Type": "application/json"}
-        }
-
 
 # Receipts
 @app.get("/receipts", auth_required=True)

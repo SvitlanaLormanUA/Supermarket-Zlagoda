@@ -11,6 +11,7 @@ import ControlButtons from './ControlButtons';
 function CustomersCard() {
   const [customerCards, setCustomerCards] = useState([]);
   const [filterPercent, setFilterPercent] = useState('');
+  const [inactiveCategory, setInactiveCategory] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -54,6 +55,28 @@ function CustomersCard() {
     } catch (error) {
       console.error('Error filtering customer cards by percent:', error);
       alert('Failed to filter customer cards.');
+    }
+  };
+
+  const handleInactiveCustomersFilter = async (categoryNumber) => {
+    if (!categoryNumber) {
+      alert('Введіть номер категорії');
+      return;
+    }
+
+    try {
+      console.log('Filtering inactive customers by category:', categoryNumber);
+      const response = await api.get(`/customers-card?category_number=${categoryNumber}`);
+      console.log('response:', response);
+
+      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+
+      console.log('Inactive customers response:', parsedData);
+      setCustomerCards(parsedData || []);
+    } catch (error) {
+      console.error('Error fetching inactive customers:', error);
+      alert('Failed to filter customer cards.');
+      setCustomerCards([]);
     }
   };
 
@@ -148,17 +171,32 @@ function CustomersCard() {
         itemKey={(item) => `${item.card_number} – ${item.cust_surname}`}
         itemIdKey="card_number"
       />
-      <div className="filter-section">
-        <span className="filter-label">Filter By Percent:</span>
-        <input
-          type="number"
-          id="percent"
-          value={filterPercent}
-          onChange={(e) => setFilterPercent(e.target.value)}
-          placeholder="Enter percent"
-        />
-        <button onClick={handleFilterByPercent}>Filter</button>
+      <div className="f-section">
+        <div className="inactive-customers-section">
+          <span className="f-label">Inactive customers:</span>
+          <input
+            type="number"
+            placeholder="Enter Category Number"
+            value={inactiveCategory}
+            onChange={(e) => setInactiveCategory(e.target.value)}
+          />
+          <button onClick={() => handleInactiveCustomersFilter(inactiveCategory)}>
+            Search
+          </button>
+        </div>
+        <div className="filter-all-section">
+          <span className="filter-label">Filter By Percent:</span>
+          <input
+            type="number"
+            id="percent"
+            value={filterPercent}
+            onChange={(e) => setFilterPercent(e.target.value)}
+            placeholder="Enter percent"
+          />
+          <button onClick={handleFilterByPercent}>Filter</button>
+        </div>
       </div>
+
 
       <CustomersList customerCards={customerCards} />
 

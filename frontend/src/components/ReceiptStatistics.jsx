@@ -60,6 +60,7 @@ function ReceiptStatistics() {
             } else if (!receiptsEndDate) {
                 url = '/receipts';
                 params.date_begin = receiptsStartDate;
+                params.id_employee = selectedCashier;
                 console.log('[getReceiptsByCashier] func: get_receipts_by_date');
             } else {
                 url = `/receipts/${selectedCashier}`;
@@ -103,7 +104,7 @@ function ReceiptStatistics() {
             }
 
             const startDate = new Date(receiptsStartDate);
-            console.log('startDate ',startDate)
+            console.log('startDate ', startDate)
             console.log('receiptsStartDate', receiptsStartDate)
             const endDate = receiptsEndDate ? new Date(receiptsEndDate) : startDate;
             console.log('receiptsEndDate', endDate)
