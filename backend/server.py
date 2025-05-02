@@ -37,6 +37,7 @@ from models import (
     get_employee_by_id,
     get_employee_by_surname,
     get_cashiers,
+    get_products_never_sold_to_customers_without_card,
 
     add_new_product,
     add_new_store_product,
@@ -393,6 +394,9 @@ async def average_receipt_by_product(request):
 
     return get_average_receipt_by_product(product_id)
 
+@app.get("/products-never-sold-to-non-customers")
+async def products_never_sold_to_customers_without_card():
+    return get_products_never_sold_to_customers_without_card()
 
 # Employees
 # вони тут вже відсортовані за прізвищем
