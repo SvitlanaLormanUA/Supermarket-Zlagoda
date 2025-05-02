@@ -1,0 +1,5 @@
+react
+axios 
+js-cookie
+jwt-decode
+lucide-react

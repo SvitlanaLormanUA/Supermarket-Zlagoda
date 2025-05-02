@@ -1,0 +1,100 @@
+.shop-container {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+}
+
+.shop-stats {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.shop-stat-card {
+    background-color: #496e4a;
+    padding: 20px 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 250px;
+}
+
+.shop-stat-title {
+    font-size: 18px;
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+.shop-stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.shop-sections {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    justify-items: center;
+    align-items: center;
+}
+
+.sections {
+    display: contents;
+}
+
+.shop-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 180px;
+    height: 180px;
+    background-color: #f5f5f5;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.6s ease;
+    margin-right: 0;
+}
+
+.shop-section .button-icon {
+    width: 70px;
+    height: 70px;
+    margin-bottom: 20px;
+    margin-right: 0px;
+}
+
+.shop-section:hover {
+    background-color: #e0e0e0;
+}
+
+@media (max-width: 1100px) {
+    .shop-sections {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .shop-sections {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+ .shop-sections {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "scripts": {
+        "start:frontend": "cd frontend && npm start",
+        "start:backend": "cd backend && nodemon --exec python3 server.py",
+        "start": "concurrently \"npm run start:frontend\" \"npm run start:backend\""
+    },
+    "dependencies": {
+        "jwt-decode": "^4.0.0",
+        "lucide-react": "^0.503.0"
+    },
+    "devDependencies": {
+        "concurrently": "^9.1.2",
+        "nodemon": "^2.0.15"
+    }
+}

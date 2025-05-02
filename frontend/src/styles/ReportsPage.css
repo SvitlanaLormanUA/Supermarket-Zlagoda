@@ -1,0 +1,149 @@
+/* Ваші існуючі стилі */
+.reports-container h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.reports-container p {
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.report-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.report-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #f3f4f6;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.report-button:hover {
+  background-color: #e5e7eb;
+}
+
+.icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: #4b5563;
+}
+
+.no-print {
+  text-align: center;
+}
+
+.print-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #a00b33;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  color: white;
+}
+
+.print-button:hover {
+  background-color: #c12c54;
+}
+
+.print-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke: #4b5563;
+}
+
+/* Оновлені стилі для таблиць */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  page-break-inside: auto;
+}
+
+tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+/* Стилі для вкладених таблиць (nested tables) */
+.nested-table-container {
+  margin: 0;
+  padding: 0;
+}
+
+.nested-table {
+  width: 100%;
+  background-color: #f5f5f5 !important;
+  border-collapse: collapse;
+}
+
+.nested-table thead {
+  background-color: #e0e0e0 !important;
+}
+
+.nested-table th, 
+.nested-table td {
+  background-color: #f5f5f5 !important;
+  border: 1px solid #ccc !important;
+}
+
+/* Стилі для друку */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .printable-section,
+  .printable-section * {
+    visibility: visible;
+  }
+
+  .printable-section {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  table {
+    width: 100% !important;
+    max-width: 100% !important;
+    font-size: 12px;
+  }
+
+  .nested-table {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 5mm;
+  }
+}
+.report-button.active {
+  background-color: #e5e7eb;
+  font-weight: bold;
+
+}

@@ -1,0 +1,24 @@
+.edit-table-container {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.item-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.item-table th, .item-table td {
+    padding: 10px;
+    text-align: left;
+}
+
+.item-table th {
+    background-color: #496e4a;
+}
+
+.item-table tbody tr:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}

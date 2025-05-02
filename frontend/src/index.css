@@ -1,0 +1,42 @@
+@import './styles/Categories.css';
+@import './styles/Navigation.css';
+@import './styles/ProductsInStore.css';
+@import './styles/Products.css';
+@import './styles/Shop.css';
+@import './styles/Login.css';
+@import './styles/SearchAndBack.css';
+@import './styles/AddItemModal.css';
+@import './styles/Dashboard.css';
+@import './styles/ControlButtons.css';
+@import './styles/CustomTable.css';
+@import './styles/CustomersCard.css';
+@import './styles/DeleteItemModal.css';
+@import './styles/EditItemModal.css';
+@import './styles/SortButtons.css';
+@import './styles/Receipts.css';
+@import './styles/Pagination.css';
+@import './styles/ProductsModal.css';
+@import './styles/Employees.css';
+@import './styles/FetchReceipts.css';
+@import './styles/ReceiptPage.css';
+@import './styles/ReceiptStatistics.css';
+@import './styles/StatisticsModal.css';
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+@import "./styles/Profile.css";
+@import "./styles/ReportsPage.css";
+@import './styles/DeleteReceipt.css';
+
+html {
+  height: 100%;
+  overflow: auto;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #eeeeee;
+}
+
+h1 {
+  color: #333;
+}
