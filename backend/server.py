@@ -51,6 +51,7 @@ from models import (
     delete_category,
     delete_customer,
     delete_employee,
+    delete_receipt,
 
     update_product,
     update_store_product,
@@ -317,6 +318,12 @@ async def get_all_receipts_history(request):
     if date_begin is not None:
         return get_active_cashiers_with_receipts(date_begin)
     return get_cashier_receipt_history()
+
+@app.delete("/receipts/:id")
+@roles_required(["Manager"])
+async def delete_check(request):
+    receipt_id = request.path_params.get("id")
+    return delete_receipt(receipt_id)
 
 @app.get("/receipts/active-cashiers", auth_required=True)
 @roles_required(["Manager"])
