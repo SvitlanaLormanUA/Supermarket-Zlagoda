@@ -26,10 +26,8 @@ function ReceiptPage({ userRole }) {
         }
     };
 
-    const handleDeleteReceipt = async () => {
-        const receiptId = prompt("Enter the ID of the receipt you want to delete:");
-        if (!receiptId) return;
-
+    const handleDeleteReceipt = async (receiptId) => {
+       
         await deleteReceipt(receiptId);
         handleFetchUpdate(); 
     };
@@ -49,7 +47,7 @@ function ReceiptPage({ userRole }) {
                 <button className="add_new_receipt" onClick={() => setShowModal(true)}>
                     Add New Receipt
                 </button>
-}
+ } 
                 {userRole === 'Manager' && 
                     <Link to="/receipts/statistics" className="receipt_statistics">
                         Statistics

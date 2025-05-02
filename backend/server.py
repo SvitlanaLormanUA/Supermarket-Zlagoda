@@ -44,6 +44,7 @@ from models import (
     add_new_category,
     add_customer,
     add_new_receipt,
+    add_receipt_with_store_products,
     add_new_employee,
 
     delete_product,
@@ -335,7 +336,7 @@ async def get_active_cashiers(request):
 async def add_receipt(request):
     try:
         receipt_data = json.loads(request.body)
-        return add_new_receipt(receipt_data)
+        return add_receipt_with_store_products(receipt_data)
     except json.JSONDecodeError:
         return {
             "status_code": 400,

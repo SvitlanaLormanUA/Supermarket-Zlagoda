@@ -4,10 +4,12 @@ const DeleteReceiptModal = ({ isOpen, onClose, onDelete }) => {
     const [receiptId, setReceiptId] = useState('');
 
     const handleDelete = () => {
+        if (!receiptId) alert('No such receipt')
         if (receiptId.trim()) {
             onDelete(receiptId.trim());
             setReceiptId('');
-        }
+            alert('deleted successfully')
+        } 
     };
 
     if (!isOpen) return null;
