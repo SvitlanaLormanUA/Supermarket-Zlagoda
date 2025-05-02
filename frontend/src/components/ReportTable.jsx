@@ -4,8 +4,8 @@ import api from '../axios';
 function ReportTable({ reportType, products }) {
   const [productQuantities, setProductQuantities] = useState({});
   const [loading, setLoading] = useState(false);
-
-  // Отримуємо дати (сьогодні та 7 днів тому)
+  const [isPrinting, setIsPrinting] = useState(false);
+  
   const getDates = () => {
     const endDate = new Date();
     const startDate = new Date();
@@ -17,7 +17,6 @@ function ReportTable({ reportType, products }) {
     };
   };
 
-  // Запит кількості проданих товарів
   useEffect(() => {
     if (reportType === 'products') {
       const fetchProductQuantities = async () => {
@@ -131,7 +130,6 @@ function ReportTable({ reportType, products }) {
               <th className="table-cell">City</th>
               <th className="table-cell">Street</th>
               <th className="table-cell">ZIP Code</th>
-              <th className="table-cell">Status</th>
             </tr>
           </thead>
           <tbody>
@@ -149,7 +147,6 @@ function ReportTable({ reportType, products }) {
                 <td className="table-cell">{emp.city}</td>
                 <td className="table-cell">{emp.street}</td>
                 <td className="table-cell">{emp.zip_code}</td>
-                <td className="table-cell">{isNonActive(emp.id_employee) ? 'Inactive' : 'Active'}</td>
               </tr>
             ))}
           </tbody>
