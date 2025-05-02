@@ -58,7 +58,7 @@ function ReceiptStatistics() {
                 params.date_end = receiptsEndDate;
                 console.log('[getReceiptsByCashier] func: get_active_cashiers_with_receipts');
             } else if (!receiptsEndDate) {
-                url = '/receipts';
+                url =`/receipts/${selectedCashier}`;
                 params.date_begin = receiptsStartDate;
                 params.id_employee = selectedCashier;
                 console.log('[getReceiptsByCashier] func: get_receipts_by_date');
@@ -98,7 +98,7 @@ function ReceiptStatistics() {
                         sum_total: receipt.sum_total,
                         vat: null,
                         card_number: receipt.card_number,
-                        products: []
+                        items: receipt.items
                     }))
                 );
             }
@@ -119,6 +119,7 @@ function ReceiptStatistics() {
                 alert('No receipts in given range');
                 return;
             }
+            console.log(receiptsData)
 
             const modalData = receiptsData.map(receipt => {
                 return {
@@ -128,7 +129,7 @@ function ReceiptStatistics() {
                     sum_total: receipt.sum_total,
                     vat: receipt.vat || null,
                     card_number: receipt.card_number,
-                    items: Array.isArray(receipt.products) ? receipt.products.map(item => {
+                    items: Array.isArray(receipt.items) ? receipt.items.map(item => {
                         return {
                             UPC: item.UPC,
                             product_name: item.product_name,

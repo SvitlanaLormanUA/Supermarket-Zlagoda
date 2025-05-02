@@ -1515,9 +1515,9 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
                     "employee_name": f"{row[1]} {row[2]}",
                     "is_active": bool(row[3]),
                     "last_login": row[4],
-                    "receipts": []
+                    "items": []
                 }
-            cashiers[employee_id]["receipts"].append({
+            cashiers[employee_id]["items"].append({
                 "check_number": row[5],
                 "card_number": row[6],
                 "print_date": row[7],
