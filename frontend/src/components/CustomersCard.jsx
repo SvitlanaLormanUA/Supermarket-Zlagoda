@@ -4,27 +4,28 @@ import { validateCustomerCard } from '../utils/Validation';
 import SearchAndBack from './SearchAndBack';
 import CustomersList from './CustomersList';
 import AddItemModal from './AddItemModal';
-import EditItemModal from "./EditItemModal";
-import DeleteItemModal from "./DeleteItemModal";
+import EditItemModal from './EditItemModal';
+import DeleteItemModal from './DeleteItemModal';
 import ControlButtons from './ControlButtons';
 
 function CustomersCard() {
   const [customerCards, setCustomerCards] = useState([]);
   const [filterPercent, setFilterPercent] = useState('');
   const [inactiveCategory, setInactiveCategory] = useState('');
+  const [noResultsMessage, setNoResultsMessage] = useState('');
   const [isModalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const customersCardFields = [
-    { name: "card_number", label: "Card Number", readOnly: true },
-    { name: "cust_surname", label: "Customer's Surname" },
-    { name: "cust_name", label: "Customer's Name" },
-    { name: "cust_patronymic", label: "Customer's Patronymic" },
-    { name: "phone_number", label: "Phone" },
-    { name: "city", label: "City" },
-    { name: "street", label: "Street" },
-    { name: "zip_code", label: "Zip Code" },
-    { name: "percent", label: "Percent" }
+    { name: 'card_number', label: 'Card Number', readOnly: true },
+    { name: 'cust_surname', label: "Customer's Surname" },
+    { name: 'cust_name', label: "Customer's Name" },
+    { name: 'cust_patronymic', label: "Customer's Patronymic" },
+    { name: 'phone_number', label: 'Phone' },
+    { name: 'city', label: 'City' },
+    { name: 'street', label: 'Street' },
+    { name: 'zip_code', label: 'Zip Code' },
+    { name: 'percent', label: 'Percent' },
   ];
 
   useEffect(() => {
@@ -36,10 +37,11 @@ function CustomersCard() {
       const response = await api.get('/customers-card');
       const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
       setCustomerCards(parsedData || []);
+      setNoResultsMessage(''); // Clear message when fetching all customers
     } catch (error) {
       console.error('Error fetching customer cards:', error);
       setCustomerCards([]);
-      alert('Failed to fetch customer cards.');
+      setNoResultsMessage('Failed to fetch customer cards.');
     }
   };
 
@@ -51,35 +53,38 @@ function CustomersCard() {
     try {
       const response = await api.get(`/customers-card?percent=${filterPercent}&sort=asc`);
       const parsedBody = JSON.parse(response.data.body);
-      setCustomerCards(parsedBody.customers || []);
+      const customers = parsedBody.customers || [];
+      setCustomerCards(customers);
+      setNoResultsMessage(customers.length === 0 ? 'No customers found with the specified percent.' : '');
     } catch (error) {
       console.error('Error filtering customer cards by percent:', error);
-      alert('Failed to filter customer cards.');
+      setCustomerCards([]);
+      setNoResultsMessage('Failed to filter customer cards.');
     }
   };
 
-  const handleInactiveCustomersFilter = async (categoryNumber) => {
-    if (!categoryNumber) {
-      alert('Введіть номер категорії');
+  const handleInactiveCustomersFilter = async (categoryName) => {
+    if (!categoryName) {
+      alert('Please enter a category name');
       return;
     }
 
     try {
-      console.log('Filtering inactive customers by category:', categoryNumber);
-      const response = await api.get(`/customers-card?category_number=${categoryNumber}`);
-      console.log('response:', response);
-
+      const response = await api.get(`/inactive-category/${encodeURIComponent(categoryName)}`);
       const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
 
-      console.log('Inactive customers response:', parsedData);
       setCustomerCards(parsedData || []);
+      setNoResultsMessage(parsedData && parsedData.length === 0 ? `No inactive customers found` : '');
     } catch (error) {
       console.error('Error fetching inactive customers:', error);
-      alert('Failed to filter customer cards.');
+      const errorMessage =
+        error.response?.data?.detail || 'Failed to fetch customers for the specified category.';
+      alert(errorMessage);
+      console.error('Error details:', error);
       setCustomerCards([]);
+      setNoResultsMessage('Failed to fetch customers for the specified category.');
     }
   };
-
 
   const addCustomer = async (newCustomer) => {
     console.log('Adding customer:', newCustomer);
@@ -148,13 +153,15 @@ function CustomersCard() {
       const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
 
       setCustomerCards(Array.isArray(parsedData) ? parsedData : [parsedData]);
+      setNoResultsMessage(
+        parsedData && parsedData.length === 0 ? 'No customers found matching the search criteria.' : ''
+      );
     } catch (error) {
       console.error('Error searching customer cards:', error);
       setCustomerCards([]);
-      alert('No customer cards found.');
+      setNoResultsMessage('No customer cards found.');
     }
   };
-
 
   return (
     <div className="cards-container">
@@ -173,10 +180,10 @@ function CustomersCard() {
       />
       <div className="f-section">
         <div className="inactive-customers-section">
-          <span className="f-label">Inactive customers:</span>
+          <span className="f-label">Inactive customers by category:</span>
           <input
-            type="number"
-            placeholder="Enter Category Number"
+            type="text"
+            placeholder="Enter Category Name"
             value={inactiveCategory}
             onChange={(e) => setInactiveCategory(e.target.value)}
           />
@@ -197,6 +204,11 @@ function CustomersCard() {
         </div>
       </div>
 
+      {noResultsMessage && (
+        <div className="no-results-message" style={{ textAlign: 'center', margin: '20px 0', color: '#666' }}>
+          {noResultsMessage}
+        </div>
+      )}
 
       <CustomersList customerCards={customerCards} />
 
@@ -227,6 +239,6 @@ function CustomersCard() {
       />
     </div>
   );
-};
+}
 
 export default CustomersCard;

@@ -95,7 +95,6 @@ function ReportsPage() {
         <ReportTable
           reportType={reportType}
           products={products}
-          nonActiveEmployees={nonActiveEmployees}
         />
       </div>
       <style jsx>{`

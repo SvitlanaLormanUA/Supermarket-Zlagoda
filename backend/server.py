@@ -257,14 +257,13 @@ async def get_customers_cards(request):
     
     return get_customer_info_ordered()
 
-@app.get("/inactive-category", auth_required=True)
+@app.get("/inactive-category/:category_name", auth_required=True)
 @roles_required(["Manager"])
 async def get_customers_not_bought_category(request):
-    category_number = request.args.get("category_number", type=int)
-
-    if category_number is None:
-        return {"message": "Номер категорії не передано."}, 400
-    return get_customers_without_category_and_receipts(category_number)
+    category_name = request.path_params.get("category_name")
+    if category_name is None:
+        raise HTTPException(status_code=400, detail="No category name provided")
+    return get_customers_without_category_and_receipts(category_name)
 
 
 @app.get("/customers-card/search", auth_required=True)
@@ -317,6 +316,11 @@ async def get_all_receipts_history(request):
     if date_begin is not None:
         return get_receipts_by_date(date_begin)
     return get_cashier_receipt_history()
+
+@app.get("/receipts/active-cashiers", auth_required=True)
+@roles_required(["Manager"])
+async def get_active_cashiers(request):
+    return get_active_cashiers_with_receipts()
 
 @app.post("/receipts/new_receipt", auth_required=True)
 async def add_receipt(request):

@@ -1,28 +1,43 @@
 import React from 'react';
 import { Users, UserCheck, Package, ShoppingBag, FileText } from 'lucide-react';
 
-function ReportButtons({ onReportSelect, onPrint, selectedReport }) {
+function ReportButtons({ onReportSelect, onPrint, selectedReport = 'employees' }) {
   return (
     <div className="report-buttons no-print">
-      <button className="report-button" onClick={() => onReportSelect('employees')}>
+      <button 
+        className={`report-button ${selectedReport === 'employees' ? 'active' : ''}`} 
+        onClick={() => onReportSelect('employees')}
+      >
         <Users className="icon" />
         Employees
       </button>
-      <button className="report-button" onClick={() => onReportSelect('customers-card')}>
+      <button 
+        className={`report-button ${selectedReport === 'customers-card' ? 'active' : ''}`} 
+        onClick={() => onReportSelect('customers-card')}
+      >
         <UserCheck className="icon" />
         Customers
       </button>
-      <button className="report-button" onClick={() => onReportSelect('products-in-store')}>
+      <button 
+        className={`report-button ${selectedReport === 'products-in-store' ? 'active' : ''}`} 
+        onClick={() => onReportSelect('products-in-store')}
+      >
         <Package className="icon" />
         Store Products
       </button>
-      <button className="report-button" onClick={() => onReportSelect('products')}>
+      <button 
+        className={`report-button ${selectedReport === 'products' ? 'active' : ''}`} 
+        onClick={() => onReportSelect('products')}
+      >
         <ShoppingBag className="icon" />
         Products to Purchase
       </button>
-      <button className="report-button" onClick={() => onReportSelect('receipts')}>
+      <button 
+        className={`report-button ${selectedReport === 'receipts' ? 'active' : ''}`} 
+        onClick={() => onReportSelect('receipts')}
+      >
         <FileText className="icon" />
-        Receipts
+        Sales
       </button>
 
       {selectedReport && (

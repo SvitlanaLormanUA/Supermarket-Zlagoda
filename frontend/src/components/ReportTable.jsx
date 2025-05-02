@@ -1,7 +1,72 @@
-function ReportTable({ reportType, products, nonActiveEmployees }) {
-  const isNonActive = (id) => nonActiveEmployees.includes(id);
+import React, { useEffect, useState } from 'react';
+import api from '../axios';
+
+function ReportTable({ reportType, products }) {
+  const [productQuantities, setProductQuantities] = useState({});
+  const [loading, setLoading] = useState(false);
+
+  // Отримуємо дати (сьогодні та 7 днів тому)
+  const getDates = () => {
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setDate(endDate.getDate() - 7);
+    
+    return {
+      start_date: startDate.toISOString().split('T')[0],
+      end_date: endDate.toISOString().split('T')[0]
+    };
+  };
+
+  // Запит кількості проданих товарів
+  useEffect(() => {
+    if (reportType === 'products') {
+      const fetchProductQuantities = async () => {
+        setLoading(true);
+        const { start_date, end_date } = getDates();
+        const quantities = {};
+        
+        try {
+          // Запит для кожного продукту
+          for (const product of products) {
+            const response = await api.get(`/sales/product?product_id=${product.id_product}&start_date=${start_date}&end_date=${end_date}`);
+            const data = response.data;
+            
+            if (data.status === 'success') {
+              quantities[product.id_product] = data.data.total_quantity || 0;
+            } else {
+              quantities[product.id_product] = 0;
+            }
+          }
+          
+          setProductQuantities(quantities);
+        } catch (error) {
+          console.error('Error fetching product quantities:', error);
+          // Якщо помилка, встановлюємо 0 для всіх продуктів
+          const zeroQuantities = {};
+          products.forEach(p => zeroQuantities[p.id_product] = 0);
+          setProductQuantities(zeroQuantities);
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchProductQuantities();
+    }
+  }, [reportType, products]);
+
+  const calculateTotalProductSales = () => {
+    return Object.values(productQuantities).reduce((total, quantity) => total + quantity, 0);
+  };
+
+  const calculateTotalReceiptSales = () => {
+    return products.reduce((total, receipt) => {
+      return total + (parseFloat(receipt.sum_total) || 0);
+    }, 0);
+  };
 
   if (reportType === 'products' || reportType === 'products-in-store') {
+    const totalSales = calculateTotalProductSales();
+
     return (
       <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
         <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '20px' }}>
@@ -12,9 +77,7 @@ function ReportTable({ reportType, products, nonActiveEmployees }) {
               <th>Category Name</th>
               <th>Product Name</th>
               <th>Characteristics</th>
-              {reportType === 'products' && (
-                <th>Total Sold Quantity</th>
-              )}
+              {reportType === 'products' && <th>Total Sold Quantity (last 7 days)</th>}
             </tr>
           </thead>
           <tbody>
@@ -26,15 +89,30 @@ function ReportTable({ reportType, products, nonActiveEmployees }) {
                 <td>{prod.product_name}</td>
                 <td>{prod.characteristics}</td>
                 {reportType === 'products' && (
-                  <td>{prod.totalQuantity ?? Math.floor(Math.random() * 14)}</td>
+                  <td>
+                    {loading ? 'Loading...' : (productQuantities[prod.id_product] || 0)}
+                  </td>
                 )}
               </tr>
             ))}
           </tbody>
+          {reportType === 'products' && (
+            <tfoot>
+              <tr>
+                <td colSpan={5} style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                  Total Sales:
+                </td>
+                <td style={{ fontWeight: 'bold' }}>
+                  {loading ? 'Loading...' : totalSales}
+                </td>
+              </tr>
+            </tfoot>
+          )}
         </table>
       </div>
     );
   }
+
 
   if (reportType === 'employees') {
     return (
@@ -112,6 +190,86 @@ function ReportTable({ reportType, products, nonActiveEmployees }) {
               </tr>
             ))}
           </tbody>
+        </table>
+      </div>
+    );
+  }
+
+  if (reportType === 'receipts') {
+    const totalSales = calculateTotalReceiptSales();
+
+    return (
+      <div style={{ maxHeight: '500px', overflowY: 'auto' }}>
+        <table border="1" cellPadding="10" style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+          <thead>
+            <tr>
+              <th>Cashier ID</th>
+              <th>Cashier Name</th>
+              <th>Check Number</th>
+              <th>Card Number</th>
+              <th>Print Date</th>
+              <th>Total Sum</th>
+              <th>Products</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map((receipt) => (
+              <tr key={receipt.check_number}>
+                <td>{receipt.id_employee}</td>
+                <td>{receipt.employee_name}</td>
+                <td>{receipt.check_number}</td>
+                <td>{receipt.card_number || '-'}</td>
+                <td>{new Date(receipt.print_date).toLocaleString()}</td>
+                <td>{parseFloat(receipt.sum_total).toFixed(2)}</td>
+                <td>
+                  {receipt.items && receipt.items.length > 0 ? (
+                    <table 
+                      border="1" 
+                      cellPadding="5" 
+                      style={{ 
+                        width: '100%', 
+                        backgroundColor: '#f5f5f5',
+                        borderColor: '#ddd'
+                      }}
+                    >
+                      <thead>
+                        <tr style={{ backgroundColor: '#e0e0e0' }}>
+                          <th>UPC</th>
+                          <th>Product Name</th>
+                          <th>Quantity</th>
+                          <th>Price</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {receipt.items.map((item, index) => (
+                          <tr key={`${receipt.check_number}-item-${index}`}>
+                            <td>{item.UPC}</td>
+                            <td>{item.product_name}</td>
+                            <td>{item.product_number}</td>
+                            <td>{parseFloat(item.selling_price).toFixed(2)}</td>
+                            <td>{(item.product_number * parseFloat(item.selling_price)).toFixed(2)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    'No products'
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan="5" style={{ textAlign: 'right', fontWeight: 'bold' }}>
+                Total Sales:
+              </td>
+              <td colSpan="2" style={{ fontWeight: 'bold' }}>
+                {totalSales.toFixed(2)}
+              </td>
+            </tr>
+          </tfoot>
         </table>
       </div>
     );

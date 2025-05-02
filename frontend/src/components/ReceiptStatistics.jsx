@@ -6,7 +6,8 @@ import StatisticsModal from './StatisticsModal';
 function ReceiptStatistics() {
     const [cashiers, setCashiers] = useState([]);
     const [products, setProducts] = useState([]);
-    const [selectedCashier, setSelectedCashier] = useState('');
+    const [receiptsCashier, setReceiptsCashier] = useState(''); 
+    const [salesCashier, setSalesCashier] = useState(''); 
     const [selectedProduct, setSelectedProduct] = useState('');
     const [receiptsStartDate, setReceiptsStartDate] = useState('');
     const [receiptsEndDate, setReceiptsEndDate] = useState('');
@@ -35,7 +36,7 @@ function ReceiptStatistics() {
     }, []);
 
     const getReceiptsByCashier = async () => {
-        console.log('[getReceiptsByCashier] selectedCashier:', selectedCashier);
+        console.log('[getReceiptsByCashier] receiptsCashier:', receiptsCashier);
         console.log('[getReceiptsByCashier] receiptsStartDate:', receiptsStartDate);
         console.log('[getReceiptsByCashier] receiptsEndDate:', receiptsEndDate);
 
@@ -48,9 +49,9 @@ function ReceiptStatistics() {
             const params = {};
             let url;
 
-            if (!selectedCashier) {
+            if (!receiptsCashier) {
                 if (!receiptsEndDate) {
-                    alert('Please fill all the end date');
+                    alert('Please fill the end date');
                     return;
                 }
                 url = '/receipts';
@@ -58,12 +59,12 @@ function ReceiptStatistics() {
                 params.date_end = receiptsEndDate;
                 console.log('[getReceiptsByCashier] func: get_active_cashiers_with_receipts');
             } else if (!receiptsEndDate) {
-                url =`/receipts/${selectedCashier}`;
+                url = `/receipts/${receiptsCashier}`;
                 params.date_begin = receiptsStartDate;
-                params.id_employee = selectedCashier;
+                params.id_employee = receiptsCashier;
                 console.log('[getReceiptsByCashier] func: get_receipts_by_date');
             } else {
-                url = `/receipts/${selectedCashier}`;
+                url = `/receipts/${receiptsCashier}`;
                 params.date_begin = receiptsStartDate;
                 params.date_end = receiptsEndDate;
                 console.log('[getReceiptsByCashier] func: get_cashier_receipt_history');
@@ -76,19 +77,18 @@ function ReceiptStatistics() {
             console.log('[getReceiptsByCashier] response.data:', response.data);
             console.log('[getReceiptsByCashier] body:', response.data.body);
 
-
             const parsed = JSON.parse(response.data.body);
 
             console.log('[getReceiptsByCashier] parsed data:', parsed);
 
             if (parsed.status !== 'success' || !parsed.data || parsed.data.length === 0) {
-                alert('No data avaliable for selected cashier');
+                alert('No data available for selected cashier');
                 return;
             }
 
             let receiptsData = parsed.data;
 
-            if (!selectedCashier) {
+            if (!receiptsCashier) {
                 receiptsData = parsed.data.flatMap(cashier =>
                     cashier.receipts.map(receipt => ({
                         check_number: receipt.check_number,
@@ -104,11 +104,7 @@ function ReceiptStatistics() {
             }
 
             const startDate = new Date(receiptsStartDate);
-            console.log('startDate ', startDate)
-            console.log('receiptsStartDate', receiptsStartDate)
             const endDate = receiptsEndDate ? new Date(receiptsEndDate) : startDate;
-            console.log('receiptsEndDate', endDate)
-            console.log('receiptsEndDate', receiptsEndDate)
             receiptsData = receiptsData.filter(receipt => {
                 const printDate = new Date(receipt.print_date);
                 const isInRange = printDate >= startDate && (!receiptsEndDate || printDate <= endDate);
@@ -119,7 +115,7 @@ function ReceiptStatistics() {
                 alert('No receipts in given range');
                 return;
             }
-            console.log(receiptsData)
+            console.log(receiptsData);
 
             const modalData = receiptsData.map(receipt => {
                 return {
@@ -161,15 +157,15 @@ function ReceiptStatistics() {
                 start_date: cashierStartDate,
                 end_date: cashierEndDate,
             };
-            if (selectedCashier) {
-                params.id_employee = selectedCashier;
+            if (salesCashier) {
+                params.id_employee = salesCashier;
             }
 
             const response = await api.get('/sales/cashier', { params });
             const responseBody = JSON.parse(response.data.body);
 
             if (response.data.status_code !== 200 || !responseBody.data || responseBody.data.length === 0) {
-                alert(responseBody.message || 'No data avaliable for selected cashier');
+                alert(responseBody.message || 'No data available for selected cashier');
                 return;
             }
 
@@ -213,7 +209,7 @@ function ReceiptStatistics() {
                 },
             });
 
-            const responseBody = response.data.body;
+            const responseBody = JSON.parse(response.data.body);
             const productData = responseBody.data;
 
             if (!productData) {
@@ -247,8 +243,8 @@ function ReceiptStatistics() {
                     <section className="statistics-box">
                         <h3>Receipts info by selected cashier</h3>
                         <select
-                            value={selectedCashier}
-                            onChange={(e) => setSelectedCashier(e.target.value)}
+                            value={receiptsCashier}
+                            onChange={(e) => setReceiptsCashier(e.target.value)}
                         >
                             <option value="">Select Cashier</option>
                             {cashiers.map((cashier) => (
@@ -273,8 +269,8 @@ function ReceiptStatistics() {
                     <section className="statistics-box">
                         <h3>Total sales by selected cashier</h3>
                         <select
-                            value={selectedCashier}
-                            onChange={(e) => setSelectedCashier(e.target.value)}
+                            value={salesCashier}
+                            onChange={(e) => setSalesCashier(e.target.value)}
                         >
                             <option value="">Select Cashier</option>
                             {cashiers.map((cashier) => (
