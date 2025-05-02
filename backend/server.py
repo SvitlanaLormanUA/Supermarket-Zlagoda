@@ -17,6 +17,7 @@ from models import (
     get_product_info,
     get_customer_info_ordered,
     get_customers_by_name_surname,
+    get_customers_without_category_and_receipts,
     get_customers_by_percent,
     get_total_price,
     get_total_quantity,
@@ -256,6 +257,15 @@ async def get_customers_cards(request):
     
     return get_customer_info_ordered()
 
+@app.get("/inactive-category/:category_name", auth_required=True)
+@roles_required(["Manager"])
+async def get_customers_not_bought_category(request):
+    category_name = request.path_params.get("category_name")
+    if category_name is None:
+        raise HTTPException(status_code=400, detail="No category name provided")
+    return get_customers_without_category_and_receipts(category_name)
+
+
 @app.get("/customers-card/search", auth_required=True)
 async def search_customers(request):
     name = request.query_params.get("name")
@@ -295,37 +305,22 @@ async def update_customer_route(request):
             "headers": {"Content-Type": "application/json"}
         }
 
-@app.get("/customers/inactive-category", auth_required=True)
-@roles_required(["Manager"])
-async def get_customers_not_bought_category(request):
-    try:
-        category_str = request.query_params.get("category_number")
-        if not category_str or not category_str.isdigit():
-            return {
-                "status_code": 400,
-                "body": {"message": "Valid category_number is required"},
-                "headers": {"Content-Type": "application/json"}
-            }
-
-        category_number = int(category_str)
-        return get_customers_without_category_and_receipts(category_number)
-
-    except Exception as e:
-        return {
-            "status_code": 500,
-            "body": {"message": f"Server error: {str(e)}"},
-            "headers": {"Content-Type": "application/json"}
-        }
-
-
 # Receipts
 @app.get("/receipts", auth_required=True)
 @roles_required(["Manager"])
 async def get_all_receipts_history(request):
-    date_created = request.query_params.get("date_cr")
-    if date_created is not None:
-        get_active_cashiers_with_receipts(date_created)
+    date_begin = request.query_params.get("date_begin")
+    date_end = request.query_params.get("date_end")
+    if (date_begin and date_end) is not None:
+        return get_active_cashiers_with_receipts(date_begin, date_end)
+    if date_begin is not None:
+        return get_active_cashiers_with_receipts(date_begin)
     return get_cashier_receipt_history()
+
+@app.get("/receipts/active-cashiers", auth_required=True)
+@roles_required(["Manager"])
+async def get_active_cashiers(request):
+    return get_active_cashiers_with_receipts()
 
 @app.post("/receipts/new_receipt", auth_required=True)
 async def add_receipt(request):
@@ -342,7 +337,13 @@ async def add_receipt(request):
 @app.get("/receipts/:id_employee", auth_required=True)
 @roles_required(["Manager"])
 async def get_receipts_by_cashier(request):
-    id_employee = request.path_params["id_employee"]  
+    id_employee = request.path_params["id_employee"]
+    date_begin = request.query_params.get("date_begin")
+    date_end = request.query_params.get("date_end")
+    if (date_begin and date_end) is not None:
+        return get_cashier_receipt_history(id_employee, date_begin, date_end)
+    elif date_begin:
+        return get_cashier_receipt_history(id_employee, date_begin)
     return get_cashier_receipt_history(id_employee)
 
 # Receipts - complicated queries 
