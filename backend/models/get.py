@@ -865,6 +865,8 @@ def get_customers_by_name_surname(name=None, surname=None):
     finally:
         if conn:
             conn.close()
+
+
 def get_customers_by_percent(percent, sort="asc"):
     conn = None
     try:
@@ -964,72 +966,6 @@ def get_all_employees():
     finally:
         if conn:
             conn.close()
-
-
-def get_cashiers():
-    conn = None
-    try:
-        conn = sqlite3.connect(DB_LINK)
-        cursor = conn.cursor()
-
-        cursor.execute('''
-            SELECT 
-                id_employee,
-                empl_surname,
-                empl_name,
-                empl_patronymic,
-                empl_role,
-                salary,
-                date_of_birth,
-                date_of_start,
-                phone_number,
-                city,
-                street,
-                zip_code
-            FROM employee
-            WHERE empl_role = ? COLLATE NOCASE  
-            ORDER BY empl_surname ASC
-        ''', ('Касир',))
-
-        employees = cursor.fetchall()
-        result = []
-        for employee in employees:
-            employee_dict = {
-                'id_employee': employee[0],
-                'empl_surname': employee[1],
-                'empl_name': employee[2],
-                'empl_patronymic': employee[3],
-                'empl_role': employee[4],
-                'salary': float(employee[5]),
-                'date_of_birth': employee[6],
-                'date_of_start': employee[7],
-                'phone_number': employee[8],
-                'city': employee[9],
-                'street': employee[10],
-                'zip_code': employee[11]
-            }
-            result.append(employee_dict)
-
-        return {
-            "status_code": 200,
-            "body": jsonify({"data": result}),
-            "headers": {"Content-Type": "application/json"}
-        }
-
-    except sqlite3.Error as e:
-        return {
-            "status_code": 500,
-            "body": jsonify({
-                "status": "error",
-                "data": [],
-                "message": f"Database error: {str(e)}"
-            }),
-            "headers": {"Content-Type": "application/json"}
-        }
-    finally:
-        if conn:
-            conn.close()
-
 
 def get_employee_by_surname(surname):
     conn = None
@@ -1149,6 +1085,7 @@ def get_cashiers():
         if conn:
             conn.close()
 
+
 def get_employee_by_id():
     conn = None
     try:
@@ -1188,6 +1125,7 @@ def get_employee_by_id():
     finally:
         if conn:
             conn.close()               
+
 
 def get_employee_info_by_id(employee_id: str, role: str = None):
     """
@@ -1317,11 +1255,14 @@ def get_all_receipts():
             conn.close()
 
 
-def get_receipts_by_date(target_date=None):
+def get_receipts_by_date(cashier_id, target_date):
+
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
+
+        print(f"[DEBUG] Filtering receipts for cashier_id={cashier_id} on date={target_date}")
 
         query = '''
         SELECT 
@@ -1339,37 +1280,17 @@ def get_receipts_by_date(target_date=None):
             employee e ON r.id_employee = e.id_employee
         LEFT JOIN 
             sale s ON r.check_number = s.check_number
-        '''
-        
-        params = []
-        if target_date:
-            query += ' WHERE DATE(r.print_date) = DATE(?)'
-            params.append(target_date)
-        
-        query += '''
+        WHERE 
+            r.id_employee = ? AND DATE(r.print_date) = DATE(?)
         GROUP BY 
             r.check_number, r.print_date, r.sum_total, r.vat, 
             e.id_employee, cashier_name, r.card_number
         ORDER BY 
             r.print_date DESC, r.check_number;
         '''
-
-        cursor.execute(query, params)
+        cursor.execute(query, (cashier_id, target_date))
         rows = cursor.fetchall()
 
-        if not rows:
-            message = "No receipts found" + (f" for date: {target_date}" if target_date else "")
-            return {
-                "status_code": 404,
-                "body": jsonify({
-                    "status": "success",
-                    "data": [],
-                    "message": message
-                }),
-                "headers": {"Content-Type": "application/json"}
-            }
-
-        # Structure the data
         receipts = []
         for row in rows:
             receipts.append({
@@ -1384,11 +1305,14 @@ def get_receipts_by_date(target_date=None):
             })
 
         return {
-            "status_code": 200,
+            "status_code": 200 if receipts else 404,
             "body": jsonify({
                 "status": "success",
                 "data": receipts,
-                "message": "Receipts retrieved successfully" + (f" for date: {target_date}" if target_date else "")
+                "message": (
+                    f"Found {len(receipts)} receipts for cashier {cashier_id} on {target_date}"
+                    if receipts else f"No receipts found for cashier {cashier_id} on {target_date}"
+                )
             }),
             "headers": {"Content-Type": "application/json"}
         }
@@ -1440,20 +1364,29 @@ def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=
         
         params = []
         conditions = []
+
+        # Add id_employee condition if provided
         if id_employee:
             conditions.append('e.id_employee = ?')
             params.append(id_employee)
+
+        # Add date conditions
         if date_created:
-            conditions.append('DATE(r.print_date) >= DATE(?)')
-            params.append(date_created)
-        if date_ended:
-            conditions.append('DATE(r.print_date) <= DATE(?)')
-            params.append(date_ended)
+            if date_ended:
+                conditions.append('DATE(r.print_date) BETWEEN DATE(?) AND DATE(?)')
+                params.extend([date_created, date_ended])  # Fixed: Use extend instead of append
+            else:
+                conditions.append('DATE(r.print_date) = DATE(?)')
+                params.append(date_created)
         
         if conditions:
             query += ' WHERE ' + ' AND '.join(conditions)
         
         query += ' ORDER BY r.print_date DESC, r.check_number, s.UPC;'
+
+        # Debug: Log query and params
+        print('Query:', query)
+        print('Params:', params)
 
         cursor.execute(query, params)
         rows = cursor.fetchall()
@@ -1539,32 +1472,51 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
             r.check_number,
             r.card_number,
             r.print_date,
-            r.sum_total
+            r.sum_total,
+            s.UPC,
+            p.product_name,
+            s.product_number,
+            s.selling_price
         FROM 
             account a
-        JOIN 
-            employee e ON a.employee_id = e.id_employee
-        JOIN 
-            receipt r ON e.id_employee = r.id_employee
+        JOIN employee e ON a.employee_id = e.id_employee
+        JOIN receipt r ON e.id_employee = r.id_employee
+        LEFT JOIN sale s ON r.check_number = s.check_number
+        LEFT JOIN store_product sp ON s.UPC = sp.UPC
+        LEFT JOIN product p ON sp.id_product = p.id_product
         WHERE 
-            a.is_active = 1
-            AND a.last_login IS NOT NULL
-            AND e.empl_role = 'Cashier'
-            AND r.card_number IS NOT NULL
+            NOT EXISTS (
+                SELECT 1 FROM account a2 
+                WHERE a2.employee_id = a.employee_id AND a2.is_active = 0
+            )
+            AND NOT EXISTS (
+                SELECT 1 FROM account a3 
+                WHERE a3.employee_id = a.employee_id AND a3.last_login IS NULL
+            )
+            AND NOT EXISTS (
+                SELECT 1 FROM employee e2 
+                WHERE e2.id_employee = e.id_employee AND e2.empl_role != 'Cashier'
+            )
+            AND NOT EXISTS (
+                SELECT 1 FROM receipt r2 
+                WHERE r2.check_number = r.check_number AND r2.card_number IS NULL
+            )
         '''
         
         params = []
         conditions = []
+        
         if date_created:
             conditions.append('DATE(r.print_date) >= DATE(?)')
             params.append(date_created)
         if date_ended:
             conditions.append('DATE(r.print_date) <= DATE(?)')
             params.append(date_ended)
-            
+    
         if conditions:
-            query += ' WHERE ' + ' AND '.join(conditions)
-        query += ' ORDER BY a.employee_id, r.print_date DESC;'
+            query += ' AND ' + ' AND '.join(conditions)
+        
+        query += ' ORDER BY a.employee_id, r.check_number, r.print_date DESC;'
 
         cursor.execute(query, params)
         rows = cursor.fetchall()
@@ -1573,41 +1525,46 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
             return {
                 "status_code": 404,
                 "body": jsonify({
-                    "status": "success",
                     "data": [],
-                    "message": "No active cashiers with receipts found"
+                    "total_sales": 0.0
                 }),
                 "headers": {"Content-Type": "application/json"}
             }
 
         # Structure the data
-        cashiers = {}
+        receipts = {}
+        total_sales = 0.0
         for row in rows:
-            employee_id = row[0]
-            if employee_id not in cashiers:
-                cashiers[employee_id] = {
-                    "employee_id": row[0],
+            check_number = row[5]
+            if check_number not in receipts:
+                receipts[check_number] = {
+                    "check_number": row[5],
+                    "id_employee": row[0],
                     "employee_name": f"{row[1]} {row[2]}",
-                    "is_active": bool(row[3]),
-                    "last_login": row[4],
-                    "receipts": []
+                    "card_number": row[6],
+                    "print_date": row[7],
+                    "sum_total": float(row[8]),
+                    "items": []
                 }
-            cashiers[employee_id]["receipts"].append({
-                "check_number": row[5],
-                "card_number": row[6],
-                "print_date": row[7],
-                "sum_total": row[8]
-            })
+                total_sales += float(row[8])  # Accumulate total sales
+            if row[9]:  # Check if product data exists (UPC is not null)
+                receipts[check_number]["items"].append({
+                    "UPC": row[9],
+                    "product_name": row[10],
+                    "product_number": row[11],
+                    "selling_price": float(row[12])
+                })
 
-        # Convert cashiers dict to list for JSON response
-        result = list(cashiers.values())
+        # Convert receipts dict to list for JSON response
+        result = list(receipts.values())
 
         return {
             "status_code": 200,
             "body": jsonify({
                 "status": "success",
                 "data": result,
-                "message": "Active cashiers with receipts retrieved successfully"
+                "total_sales": total_sales,
+                "message": "Receipt history retrieved successfully"
             }),
             "headers": {"Content-Type": "application/json"}
         }
@@ -1618,6 +1575,7 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
             "body": jsonify({
                 "status": "error",
                 "data": [],
+                "total_sales": 0.0,
                 "message": f"Database error: {str(e)}"
             }),
             "headers": {"Content-Type": "application/json"}
@@ -1625,7 +1583,6 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
     finally:
         if conn:
             conn.close()
-
 #19. загальна сума продажів
 def get_total_sales_by_cashier(id_employee, start_date, end_date):
     conn = None
@@ -1775,7 +1732,7 @@ def get_total_quantity_product(product_id, start_date, end_date):
             conn.close()
 
 
-def get_customers_without_category_and_receipts(category_number: int):
+def get_customers_without_category_and_receipts(category_name: str):
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
@@ -1798,7 +1755,7 @@ def get_customers_without_category_and_receipts(category_number: int):
                 JOIN store_product sp ON s.UPC = sp.UPC
                 JOIN product p ON sp.id_product = p.id_product
                 WHERE r.card_number = c.card_number
-                AND p.category_number = ?
+                AND p.category_name = ?
             )
             AND NOT EXISTS (
                 SELECT 1 
@@ -1807,7 +1764,7 @@ def get_customers_without_category_and_receipts(category_number: int):
             )
         '''
 
-        cursor.execute(query, (category_number,))
+        cursor.execute(query, (category_name))
         rows = cursor.fetchall()
 
         if not rows:
@@ -1834,9 +1791,7 @@ def get_customers_without_category_and_receipts(category_number: int):
         return {
             "status_code": 200,
             "body": jsonify({
-                "status": "success",
                 "data": result,
-                "message": "Customers who never bought from given category and never had receipts"
             }),
             "headers": {"Content-Type": "application/json"}
         }
