@@ -1809,3 +1809,82 @@ def get_customers_without_category_and_receipts(category_name: str):
     finally:
         if conn:
             conn.close()
+
+
+def get_average_receipt_by_product(product_id):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+            SELECT 
+                p.id_product,
+                p.product_name,
+                AVG(r.sum_total) AS average_receipt_total,
+                MIN(r.sum_total) AS min_receipt_total,
+                MAX(r.sum_total) AS max_receipt_total,
+                COUNT(DISTINCT r.check_number) AS number_of_receipts
+            FROM receipt r
+            JOIN sale s ON r.check_number = s.check_number
+            JOIN store_product sp ON s.UPC = sp.UPC
+            JOIN product p ON sp.id_product = p.id_product
+            WHERE p.id_product = ?
+            GROUP BY p.id_product, p.product_name
+        '''
+
+        cursor.execute(query, (product_id,))
+        result = cursor.fetchone()
+
+        if result:
+            product_id = result[0] 
+            product_name = result[1]
+            average_receipt_total = result[2] if result[2] else 0.0
+            min_receipt_total = result[3] if result[3] else 0.0
+            max_receipt_total = result[4] if result[4] else 0.0
+            number_of_receipts = result[5] if result[5] else 0
+
+            return {
+                "status_code": 200,
+                "body": jsonify({
+                    "status": "success",
+                    "data": {
+                        "product_id": product_id,
+                        "product_name": product_name,
+                        "average_receipt_total": round(average_receipt_total, 2),
+                        "min_receipt_total": round(min_receipt_total, 2),
+                        "max_receipt_total": round(max_receipt_total, 2),
+                        "number_of_receipts": number_of_receipts
+                    },
+                    "message": "Average receipt total calculated"
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+        else:
+            return {
+                "status_code": 404,
+                "body": jsonify({
+                    "status": "error",
+                    "data": [],
+                    "message": "No data found for the selected product"
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+
+

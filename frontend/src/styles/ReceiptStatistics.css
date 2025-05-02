@@ -1,6 +1,6 @@
 .statistics-section {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
     gap: 30px;
     margin-top: 40px;
@@ -14,14 +14,23 @@
     max-width: 900px;
 }
 
+.select-data-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    height: 100%;
+}
+
 .statistics-box {
     background-color: #f9f9f9;
     border-radius: 16px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
     display: flex;
+    justify-content: flex-start;
     flex-direction: column;
-    gap: 12px;
+    min-height: 220px; 
 }
 
 .statistics-box select,
