@@ -94,17 +94,22 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
     };
 
     const addProduct = () => {
-        if (!productData.UPC || !productData.selling_price) return;
+        if (!productData.UPC || !productData.selling_price || !productData.product_number) return;
 
         const price = parseFloat(productData.selling_price);
-        const vat = price * 0.2;
+        const quantity = parseInt(productData.product_number, 10);
 
         const selected = optionsMap.UPC.find((opt) => opt.value === productData.UPC);
         const productName = selected?.raw?.product_name || '';
 
+        const totalPrice = price * quantity;
+        const vat = totalPrice * 0.2;
+
         const newProduct = {
             ...productData,
             selling_price: price.toFixed(2),
+            quantity,
+            total_price: totalPrice.toFixed(2),
             vat: vat.toFixed(2),
             product_name: productName,
         };
@@ -113,7 +118,7 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
         setProducts(updatedProducts);
 
         const totalSum = updatedProducts.reduce(
-            (sum, p) => sum + parseFloat(p.selling_price),
+            (sum, p) => sum + parseFloat(p.total_price),
             0
         );
         const totalVat = updatedProducts.reduce(
@@ -132,11 +137,15 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
 
     const addReceipt = async () => {
         try {
+            console.log('Saving receipt...');
+            console.log('Form Data:', formData);
+            console.log('Products:', products);
+    
             const payload = {
                 ...formData,
                 products,
             };
-            await api.post('/receipts/new_receipt', payload);
+            const response = await api.post('/receipts/new_receipt', payload);
             alert('Receipt saved successfully!');
             onReceiptAdded && onReceiptAdded();
         } catch (error) {
@@ -144,6 +153,7 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
             alert(error.response?.data?.detail || 'Error saving receipt.');
         }
     };
+    
 
 
     useEffect(() => {
@@ -201,7 +211,7 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
                                                 <th>Name</th>
                                                 <th>Product #</th>
                                                 <th>Price</th>
-                                                <th>VAT</th>
+                                                <th>Total Price</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -211,7 +221,7 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
                                                     <td>{p.product_name}</td>
                                                     <td>{p.product_number}</td>
                                                     <td>{p.selling_price}</td>
-                                                    <td>{p.vat}</td>
+                                                    <td>{p.total_price}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
