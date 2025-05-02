@@ -314,7 +314,7 @@ async def get_all_receipts_history(request):
     if (date_begin and date_end) is not None:
         return get_active_cashiers_with_receipts(date_begin, date_end)
     if date_begin is not None:
-        return get_receipts_by_date(date_begin)
+        return get_active_cashiers_with_receipts(date_begin)
     return get_cashier_receipt_history()
 
 @app.get("/receipts/active-cashiers", auth_required=True)
@@ -342,6 +342,8 @@ async def get_receipts_by_cashier(request):
     date_end = request.query_params.get("date_end")
     if (date_begin and date_end) is not None:
         return get_cashier_receipt_history(id_employee, date_begin, date_end)
+    elif date_begin:
+        return get_cashier_receipt_history(id_employee, date_begin)
     return get_cashier_receipt_history(id_employee)
 
 # Receipts - complicated queries 

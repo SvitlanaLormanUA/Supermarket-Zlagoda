@@ -1364,20 +1364,29 @@ def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=
         
         params = []
         conditions = []
+
+        # Add id_employee condition if provided
         if id_employee:
             conditions.append('e.id_employee = ?')
             params.append(id_employee)
+
+        # Add date conditions
         if date_created:
-            conditions.append('DATE(r.print_date) >= DATE(?)')
-            params.append(date_created)
-        if date_ended:
-            conditions.append('DATE(r.print_date) <= DATE(?)')
-            params.append(date_ended)
+            if date_ended:
+                conditions.append('DATE(r.print_date) BETWEEN DATE(?) AND DATE(?)')
+                params.extend([date_created, date_ended])  # Fixed: Use extend instead of append
+            else:
+                conditions.append('DATE(r.print_date) = DATE(?)')
+                params.append(date_created)
         
         if conditions:
             query += ' WHERE ' + ' AND '.join(conditions)
         
         query += ' ORDER BY r.print_date DESC, r.check_number, s.UPC;'
+
+        # Debug: Log query and params
+        print('Query:', query)
+        print('Params:', params)
 
         cursor.execute(query, params)
         rows = cursor.fetchall()
@@ -1447,7 +1456,6 @@ def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=
     finally:
         if conn:
             conn.close()
-
 def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
     conn = None
     try:
@@ -1497,6 +1505,7 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
         
         params = []
         conditions = []
+        
         if date_created:
             conditions.append('DATE(r.print_date) >= DATE(?)')
             params.append(date_created)
