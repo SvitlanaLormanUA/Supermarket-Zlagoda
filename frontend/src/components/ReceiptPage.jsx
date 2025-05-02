@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import SearchAndBack from './SearchAndBack';
 import FetchReceipts from './FetchReceipts';
 
-function ReceiptPage() {
+function ReceiptPage({ userRole }) {
     const fetchReceiptsRef = useRef(null);
     const [showModal, setShowModal] = useState(false);
 
@@ -19,15 +19,19 @@ function ReceiptPage() {
                 <SearchAndBack />
             </div>
             <div className="receipt-action-buttons">
+                {userRole !== 'Manager' && 
                 <button className="add_new_receipt" onClick={() => setShowModal(true)}>
                     Add New Receipt
                 </button>
+}               
+            {userRole === 'Manager' && 
                 <Link to="/receipts/statistics" className="receipt_statistics">
                     Statistics
                 </Link>
+}
             </div>
 
-            <Receipts showModal={showModal} setShowModal={setShowModal} onReceiptAdded={handleFetchUpdate} />
+            <Receipts userRole={userRole} showModal={showModal} setShowModal={setShowModal} onReceiptAdded={handleFetchUpdate} />
             <FetchReceipts refetchRef={fetchReceiptsRef} />
         </div>
     );

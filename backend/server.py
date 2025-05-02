@@ -309,7 +309,6 @@ async def update_customer_route(request):
 
 # Receipts
 @app.get("/receipts", auth_required=True)
-@roles_required(["Manager"])
 async def get_all_receipts_history(request):
     date_begin = request.query_params.get("date_begin")
     date_end = request.query_params.get("date_end")
@@ -325,6 +324,7 @@ async def get_active_cashiers(request):
     return get_active_cashiers_with_receipts()
 
 @app.post("/receipts/new_receipt", auth_required=True)
+@roles_required(["Cashier"])
 async def add_receipt(request):
     try:
         receipt_data = json.loads(request.body)

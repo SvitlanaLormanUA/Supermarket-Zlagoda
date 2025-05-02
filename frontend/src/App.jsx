@@ -101,7 +101,7 @@ function App() {
               />
               <Route
                 path="/shop/receipts"
-                element={<ReceiptPage />}
+                element={<ReceiptPage userRole={userRole}/>}
               />
               <Route
                 path="/receipts/statistics"
