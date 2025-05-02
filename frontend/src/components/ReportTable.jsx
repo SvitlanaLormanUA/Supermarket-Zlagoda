@@ -72,7 +72,6 @@ function ReportTable({ reportType, products }) {
           <thead>
             <tr>
               <th>ID</th>
-              <th>Category Number</th>
               <th>Category Name</th>
               <th>Product Name</th>
               <th>Characteristics</th>
