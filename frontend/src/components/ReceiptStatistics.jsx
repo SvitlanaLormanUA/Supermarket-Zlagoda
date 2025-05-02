@@ -6,8 +6,8 @@ import StatisticsModal from './StatisticsModal';
 function ReceiptStatistics() {
     const [cashiers, setCashiers] = useState([]);
     const [products, setProducts] = useState([]);
-    const [receiptsCashier, setReceiptsCashier] = useState(''); 
-    const [salesCashier, setSalesCashier] = useState(''); 
+    const [receiptsCashier, setReceiptsCashier] = useState('');
+    const [salesCashier, setSalesCashier] = useState('');
     const [selectedProduct, setSelectedProduct] = useState('');
     const [receiptsStartDate, setReceiptsStartDate] = useState('');
     const [receiptsEndDate, setReceiptsEndDate] = useState('');
@@ -208,9 +208,7 @@ function ReceiptStatistics() {
                     end_date: productEndDate,
                 },
             });
-
-            const responseBody = JSON.parse(response.data.body);
-            const productData = responseBody.data;
+            const productData = response.data.body.data;
 
             if (!productData) {
                 alert('No data available for the selected product');
