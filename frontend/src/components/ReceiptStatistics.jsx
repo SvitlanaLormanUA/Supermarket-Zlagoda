@@ -242,27 +242,27 @@ function ReceiptStatistics() {
             const response = await api.get('/average-receipt-by-product', {
                 params: { product_id: selectedProduct },
             });
-
             const parsedBody = JSON.parse(response.data.body);
             const productData = parsedBody.data;
-
+    
             if (!productData) {
+                console.warn('No data available for selected product:', selectedProduct);
                 alert('No data available for the selected product');
                 return;
             }
-
+    
             const modalData = {
                 id_product: productData.product_id,
                 product_name: productData.product_name,
                 average_receipt_total: productData.average_receipt_total,
-
-                // min_receipt_total: productData.min_receipt_total,
-                // max_receipt_total: productData.max_receipt_total,
-                // number_of_receipts: productData.number_of_receipts,
+                min_receipt_total: productData.min_receipt_total,
+                max_receipt_total: productData.max_receipt_total,
+                number_of_receipts: productData.number_of_receipts,
             };
-
+    
             setModalData(modalData);
             setShowModal(true);
+            console.log('Modal opened with data');
         } catch (error) {
             console.error('Error fetching data for selected product:', error);
             alert('Failed to fetch data for product');
