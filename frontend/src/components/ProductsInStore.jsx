@@ -15,6 +15,7 @@ function ProductsInStore() {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setDeleteModalOpen] = useState(false);
   const [filterDiscounted, setFilterDiscounted] = useState(false);
+  const [filterNeverSoldToNoCard, setFilterNeverSoldToNoCard] = useState(false);
   const [filterNonDiscounted, setFilterNonDiscounted] = useState(false);
   const [productOptions, setProductOptions] = useState([]);
   const [UPCOptions, setUPCOptions] = useState([]);
@@ -155,6 +156,29 @@ function ProductsInStore() {
     }
   };
 
+  const fetchNeverSoldToNoCardCustomers = async () => {
+    try {
+      const response = await api.get('/products-never-sold-to-non-customers');
+      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
+      if (parsedData.length === 0) {
+        console.warn('No products found that match the criteria.');
+      }
+      setProductsInStore(parsedData);
+
+    } catch (error) {
+      console.error('Error fetching never-sold products:', error);
+      if (error.response) {
+        console.error('Error response:', error.response);
+        console.error('Error message:', error.response.data?.message || 'No message available');
+      }
+
+      alert('Failed to fetch filtered products.');
+    } finally {
+      console.log('Fetch operation completed.');
+    }
+  };
+
+
   return (
     <div className="products-container">
       <div className="searchAndBackSection">
@@ -225,6 +249,25 @@ function ProductsInStore() {
             }}
           />
           Non Promotional Products
+        </label>
+        <label>
+          <input
+            type="checkbox"
+            checked={filterNeverSoldToNoCard}
+            onChange={async () => {
+              const newValue = !filterNeverSoldToNoCard;
+              setFilterNeverSoldToNoCard(newValue);
+              setFilterDiscounted(false);
+              setFilterNonDiscounted(false);
+
+              if (newValue) {
+                await fetchNeverSoldToNoCardCustomers();
+              } else {
+                await fetchAllStoreProducts();
+              }
+            }}
+          />
+          Never Sold to Customers Without Card
         </label>
       </div>
 

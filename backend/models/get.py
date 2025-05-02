@@ -1364,20 +1364,29 @@ def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=
         
         params = []
         conditions = []
+
+        # Add id_employee condition if provided
         if id_employee:
             conditions.append('e.id_employee = ?')
             params.append(id_employee)
+
+        # Add date conditions
         if date_created:
-            conditions.append('DATE(r.print_date) >= DATE(?)')
-            params.append(date_created)
-        if date_ended:
-            conditions.append('DATE(r.print_date) <= DATE(?)')
-            params.append(date_ended)
+            if date_ended:
+                conditions.append('DATE(r.print_date) BETWEEN DATE(?) AND DATE(?)')
+                params.extend([date_created, date_ended])  # Fixed: Use extend instead of append
+            else:
+                conditions.append('DATE(r.print_date) = DATE(?)')
+                params.append(date_created)
         
         if conditions:
             query += ' WHERE ' + ' AND '.join(conditions)
         
         query += ' ORDER BY r.print_date DESC, r.check_number, s.UPC;'
+
+        # Debug: Log query and params
+        print('Query:', query)
+        print('Params:', params)
 
         cursor.execute(query, params)
         rows = cursor.fetchall()
@@ -1447,7 +1456,6 @@ def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=
     finally:
         if conn:
             conn.close()
-
 def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
     conn = None
     try:
@@ -1497,6 +1505,7 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
         
         params = []
         conditions = []
+        
         if date_created:
             conditions.append('DATE(r.print_date) >= DATE(?)')
             params.append(date_created)
@@ -1861,6 +1870,57 @@ def get_average_receipt_by_product(product_id):
                 }),
                 "headers": {"Content-Type": "application/json"}
             }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+def get_products_never_sold_to_customers_without_card():
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+            SELECT DISTINCT p.id_product, p.product_name
+            FROM product p
+            JOIN store_product sp ON p.id_product = sp.id_product
+            JOIN sale s ON sp.UPC = s.UPC
+            JOIN receipt r ON s.check_number = r.check_number
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM sale s2
+                JOIN receipt r2 ON s2.check_number = r2.check_number
+                WHERE s2.UPC = sp.UPC AND (r2.card_number = '' OR r2.card_number IS NULL)
+            )
+        '''
+
+        cursor.execute(query)
+        results = cursor.fetchall()
+
+        return {
+            "status_code": 200,
+            "body": jsonify({
+                "status": "success",
+                "data": [
+                    {"product_id": row[0], "product_name": row[1]}
+                    for row in results
+                ],
+                "message": "Products never sold to customers without a card"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
 
     except sqlite3.Error as e:
         return {

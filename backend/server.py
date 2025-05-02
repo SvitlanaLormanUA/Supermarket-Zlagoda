@@ -37,6 +37,7 @@ from models import (
     get_employee_by_id,
     get_employee_by_surname,
     get_cashiers,
+    get_products_never_sold_to_customers_without_card,
 
     add_new_product,
     add_new_store_product,
@@ -315,7 +316,7 @@ async def get_all_receipts_history(request):
     if (date_begin and date_end) is not None:
         return get_active_cashiers_with_receipts(date_begin, date_end)
     if date_begin is not None:
-        return get_receipts_by_date(date_begin)
+        return get_active_cashiers_with_receipts(date_begin)
     return get_cashier_receipt_history()
 
 @app.get("/receipts/active-cashiers", auth_required=True)
@@ -343,6 +344,8 @@ async def get_receipts_by_cashier(request):
     date_end = request.query_params.get("date_end")
     if (date_begin and date_end) is not None:
         return get_cashier_receipt_history(id_employee, date_begin, date_end)
+    elif date_begin:
+        return get_cashier_receipt_history(id_employee, date_begin)
     return get_cashier_receipt_history(id_employee)
 
 # Receipts - complicated queries 
@@ -391,6 +394,9 @@ async def average_receipt_by_product(request):
 
     return get_average_receipt_by_product(product_id)
 
+@app.get("/products-never-sold-to-non-customers")
+async def products_never_sold_to_customers_without_card():
+    return get_products_never_sold_to_customers_without_card()
 
 # Employees
 # вони тут вже відсортовані за прізвищем

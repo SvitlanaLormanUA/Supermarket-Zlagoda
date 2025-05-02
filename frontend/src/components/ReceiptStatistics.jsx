@@ -39,21 +39,17 @@ function ReceiptStatistics() {
         console.log('[getReceiptsByCashier] receiptsCashier:', receiptsCashier);
         console.log('[getReceiptsByCashier] receiptsStartDate:', receiptsStartDate);
         console.log('[getReceiptsByCashier] receiptsEndDate:', receiptsEndDate);
-
+    
         if (!receiptsStartDate) {
             alert('Please fill all the fields');
             return;
         }
-
+    
         try {
             const params = {};
             let url;
-
+    
             if (!receiptsCashier) {
-                if (!receiptsEndDate) {
-                    alert('Please fill the end date');
-                    return;
-                }
                 url = '/receipts';
                 params.date_begin = receiptsStartDate;
                 params.date_end = receiptsEndDate;
@@ -69,40 +65,22 @@ function ReceiptStatistics() {
                 params.date_end = receiptsEndDate;
                 console.log('[getReceiptsByCashier] func: get_cashier_receipt_history');
             }
-
+    
             console.log('[getReceiptsByCashier] GET on url:', url, 'with params:', params);
-
+    
             const response = await api.get(url, { params });
-            console.log('[getReceiptsByCashier] server response:', response);
-            console.log('[getReceiptsByCashier] response.data:', response.data);
-            console.log('[getReceiptsByCashier] body:', response.data.body);
-
             const parsed = JSON.parse(response.data.body);
-
+    
             console.log('[getReceiptsByCashier] parsed data:', parsed);
-
+    
             if (parsed.status !== 'success' || !parsed.data || parsed.data.length === 0) {
                 alert('No data available for selected cashier');
                 return;
             }
-
+    
+            // Simply use parsed.data as receiptsData
             let receiptsData = parsed.data;
-
-            if (!receiptsCashier) {
-                receiptsData = parsed.data.flatMap(cashier =>
-                    cashier.receipts.map(receipt => ({
-                        check_number: receipt.check_number,
-                        id_employee: cashier.employee_id,
-                        employee_name: cashier.employee_name,
-                        print_date: receipt.print_date,
-                        sum_total: receipt.sum_total,
-                        vat: null,
-                        card_number: receipt.card_number,
-                        items: receipt.items
-                    }))
-                );
-            }
-
+    
             const startDate = new Date(receiptsStartDate);
             const endDate = receiptsEndDate ? new Date(receiptsEndDate) : startDate;
             receiptsData = receiptsData.filter(receipt => {
@@ -110,13 +88,13 @@ function ReceiptStatistics() {
                 const isInRange = printDate >= startDate && (!receiptsEndDate || printDate <= endDate);
                 return isInRange;
             });
-
+    
             if (receiptsData.length === 0) {
                 alert('No receipts in given range');
                 return;
             }
             console.log(receiptsData);
-
+    
             const modalData = receiptsData.map(receipt => {
                 return {
                     check_number: receipt.check_number,
@@ -136,10 +114,10 @@ function ReceiptStatistics() {
                     }) : []
                 };
             });
-
+    
             setModalData(modalData);
             setShowModal(true);
-
+    
         } catch (error) {
             console.error('Error fetching data for cashier:', error);
             alert('Failed to fetch data for cashier');

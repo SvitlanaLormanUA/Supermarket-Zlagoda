@@ -32,7 +32,8 @@ from .get import (
     get_total_sales_by_cashier,  
     get_total_quantity_product,
     get_customers_without_category_and_receipts,   
-    get_average_receipt_by_product
+    get_average_receipt_by_product,
+    get_products_never_sold_to_customers_without_card
 
 )
 
@@ -104,6 +105,7 @@ __all__ = [
     'get_receipts_by_date',
     'get_average_receipt_by_product', 
     'get_receipts_by_date',
+    'get_products_never_sold_to_customers_without_card',
 
     'add_new_product',
     'add_new_store_product',
