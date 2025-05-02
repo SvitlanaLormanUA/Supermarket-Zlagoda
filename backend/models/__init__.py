@@ -31,7 +31,8 @@ from .get import (
     get_cashier_receipt_history,
     get_total_sales_by_cashier,  
     get_total_quantity_product,
-    get_customers_without_category_and_receipts    
+    get_customers_without_category_and_receipts,   
+    get_average_receipt_by_product
 
 )
 
@@ -101,6 +102,8 @@ __all__ = [
     'get_active_cashiers_with_receipts',
     'get_customers_without_category_and_receipts',  
     'get_receipts_by_date',
+    'get_average_receipt_by_product', 
+    'get_receipts_by_date',
 
     'add_new_product',
     'add_new_store_product',
@@ -122,6 +125,5 @@ __all__ = [
     'update_customer',
     'update_employee',
     'add_receipt_with_store_products'
-    'get_receipts_by_date',
     
 ]

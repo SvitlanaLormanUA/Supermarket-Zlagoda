@@ -8,6 +8,7 @@ from models import (
     get_store_products_by_input,
     get_receipts_by_date,
     get_active_cashiers_with_receipts,
+    get_average_receipt_by_product,
     get_all_products,
     get_product_by_name,
     get_all_store_products,
@@ -380,6 +381,17 @@ async def get_quantity_of_product(request):
     
     return get_total_quantity_product(product_id, start_date, end_date)
 
+@app.get("/average-receipt-by-product")
+async def average_receipt_by_product(request):
+    product_id = request.query_params.get("product_id")
+    if not product_id:
+        return jsonify({"error": "product_id is required"}), 400
+    try:
+        product_id = int(product_id)
+    except ValueError:
+        return jsonify({"error": "Invalid product_id"}), 400
+
+    return get_average_receipt_by_product(product_id)
 
 
 # Employees
