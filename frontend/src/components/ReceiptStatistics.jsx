@@ -230,6 +230,45 @@ function ReceiptStatistics() {
         }
     };
 
+    const getAverageReceiptByProduct = async () => {
+        if (!selectedProduct) {
+            alert('Please select a product');
+            return;
+        }
+
+        console.log('selectedProduct', selectedProduct);
+
+        try {
+            const response = await api.get('/average-receipt-by-product', {
+                params: { product_id: selectedProduct },
+            });
+
+            const parsedBody = JSON.parse(response.data.body);
+            const productData = parsedBody.data;
+
+            if (!productData) {
+                alert('No data available for the selected product');
+                return;
+            }
+
+            const modalData = {
+                id_product: productData.product_id,
+                product_name: productData.product_name,
+                average_receipt_total: productData.average_receipt_total,
+
+                // min_receipt_total: productData.min_receipt_total,
+                // max_receipt_total: productData.max_receipt_total,
+                // number_of_receipts: productData.number_of_receipts,
+            };
+
+            setModalData(modalData);
+            setShowModal(true);
+        } catch (error) {
+            console.error('Error fetching data for selected product:', error);
+            alert('Failed to fetch data for product');
+        }
+    };
+
     return (
         <div className="statistics-container">
             <div className="searchAndBackSection">
@@ -240,82 +279,107 @@ function ReceiptStatistics() {
                 <div className="statistics-grid">
                     <section className="statistics-box">
                         <h3>Receipts info by selected cashier</h3>
-                        <select
-                            value={receiptsCashier}
-                            onChange={(e) => setReceiptsCashier(e.target.value)}
-                        >
-                            <option value="">Select Cashier</option>
-                            {cashiers.map((cashier) => (
-                                <option key={cashier.id_employee} value={cashier.id_employee}>
-                                    {cashier.id_employee} - {cashier.empl_surname}
-                                </option>
-                            ))}
-                        </select>
-                        <input
-                            type="date"
-                            value={receiptsStartDate}
-                            onChange={(e) => setReceiptsStartDate(e.target.value)}
-                        />
-                        <input
-                            type="date"
-                            value={receiptsEndDate}
-                            onChange={(e) => setReceiptsEndDate(e.target.value)}
-                        />
-                        <button onClick={getReceiptsByCashier}>→</button>
+                        <div className="select-data-section">
+                            <select
+                                value={receiptsCashier}
+                                onChange={(e) => setReceiptsCashier(e.target.value)}
+                            >
+                                <option value="">Select Cashier</option>
+                                {cashiers.map((cashier) => (
+                                    <option key={cashier.id_employee} value={cashier.id_employee}>
+                                        {cashier.id_employee} - {cashier.empl_surname}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                type="date"
+                                value={receiptsStartDate}
+                                onChange={(e) => setReceiptsStartDate(e.target.value)}
+                            />
+                            <input
+                                type="date"
+                                value={receiptsEndDate}
+                                onChange={(e) => setReceiptsEndDate(e.target.value)}
+                            />
+                            <button onClick={getReceiptsByCashier}>→</button>
+                        </div>
                     </section>
 
                     <section className="statistics-box">
                         <h3>Total sales by selected cashier</h3>
-                        <select
-                            value={salesCashier}
-                            onChange={(e) => setSalesCashier(e.target.value)}
-                        >
-                            <option value="">Select Cashier</option>
-                            {cashiers.map((cashier) => (
-                                <option key={cashier.id_employee} value={cashier.id_employee}>
-                                    {cashier.id_employee} - {cashier.empl_surname}
-                                </option>
-                            ))}
-                        </select>
-                        <input
-                            type="date"
-                            value={cashierStartDate}
-                            onChange={(e) => setCashierStartDate(e.target.value)}
-                        />
-                        <input
-                            type="date"
-                            value={cashierEndDate}
-                            onChange={(e) => setCashierEndDate(e.target.value)}
-                        />
-                        <button onClick={getSalesByCashier}>→</button>
+                        <div className="select-data-section">
+                            <select
+                                value={salesCashier}
+                                onChange={(e) => setSalesCashier(e.target.value)}
+                            >
+                                <option value="">Select Cashier</option>
+                                {cashiers.map((cashier) => (
+                                    <option key={cashier.id_employee} value={cashier.id_employee}>
+                                        {cashier.id_employee} - {cashier.empl_surname}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                type="date"
+                                value={cashierStartDate}
+                                onChange={(e) => setCashierStartDate(e.target.value)}
+                            />
+                            <input
+                                type="date"
+                                value={cashierEndDate}
+                                onChange={(e) => setCashierEndDate(e.target.value)}
+                            />
+                            <button onClick={getSalesByCashier}>→</button>
+                        </div>
+                    </section>
+
+                    {/* complicated */}
+                    <section className="statistics-box" style={{ width: '400px' }}>
+                        <h3>Average sum of receipt by product</h3>
+                        <div className="select-data-section">
+                            <select
+                                value={selectedProduct}
+                                onChange={(e) => setSelectedProduct(e.target.value)}
+                            >
+                                <option value="">Select Product</option>
+                                {products.map((product) => (
+                                    <option key={product.id_product} value={product.id_product}>
+                                        {product.product_name}
+                                    </option>
+                                ))}
+                            </select>
+                            <button onClick={getAverageReceiptByProduct}>→</button>
+                        </div>
+                    </section>
+
+                    <section className="statistics-box" style={{ width: '400px' }}>
+                        <h3>Total quantity of sold product</h3>
+                        <div className="select-data-section">
+                            <select
+                                value={selectedProduct}
+                                onChange={(e) => setSelectedProduct(e.target.value)}
+                            >
+                                <option value="">Select Product</option>
+                                {products.map((product) => (
+                                    <option key={product.id_product} value={product.id_product}>
+                                        {product.product_name}
+                                    </option>
+                                ))}
+                            </select>
+                            <input
+                                type="date"
+                                value={productStartDate}
+                                onChange={(e) => setProductStartDate(e.target.value)}
+                            />
+                            <input
+                                type="date"
+                                value={productEndDate}
+                                onChange={(e) => setProductEndDate(e.target.value)}
+                            />
+                            <button onClick={getQuantityOfProduct}>→</button>
+                        </div>
                     </section>
                 </div>
-
-                <section className="statistics-box" style={{ width: '400px' }}>
-                    <h3>Total quantity of sold product</h3>
-                    <select
-                        value={selectedProduct}
-                        onChange={(e) => setSelectedProduct(e.target.value)}
-                    >
-                        <option value="">Select Product</option>
-                        {products.map((product) => (
-                            <option key={product.id_product} value={product.id_product}>
-                                {product.product_name}
-                            </option>
-                        ))}
-                    </select>
-                    <input
-                        type="date"
-                        value={productStartDate}
-                        onChange={(e) => setProductStartDate(e.target.value)}
-                    />
-                    <input
-                        type="date"
-                        value={productEndDate}
-                        onChange={(e) => setProductEndDate(e.target.value)}
-                    />
-                    <button onClick={getQuantityOfProduct}>→</button>
-                </section>
             </div>
             {showModal && <StatisticsModal data={modalData} onClose={() => setShowModal(false)} />}
         </div>

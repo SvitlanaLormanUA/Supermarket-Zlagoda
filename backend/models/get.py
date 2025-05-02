@@ -1800,3 +1800,73 @@ def get_customers_without_category_and_receipts(category_name: str):
     finally:
         if conn:
             conn.close()
+
+
+def get_average_receipt_by_product(product_id):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        query = '''
+            SELECT 
+                AVG(r.sum_total) AS average_receipt_total,
+                p.id_product,
+                p.product_name
+            FROM receipt r
+            JOIN sale s ON r.check_number = s.check_number
+            JOIN store_product sp ON s.UPC = sp.UPC
+            JOIN product p ON sp.id_product = p.id_product
+            WHERE p.id_product = ?
+            GROUP BY p.id_product, p.product_name
+        '''
+
+        cursor.execute(query, (product_id,))
+        result = cursor.fetchone()
+
+        if result:
+            average = result[0] if result[0] is not None else 0.0
+            product_id = result[1]
+            product_name = result[2]
+
+            return {
+                "status_code": 200,
+                "body": jsonify({
+                    "status": "success",
+                    "data": {
+                        "product_id": product_id,
+                        "product_name": product_name,
+                        "average_receipt_total": round(average, 2)
+                    },
+                    "message": "Average receipt total calculated"
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+        else:
+            return {
+                "status_code": 404,
+                "body": jsonify({
+                    "status": "error",
+                    "data": [],
+                    "message": "No data found for the selected product"
+                }),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+    except sqlite3.Error as e:
+        return {
+            "status_code": 500,
+            "body": jsonify({
+                "status": "error",
+                "data": [],
+                "message": f"Database error: {str(e)}"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
+
+
+
+
