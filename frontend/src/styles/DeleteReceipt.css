@@ -22,7 +22,7 @@
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
-.modal-content input {
+.modal-content select {
     width: 100%;
     padding: 10px;
     margin-top: 15px;

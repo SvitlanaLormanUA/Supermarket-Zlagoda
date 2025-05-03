@@ -3,7 +3,7 @@ import Receipts from './Receipts';
 import { Link } from 'react-router-dom';
 import SearchAndBack from './SearchAndBack';
 import FetchReceipts from './FetchReceipts';
-import api from '../axios'; 
+import api from '../axios';
 import DeleteReceiptModal from './DeleteReceiptModal';
 function ReceiptPage({ userRole }) {
     const fetchReceiptsRef = useRef(null);
@@ -27,9 +27,8 @@ function ReceiptPage({ userRole }) {
     };
 
     const handleDeleteReceipt = async (receiptId) => {
-       
         await deleteReceipt(receiptId);
-        handleFetchUpdate(); 
+        handleFetchUpdate();
     };
 
     return (
@@ -38,17 +37,17 @@ function ReceiptPage({ userRole }) {
                 <SearchAndBack />
             </div>
             <div className="receipt-action-buttons">
-                {userRole === 'Manager' && 
+                {userRole === 'Manager' &&
                     <button className="add_new_receipt" onClick={() => setShowDeleteModal(true)}>
                         Delete Receipt
                     </button>
                 }
-                 {userRole !== 'Manager' && 
-                <button className="add_new_receipt" onClick={() => setShowModal(true)}>
-                    Add New Receipt
-                </button>
- } 
-                {userRole === 'Manager' && 
+                {userRole !== 'Manager' &&
+                    <button className="add_new_receipt" onClick={() => setShowModal(true)}>
+                        Add New Receipt
+                    </button>
+                }
+                {userRole === 'Manager' &&
                     <Link to="/receipts/statistics" className="receipt_statistics">
                         Statistics
                     </Link>
@@ -60,7 +59,7 @@ function ReceiptPage({ userRole }) {
                         handleDeleteReceipt(id);
                         setShowDeleteModal(false);
                     }}
-/>
+                />
             </div>
             <Receipts userRole={userRole} showModal={showModal} setShowModal={setShowModal} onReceiptAdded={handleFetchUpdate} />
             <FetchReceipts refetchRef={fetchReceiptsRef} />
