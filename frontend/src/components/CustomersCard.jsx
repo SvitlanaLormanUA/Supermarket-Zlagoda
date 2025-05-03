@@ -68,21 +68,28 @@ function CustomersCard() {
       alert('Please enter a category name');
       return;
     }
-
+  
     try {
       const response = await api.get(`/inactive-category/${encodeURIComponent(categoryName)}`);
-      const parsedData = response.data.data ?? JSON.parse(response.data.body).data;
-
-      setCustomerCards(parsedData || []);
-      setNoResultsMessage(parsedData && parsedData.length === 0 ? `No inactive customers found` : '');
+      const { status, data, message } = response.data; // Directly access response.data
+      console.log('Response data:', response); // Log the entire response data
+      if (status === 'success') {
+        setCustomerCards(data || []);
+        setNoResultsMessage(data.length === 0 ? message || 'No inactive customers found' : '');
+      } else {
+        setCustomerCards([]);
+        
+        setNoResultsMessage(message || 'Failed to fetch customers for the specified category.');
+      }
     } catch (error) {
       console.error('Error fetching inactive customers:', error);
       const errorMessage =
-        error.response?.data?.detail || 'Failed to fetch customers for the specified category.';
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        'Failed to fetch customers for the specified category.';
       alert(errorMessage);
-      console.error('Error details:', error);
       setCustomerCards([]);
-      setNoResultsMessage('Failed to fetch customers for the specified category.');
+      setNoResultsMessage(errorMessage);
     }
   };
 
