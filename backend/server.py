@@ -44,6 +44,7 @@ from models import (
     add_new_category,
     add_customer,
     add_new_receipt,
+    add_receipt_with_store_products,
     add_new_employee,
 
     delete_product,
@@ -51,6 +52,7 @@ from models import (
     delete_category,
     delete_customer,
     delete_employee,
+    delete_receipt,
 
     update_product,
     update_store_product,
@@ -309,7 +311,6 @@ async def update_customer_route(request):
 
 # Receipts
 @app.get("/receipts", auth_required=True)
-@roles_required(["Manager"])
 async def get_all_receipts_history(request):
     date_begin = request.query_params.get("date_begin")
     date_end = request.query_params.get("date_end")
@@ -319,16 +320,23 @@ async def get_all_receipts_history(request):
         return get_active_cashiers_with_receipts(date_begin)
     return get_cashier_receipt_history()
 
+@app.delete("/receipts/:id")
+@roles_required(["Manager"])
+async def delete_check(request):
+    receipt_id = request.path_params.get("id")
+    return delete_receipt(receipt_id)
+
 @app.get("/receipts/active-cashiers", auth_required=True)
 @roles_required(["Manager"])
 async def get_active_cashiers(request):
     return get_active_cashiers_with_receipts()
 
 @app.post("/receipts/new_receipt", auth_required=True)
+@roles_required(["Cashier"])
 async def add_receipt(request):
     try:
         receipt_data = json.loads(request.body)
-        return add_new_receipt(receipt_data)
+        return add_receipt_with_store_products(receipt_data)
     except json.JSONDecodeError:
         return {
             "status_code": 400,

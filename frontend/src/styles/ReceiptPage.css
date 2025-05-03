@@ -5,9 +5,15 @@
     width: 100%;
     margin-bottom: 40px;
 }
-
+.add_new_receipt {
+    margin-left: 3em;
+}
+.receipt_statistics {
+    margin-right: 3em;
+}
 .add_new_receipt, .receipt_statistics {
-    width: 48%;
+    align-self: center;
+    width: 42%;
     padding: 10px;
     border-radius: 10px;
     border: none;

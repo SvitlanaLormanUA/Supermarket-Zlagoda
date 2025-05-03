@@ -1456,6 +1456,7 @@ def get_cashier_receipt_history(id_employee=None, date_created=None, date_ended=
     finally:
         if conn:
             conn.close()
+
 def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
     conn = None
     try:
@@ -1583,7 +1584,9 @@ def get_active_cashiers_with_receipts(date_created=None, date_ended=None):
     finally:
         if conn:
             conn.close()
+
 #19. загальна сума продажів
+
 def get_total_sales_by_cashier(id_employee, start_date, end_date):
     conn = None
     try:
@@ -1731,11 +1734,10 @@ def get_total_quantity_product(product_id, start_date, end_date):
         if conn:
             conn.close()
 
-
 def get_customers_without_category_and_receipts(category_name: str):
     conn = None
     try:
-        conn = sqlite3.connect(DB_LINK)
+        conn = sqlite3.connect(DB_LINK) 
         cursor = conn.cursor()
 
         query = '''
@@ -1743,8 +1745,12 @@ def get_customers_without_category_and_receipts(category_name: str):
             c.card_number,
             c.cust_surname,
             c.cust_name,
+            c.cust_patronymic,
             c.phone_number,
-            c.city
+            c.city,
+            c.street,
+            c.zip_code,
+            c.percent
         FROM 
             customer_card c
         WHERE 
@@ -1754,8 +1760,9 @@ def get_customers_without_category_and_receipts(category_name: str):
                 JOIN sale s ON r.check_number = s.check_number
                 JOIN store_product sp ON s.UPC = sp.UPC
                 JOIN product p ON sp.id_product = p.id_product
+                JOIN category cat ON p.category_number = cat.category_number
                 WHERE r.card_number = c.card_number
-                AND p.category_name = ?
+                AND cat.category_name = ?
             )
             AND NOT EXISTS (
                 SELECT 1 
@@ -1764,52 +1771,40 @@ def get_customers_without_category_and_receipts(category_name: str):
             )
         '''
 
-        cursor.execute(query, (category_name))
+        cursor.execute(query, (category_name,))
         rows = cursor.fetchall()
 
-        if not rows:
-            return {
-                "status_code": 404,
-                "body": jsonify({
-                    "status": "success",
-                    "data": [],
-                    "message": "No matching customers found"
-                }),
-                "headers": {"Content-Type": "application/json"}
-            }
-
-        result = []
-        for row in rows:
-            result.append({
+        result = [
+            {
                 "card_number": row[0],
-                "surname": row[1],
-                "name": row[2],
-                "phone": row[3],
-                "city": row[4]
-            })
+                "cust_surname": row[1],
+                "cust_name": row[2],
+                "cust_patronymic": row[3] if row[3] else "",
+                "phone_number": row[4],
+                "city": row[5] if row[5] else "",
+                "street": row[6] if row[6] else "",
+                "zip_code": row[7] if row[7] else "",
+                "percent": row[8]
+            }
+            for row in rows
+        ]
 
         return {
-            "status_code": 200,
-            "body": jsonify({
-                "data": result,
-            }),
-            "headers": {"Content-Type": "application/json"}
+            "status": "success",
+            "data": result,
+            "message": "No matching customers found" if not result else ""
         }
 
     except sqlite3.Error as e:
         return {
-            "status_code": 500,
-            "body": jsonify({
-                "status": "error",
-                "data": [],
-                "message": f"Database error: {str(e)}"
-            }),
-            "headers": {"Content-Type": "application/json"}
+            "status": "error",
+            "data": [],
+            "message": f"Database error: {str(e)}"
         }
+
     finally:
         if conn:
             conn.close()
-
 
 def get_average_receipt_by_product(product_id):
     conn = None

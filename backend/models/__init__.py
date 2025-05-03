@@ -54,7 +54,7 @@ from .delete import (
     delete_store_product,
     delete_category,
     delete_customer,
-
+    delete_receipt,
     delete_employee
 )
 
@@ -120,6 +120,7 @@ __all__ = [
     'delete_category',
     'delete_customer',
     'delete_employee',
+    'delete_receipt',
 
     'update_product',
     'update_store_product',
