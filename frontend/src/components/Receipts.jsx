@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { validateReceiptStep1, validateReceiptBeforeSave } from '../utils/Validation';
 import api from '../axios';
 
-// Logic and Validation of receipts
 function Receipts({ showModal, setShowModal, onReceiptAdded }) {
     const [step, setStep] = useState(1);
 
@@ -13,6 +12,8 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
         print_date: '',
         sum_total: '',
         vat: '',
+        discount: '0.00',
+        discountRate: '0.00',
     };
 
     const initialProductData = {
@@ -63,10 +64,27 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
         .filter((f) => f.name !== 'card_number')
         .map((f) => f.name);
 
-
-    const handleFormChange = (e) => {
+    const handleFormChange = async (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
+
+        if (name === 'card_number' && value) {
+            try {
+                let selectedCard = optionsMap.card_number?.find((opt) => opt.value === value)?.raw;
+                let discountRate = selectedCard?.percent || 0;
+
+                let totalSum = parseFloat(formData.sum_total || '0');
+                let discount = (totalSum * discountRate / 100).toFixed(2);
+
+                setFormData((prev) => ({
+                    ...prev,
+                    discount,
+                    discountRate
+                }));
+            } catch (error) {
+                console.error('Failed to calculate discount:', error);
+            }
+        }
     };
 
     const handleProductChange = (e) => {
@@ -126,10 +144,14 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
             0
         );
 
+        const discountRate = optionsMap.card_number?.find((opt) => opt.value === formData.card_number)?.raw?.percent || 0;
+        const discount = (totalSum * discountRate / 100).toFixed(2);
+
         setFormData((prev) => ({
             ...prev,
             sum_total: totalSum.toFixed(2),
             vat: totalVat.toFixed(2),
+            discount,
         }));
 
         setProductData(initialProductData);
@@ -137,15 +159,16 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
 
     const addReceipt = async () => {
         try {
-            console.log('Saving receipt...');
-            console.log('Form Data:', formData);
-            console.log('Products:', products);
-    
             const payload = {
                 ...formData,
-                products,
+                items: products.map(p => ({
+                    UPC: p.UPC,
+                    quantity: Number(p.product_number),
+                    selling_price: Number(p.selling_price)
+                }))
             };
-            const response = await api.post('/receipts/new_receipt', payload);
+
+            await api.post('/receipts/new_receipt', payload);
             alert('Receipt saved successfully!');
             onReceiptAdded && onReceiptAdded();
         } catch (error) {
@@ -153,8 +176,6 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
             alert(error.response?.data?.detail || 'Error saving receipt.');
         }
     };
-    
-
 
     useEffect(() => {
         if (!showModal) return;
@@ -189,6 +210,8 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
         fetchAllOptions();
     }, [showModal]);
 
+    const finalPrice = (parseFloat(formData.sum_total || 0) - parseFloat(formData.discount || 0)).toFixed(2);
+
     return (
         <>
             {showModal && (
@@ -215,119 +238,125 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {products.map((p, idx) => (
-                                                <tr key={idx}>
+                                            {products.map((p, i) => (
+                                                <tr key={i}>
                                                     <td>{p.UPC}</td>
                                                     <td>{p.product_name}</td>
-                                                    <td>{p.product_number}</td>
+                                                    <td>{p.quantity}</td>
                                                     <td>{p.selling_price}</td>
                                                     <td>{p.total_price}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
+
+                                    <div className="receipt-summary">
+                                        <p><strong>Total:</strong> {formData.sum_total}$</p>
+                                        <p><strong>VAT:</strong> {formData.vat}</p>
+                                        <p><strong>Discount Rate:</strong> {formData.discountRate}%</p>
+                                        <p><strong>Discount:</strong> {formData.discount}$</p>
+                                        <p><strong>Final Price:</strong> {finalPrice}$</p>
+                                    </div>
                                 </>
                             )}
-                            <p><strong>Sum:</strong> {formData.sum_total}</p>
-                            <p><strong>VAT:</strong> {formData.vat}</p>
                         </div>
 
                         <div className="modal-right">
-                            <div className="receipt-modal-header">
-                                {step === 2 && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setStep(1)}
-                                        className="back-button"
-                                    >
-                                        ← Back
-                                    </button>
-                                )}
+                        <div className="receipt-modal-header">
+                            {step === 2 && (
                                 <button
                                     type="button"
-                                    onClick={closeModal}
-                                    className="close-button"
+                                    onClick={() => setStep(1)}
+                                    className="back-button"
                                 >
-                                    ×
+                                    ← Back
                                 </button>
+                            )}
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="close-button"
+                            >
+                                ×
+                            </button>
+                        </div>
+                        <h3>{step === 1 ? 'Receipt Info' : 'Add Product'}</h3>
+                        {(step === 1 ? fieldsStep1 : fieldsStep2).map((field) => (
+                            <div key={field.name}>
+                                {field.type === 'fk' ? (
+                                    <select
+                                        name={field.name}
+                                        value={
+                                            step === 1
+                                                ? formData[field.name]
+                                                : productData[field.name]
+                                        }
+                                        onChange={step === 1 ? handleFormChange : handleProductChange}
+                                    >
+                                        <option value="">{`Select ${field.label}`}</option>
+                                        {(optionsMap[field.name] || []).map((opt) => (
+                                            <option key={opt.value} value={opt.value}>
+                                                {opt.label}
+                                            </option>
+                                        ))}
+                                    </select>
+                                ) : field.type === 'datetime-local' ? (
+                                    <input
+                                        type="datetime-local"
+                                        name={field.name}
+                                        value={formData[field.name]}
+                                        onChange={handleFormChange}
+                                    />
+                                ) : (
+                                    <input
+                                        type="text"
+                                        name={field.name}
+                                        placeholder={field.label}
+                                        value={
+                                            step === 1
+                                                ? formData[field.name]
+                                                : productData[field.name]
+                                        }
+                                        onChange={step === 1 ? handleFormChange : handleProductChange}
+                                    />
+                                )}
                             </div>
-                            <h3>{step === 1 ? 'Receipt Info' : 'Add Product'}</h3>
-                            {(step === 1 ? fieldsStep1 : fieldsStep2).map((field) => (
-                                <div key={field.name}>
-                                    {field.type === 'fk' ? (
-                                        <select
-                                            name={field.name}
-                                            value={
-                                                step === 1
-                                                    ? formData[field.name]
-                                                    : productData[field.name]
-                                            }
-                                            onChange={step === 1 ? handleFormChange : handleProductChange}
-                                        >
-                                            <option value="">{`Select ${field.label}`}</option>
-                                            {(optionsMap[field.name] || []).map((opt) => (
-                                                <option key={opt.value} value={opt.value}>
-                                                    {opt.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    ) : field.type === 'datetime-local' ? (
-                                        <input
-                                            type="datetime-local"
-                                            name={field.name}
-                                            value={formData[field.name]}
-                                            onChange={handleFormChange}
-                                        />
-                                    ) : (
-                                        <input
-                                            type="text"
-                                            name={field.name}
-                                            placeholder={field.label}
-                                            value={
-                                                step === 1
-                                                    ? formData[field.name]
-                                                    : productData[field.name]
-                                            }
-                                            onChange={step === 1 ? handleFormChange : handleProductChange}
-                                        />
-                                    )}
-                                </div>
-                            ))}
+                        ))}
 
-                            <div className="modal-actions">
-                                {step === 1 ? (
+                        <div className="modal-actions">
+                            {step === 1 ? (
+                                <button
+                                    className="save-button"
+                                    onClick={() => {
+                                        if (validateReceiptStep1(formData, requiredStep1Fields)) {
+                                            setStep(2);
+                                        }
+                                    }}
+                                >
+                                    Next
+                                </button>
+                            ) : (
+                                <>
+                                    <button className="save-button" onClick={addProduct}>
+                                        Add Product
+                                    </button>
                                     <button
                                         className="save-button"
-                                        onClick={() => {
-                                            if (validateReceiptStep1(formData, requiredStep1Fields)) {
-                                                setStep(2);
+                                        onClick={async () => {
+                                            if (validateReceiptBeforeSave(products)) {
+                                                await addReceipt();
+                                                closeModal();
                                             }
                                         }}
                                     >
-                                        Next
+                                        Save Receipt
                                     </button>
-                                ) : (
-                                    <>
-                                        <button className="save-button" onClick={addProduct}>
-                                            Add Product
-                                        </button>
-                                        <button
-                                            className="save-button"
-                                            onClick={async () => {
-                                                if (validateReceiptBeforeSave(products)) {
-                                                    await addReceipt();
-                                                    closeModal();
-                                                }
-                                            }}
-                                        >
-                                            Save Receipt
-                                        </button>
-                                    </>
-                                )}
-                                <button className="cancel-button" onClick={closeModal}>
-                                    Cancel
-                                </button>
-                            </div>
+                                </>
+                            )}
+                            <button className="cancel-button" onClick={closeModal}>
+                                Cancel
+                            </button>
+                        </div>
                         </div>
                     </div>
                 </div>
@@ -337,3 +366,5 @@ function Receipts({ showModal, setShowModal, onReceiptAdded }) {
 }
 
 export default Receipts;
+
+
