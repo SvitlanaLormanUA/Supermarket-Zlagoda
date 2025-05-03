@@ -9,7 +9,7 @@ function ReportTable({ reportType, products }) {
   const getDates = () => {
     const endDate = new Date();
     const startDate = new Date();
-    startDate.setDate(endDate.getDate() - 7);
+    startDate.setDate(endDate.getDate() - 30);
     
     return {
       start_date: startDate.toISOString().split('T')[0],
@@ -23,36 +23,40 @@ function ReportTable({ reportType, products }) {
         setLoading(true);
         const { start_date, end_date } = getDates();
         const quantities = {};
-        
+  
         try {
-          // Запит для кожного продукту
           for (const product of products) {
-            const response = await api.get(`/sales/product?product_id=${product.id_product}&start_date=${start_date}&end_date=${end_date}`);
-            const data = response.data;
-            
-            if (data.status === 'success') {
-              quantities[product.id_product] = data.data.total_quantity || 0;
-            } else {
+            const response = await api.get('/sales/product', {
+              params: {
+                product_id: product.id_product,
+                start_date: start_date,
+                end_date: end_date,
+              },
+            });
+  
+            const productData = response.data.body.data;
+  
+            if (!productData || response.data.body.status === 'error') {
+              console.warn(`No sales data for product ${product.id_product}`);
               quantities[product.id_product] = 0;
+            } else {
+              quantities[product.id_product] = productData.total_quantity_sold || 0;
             }
           }
-          
+  
           setProductQuantities(quantities);
         } catch (error) {
-          console.error('Error fetching product quantities:', error);
-          // Якщо помилка, встановлюємо 0 для всіх продуктів
-          const zeroQuantities = {};
-          products.forEach(p => zeroQuantities[p.id_product] = 0);
-          setProductQuantities(zeroQuantities);
+          console.error('Error fetching product quantities:', error.response?.data || error.message);
+          products.forEach((p) => (quantities[p.id_product] = 0));
+          setProductQuantities(quantities);
         } finally {
           setLoading(false);
         }
       };
-      
+  
       fetchProductQuantities();
     }
   }, [reportType, products]);
-
   const calculateTotalProductSales = () => {
     return Object.values(productQuantities).reduce((total, quantity) => total + quantity, 0);
   };
@@ -75,7 +79,7 @@ function ReportTable({ reportType, products }) {
               <th>Category Name</th>
               <th>Product Name</th>
               <th>Characteristics</th>
-              {reportType === 'products' && <th>Total Sold Quantity (last 7 days)</th>}
+              {reportType === 'products' && <th>Total Sold Quantity (last 30 days)</th>}
             </tr>
           </thead>
           <tbody>
