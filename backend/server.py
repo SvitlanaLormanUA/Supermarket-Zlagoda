@@ -409,7 +409,6 @@ async def products_never_sold_to_customers_without_card():
 # Employees
 # вони тут вже відсортовані за прізвищем
 @app.get("/employees", auth_required=True)
-@roles_required(["Manager"])
 async def get_employees(request):
     return get_all_employees()
 
@@ -419,8 +418,7 @@ async def get_empl_by_id(request):
     return get_employee_by_id()
 
 
-@app.get("/employees/cashiers")
-@roles_required(["Manager"])
+@app.get("/employees/cashiers", auth_required=True)
 async def fetch_cashiers(request):
     return get_cashiers()
 
