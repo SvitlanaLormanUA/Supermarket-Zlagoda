@@ -8,7 +8,6 @@ import AddItemModal from './AddItemModal';
 import EditItemModal from './EditItemModal';
 import DeleteItemModal from './DeleteItemModal';
 import SortButtons from './SortButtons';
-
 import ProductsModal from './ProductsModal';
 
 function Categories() {
