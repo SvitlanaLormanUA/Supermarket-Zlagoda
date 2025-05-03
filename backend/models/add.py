@@ -268,69 +268,68 @@ def add_new_receipt(receipt_data):
             conn.close()         
 
 def add_receipt_with_store_products(receipt_data):
-    """
-    Чек (store_products)
-    :param receipt_data: {
-        "check_number": str,
-        "id_employee": str,
-        "card_number": str (optional),
-        "print_date": str (YYYY-MM-DD HH:MM:SS),
-        "items": [
-            {
-                "UPC": str,
-                "quantity": int,
-                "selling_price": float
-            },
-            ...
-        ]
-    }
-    """
     conn = None
     try:
         conn = sqlite3.connect(DB_LINK)
         cursor = conn.cursor()
-        
-        # Загальна сума та ПДВ
-        total = sum(item['quantity'] * item['selling_price'] for item in receipt_data['items'])
-        vat = total * 0.2  # 20% ПДВ (можна змінити)
 
+        items = receipt_data['items']
+
+        # 1. Загальна сума без знижки
+        total = sum(item['quantity'] * item['selling_price'] for item in items)
+
+        # 2. Якщо є картка — дізнаємось відсоток знижки
+        discount_percent = 0
+        card_number = receipt_data.get('card_number')
+
+        if card_number:
+            cursor.execute('SELECT percent FROM customer_card WHERE card_number = ?', (card_number,))
+            result = cursor.fetchone()
+            if result:
+                discount_percent = result[0]
+
+        # 3. Розрахунок знижки та суми з ПДВ
+        discount_amount = total * discount_percent / 100
+        total_with_discount = total - discount_amount
+        vat = total_with_discount * 0.2  # 20% ПДВ
+
+        # 4. Вставка чеку
         cursor.execute('''
             INSERT INTO receipt (
-                check_number, 
-                id_employee, 
-                card_number, 
-                print_date, 
-                sum_total, 
+                check_number,
+                id_employee,
+                card_number,
+                print_date,
+                sum_total,
                 vat
             ) VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             receipt_data['check_number'],
             receipt_data['id_employee'],
-            receipt_data.get('card_number'),
+            card_number,
             receipt_data['print_date'],
-            total,
+            total_with_discount,
             vat
         ))
 
-
-        for item in receipt_data['items']:
-            # наявність?
+        for item in items:
+            # 5. Перевірка доступної кількості
             cursor.execute('SELECT products_number FROM store_product WHERE UPC = ?', (item['UPC'],))
             result = cursor.fetchone()
-            
+
             if not result:
                 raise ValueError(f"Товар з UPC {item['UPC']} не знайдено")
-                
+
             available_quantity = result[0]
             if available_quantity < item['quantity']:
-                raise ValueError(f"Недостатня кількість товару {item['UPC']}. Доступно: {available_quantity}")
+                raise ValueError(f"Недостатньо товару з UPC {item['UPC']}. Доступно: {available_quantity}")
 
-
+            # 6. Додавання продажу
             cursor.execute('''
                 INSERT INTO sale (
-                    UPC, 
-                    check_number, 
-                    product_number, 
+                    UPC,
+                    check_number,
+                    product_number,
                     selling_price
                 ) VALUES (?, ?, ?, ?)
             ''', (
@@ -340,7 +339,7 @@ def add_receipt_with_store_products(receipt_data):
                 item['selling_price']
             ))
 
-
+            # 7. Оновлення залишку на складі
             cursor.execute('''
                 UPDATE store_product 
                 SET products_number = products_number - ? 
@@ -355,6 +354,9 @@ def add_receipt_with_store_products(receipt_data):
                 "message": "Чек успішно додано",
                 "check_number": receipt_data['check_number'],
                 "total": total,
+                "discount_percent": discount_percent,
+                "discount_amount": discount_amount,
+                "total_with_discount": total_with_discount,
                 "vat": vat
             }),
             "headers": {"Content-Type": "application/json"}

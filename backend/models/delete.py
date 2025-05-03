@@ -232,3 +232,48 @@ def delete_employee(employee_id):
     finally:
         if conn:
             conn.close()
+
+def delete_receipt(receipt_id):
+    conn = None
+    try:
+        conn = sqlite3.connect(DB_LINK)
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT check_number FROM receipt WHERE check_number = ?
+        ''', (receipt_id,))
+        receipt_exists = cursor.fetchone()
+
+        if not receipt_exists:
+            return {
+                "status_code": 404,
+                "body": jsonify({"data": "Receipt not found"}),
+                "headers": {"Content-Type": "application/json"}
+            }
+
+        cursor.execute('''
+            DELETE FROM receipt 
+            WHERE check_number = ?
+        ''', (receipt_id,))
+
+        conn.commit()
+
+        return {
+            "status_code": 200,
+            "body": jsonify({
+                "data": f"Receipt {receipt_id} deleted successfully"
+            }),
+            "headers": {"Content-Type": "application/json"}
+        }
+
+    except sqlite3.Error as e:
+        if conn:
+            conn.rollback()
+        return {
+            "status_code": 500,
+            "body": jsonify({"data": f"Database error: {str(e)}"}),
+            "headers": {"Content-Type": "application/json"}
+        }
+    finally:
+        if conn:
+            conn.close()
