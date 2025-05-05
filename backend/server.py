@@ -262,7 +262,6 @@ async def get_customers_cards(request):
     return get_customer_info_ordered()
 
 @app.get("/inactive-category/:category_name", auth_required=True)
-@roles_required(["Manager"])
 async def get_customers_not_bought_category(request):
     category_name = request.path_params.get("category_name")
     if category_name is None:
